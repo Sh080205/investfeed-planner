@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Migrate Helper · ดึงข้อมูล planner_v2 เดิม</title>
+<style>
+  body { background: #0b0f14; color: #e6edf3; font-family: 'IBM Plex Sans Thai', system-ui, sans-serif;
+         max-width: 640px; margin: 40px auto; padding: 0 20px; line-height: 1.7; }
+  h1 { font-size: 20px; }
+  button { background: #2ecc71; color: #0b0f14; border: none; border-radius: 8px;
+           padding: 10px 18px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  button:disabled { background: #26313d; color: #8b98a5; cursor: not-allowed; }
+  pre { background: #121922; border: 1px solid #26313d; border-radius: 8px; padding: 12px;
+        font-size: 12px; overflow: auto; white-space: pre-wrap; }
+  .muted { color: #8b98a5; font-size: 13px; }
+</style>
+</head>
+<body>
+<h1>🔄 ดึงข้อมูล planner_v2 เดิมออกมาเป็นไฟล์ JSON</h1>
+<p class="muted">
+  ใช้เมื่อเปิดแอปใหม่แล้วข้อมูลเดิมไม่ตามมาอัตโนมัติ (คนละ origin เช่น แอปรันบน localhost
+  แต่ planner เดิมเปิดจากไฟล์ตรง ๆ)<br />
+  วิธีใช้: วางไฟล์นี้ <b>ในโฟลเดอร์เดียวกับ planner_v2.html</b> แล้วเปิดด้วย <b>browser ตัวเดียวกับที่เคยใช้ planner เดิม</b>
+  → กดปุ่มดาวน์โหลด → เอาไฟล์ที่ได้ไปกด "⬆ Import JSON" ในแอปใหม่
+</p>
+<button id="btn">⬇ ดาวน์โหลดข้อมูลเดิมเป็น JSON</button>
+<pre id="out"></pre>
+<script>
+  // เก็บทุก key ของ planner_v2 (prefix 'mission-log-v2:') จาก localStorage ของ origin นี้
+  var PREFIX = 'mission-log-v2:';
+  var data = {};
+  var n = 0;
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (k && k.indexOf(PREFIX) === 0) {
+      data[k.slice(PREFIX.length)] = localStorage.getItem(k);
+      n++;
+    }
+  }
+  var out = document.getElementById('out');
+  var btn = document.getElementById('btn');
+  if (n) {
+    out.textContent = 'พบข้อมูลเดิม ' + n + ' key:\n· ' + Object.keys(data).join('\n· ');
+  } else {
+    out.textContent = 'ไม่พบข้อมูล planner_v2 บน origin นี้ — ลองเช็กว่าเปิดไฟล์นี้จากโฟลเดอร์เดียวกับ planner_v2.html และใช้ browser ตัวเดิม';
+    btn.disabled = true;
+  }
+  btn.onclick = function () {
+    // ห่อใน {legacyV2: ...} ให้แอปใหม่รู้ว่าเป็นไฟล์ migration ไม่ใช่ backup ปกติ
+    var blob = new Blob([JSON.stringify({ legacyV2: data }, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'planner-v2-legacy.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+</script>
+</body>
+</html>

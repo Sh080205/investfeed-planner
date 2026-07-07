@@ -1,0 +1,27 @@
+# ---------- dependencies ----------
+node_modules/
+planner/node_modules/
+
+# ---------- secrets / local env ----------
+# .env มี GEMINI_API_KEY — ห้าม commit เด็ดขาด (ดู .env.example เป็นแม่แบบ)
+.env
+.env.*
+!.env.example
+*.local
+
+# ---------- runtime data (server สร้างใหม่เองตอนรัน) ----------
+/data/
+
+# ---------- build output (สร้างด้วย `npm run build:planner`) ----------
+planner/dist/
+
+# ---------- logs ----------
+*.log
+npm-debug.log*
+
+# ---------- Claude Code local settings ----------
+.claude/settings.local.json
+
+# ---------- OS / editor ----------
+.DS_Store
+Thumbs.db

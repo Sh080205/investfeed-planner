@@ -1,0 +1,20 @@
+{
+  "name": "investfeed",
+  "version": "1.0.0",
+  "description": "Personal investment news reader",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build:planner": "npm --prefix planner run build"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.107.0",
+    "express": "^4.18.2",
+    "node-cron": "^3.0.3",
+    "rss-parser": "^3.13.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
