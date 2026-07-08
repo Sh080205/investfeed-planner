@@ -147,6 +147,20 @@ const SECTIONS = [
       { id: 'en13', group: 'เช็กพัฒนาการ (milestone รายช่วง)', meta: 'เดือน 3–4 (ก.ย.–ต.ค. 2026)', activity: 'อ่านโจทย์ Div.2 C + editorial จบได้โดยไม่ใช้ translator', cat: 'eng' },
       { id: 'en14', group: 'เช็กพัฒนาการ (milestone รายช่วง)', meta: 'เดือน 5–6 (พ.ย.–ธ.ค. 2026)', activity: 'อ่านโจทย์ ICPC regional จริง (ใน vjudge) เข้าใจครบทั้งชุด', cat: 'eng' },
       { id: 'en15', group: 'เช็กพัฒนาการ (milestone รายช่วง)', meta: 'ก่อน National 2027', activity: 'อ่านชุดโจทย์ 10–12 ข้อแบบแบ่งกันในทีม แล้วสรุปให้เพื่อนฟังได้คล่อง', cat: 'eng' },
+
+      // แหล่งเรียนระดับ B2 — คัดเฉพาะของฟรี/มาตรฐาน เน้นอ่าน+ศัพท์ตามจุดอ่อน
+      { id: 'enr1', group: 'แหล่งเรียนระดับ B2 (คัดแล้ว · กด "เปิด ↗")', meta: 'เริ่มที่นี่ · วัดระดับ', activity: 'EF SET — สอบวัดระดับฟรี 50 นาที ได้ใบรับรอง CEFR ใช้ยืนยันว่าอยู่ B2 จริง + สอบซ้ำทุก 3–4 เดือนดูพัฒนาการ', cat: 'eng', url: 'https://www.efset.org/' },
+      { id: 'enr2', group: 'แหล่งเรียนระดับ B2 (คัดแล้ว · กด "เปิด ↗")', meta: 'อ่าน · 2–3 ชิ้น/สัปดาห์', activity: 'British Council — ชุดฝึกอ่านระดับ B2 พร้อมแบบฝึกเช็กความเข้าใจ (ฟรีทั้งหมด)', cat: 'eng', url: 'https://learnenglish.britishcouncil.org/skills/reading/b2-reading' },
+      { id: 'enr3', group: 'แหล่งเรียนระดับ B2 (คัดแล้ว · กด "เปิด ↗")', meta: 'อ่าน', activity: 'Breaking News English — ข่าวเดียวกันเขียนหลายระดับ เริ่ม Level 6 แล้วขยับขึ้น (เห็นชัดว่าระดับต่างกันยังไง)', cat: 'eng', url: 'https://breakingnewsenglish.com/' },
+      { id: 'enr4', group: 'แหล่งเรียนระดับ B2 (คัดแล้ว · กด "เปิด ↗")', meta: 'อ่าน · เครื่องมือ', activity: 'Readlang — เอาบทความ tech จริง (dev.to, blog) มาอ่านในเว็บ คลิกคำเพื่อแปลแล้วเก็บเป็น flashcard อัตโนมัติ', cat: 'eng', url: 'https://readlang.com/' },
+      { id: 'enr5', group: 'แหล่งเรียนระดับ B2 (คัดแล้ว · กด "เปิด ↗")', meta: 'ศัพท์ · 30–50 คำ/สัปดาห์', activity: 'Oxford 5000 — ลิสต์ศัพท์ระดับ B2–C1 อย่างเป็นทางการ พร้อมเสียงอ่าน ทยอยเอาเข้า Anki', cat: 'eng', url: 'https://www.oxfordlearnersdictionaries.com/wordlists/oxford3000-5000' },
+      { id: 'enr6', group: 'แหล่งเรียนระดับ B2 (คัดแล้ว · กด "เปิด ↗")', meta: 'ศัพท์ · สาย paper', activity: 'Academic Word List (AWL) — ศัพท์วิชาการ 570 ตระกูลคำที่โผล่บ่อยสุดใน paper/เอกสาร เรียนคู่กับการอ่าน paper ML', cat: 'eng', url: 'https://www.wgtn.ac.nz/lals/resources/academicwordlist' },
+      { id: 'enr7', group: 'แหล่งเรียนระดับ B2 (คัดแล้ว · กด "เปิด ↗")', meta: 'ฟัง · 6 นาที/วัน', activity: 'BBC 6 Minute English — ตอนสั้นมี transcript อ่านตามได้ เหมาะฟังตอนเดินทาง/ก่อนนอน', cat: 'eng', url: 'https://www.bbc.co.uk/learningenglish/english/features/6-minute-english' },
+      { id: 'enr8', group: 'แหล่งเรียนระดับ B2 (คัดแล้ว · กด "เปิด ↗")', meta: 'ฟัง+อ่าน', activity: 'TED Talks — เปิด transcript ภาษาอังกฤษอ่านคู่กับฟัง เลือกหัวข้อ tech/AI ที่รู้บริบทอยู่แล้วจะตามทัน', cat: 'eng', url: 'https://www.ted.com/talks' },
+      { id: 'enr9', group: 'แหล่งเรียนระดับ B2 (คัดแล้ว · กด "เปิด ↗")', meta: 'ฟัง · สาย CS', activity: 'CS50 (YouTube) — เลกเชอร์ CS พูดชัด + sub อังกฤษ ฝึกหูด้วยเนื้อหาที่เรารู้เรื่องอยู่แล้ว', cat: 'eng', url: 'https://www.youtube.com/@cs50' },
+      { id: 'enr10', group: 'แหล่งเรียนระดับ B2 (คัดแล้ว · กด "เปิด ↗")', meta: 'แกรมมาร์ · ตามอาการ', activity: 'British Council Grammar B1–B2 — ทบทวนแกรมมาร์เป็นจุด ๆ เฉพาะเรื่องที่งง ไม่ต้องไล่ทั้งคอร์ส', cat: 'eng', url: 'https://learnenglish.britishcouncil.org/grammar/b1-b2-grammar' },
+      { id: 'enr11', group: 'แหล่งเรียนระดับ B2 (คัดแล้ว · กด "เปิด ↗")', meta: 'แกรมมาร์ · หนังสือ', activity: 'English Grammar in Use (Murphy เล่มฟ้า) — หนังสือมาตรฐาน B1–B2 มีเฉลยในตัว เปิดเฉพาะบทที่พลาดบ่อย', cat: 'eng' },
+      { id: 'enr12', group: 'แหล่งเรียนระดับ B2 (คัดแล้ว · กด "เปิด ↗")', meta: 'วัดผล · ข้อสอบจริง', activity: 'Cambridge B2 First (FCE) sample papers — ข้อสอบมาตรฐานของระดับ B2 ไว้ซ้อมจริงจัง (เผื่อยื่นแลกเปลี่ยน/สมัครงาน)', cat: 'eng', url: 'https://www.cambridgeenglish.org/exams-and-tests/first/preparation/' },
     ],
   },
 
@@ -271,7 +285,7 @@ const SECTIONS = [
 /** สร้าง doc เริ่มต้น (ก้อนข้อมูลทั้งหมดของแอป) */
 export function buildSeedDoc() {
   return {
-    schemaVersion: 2, // v2 = แผน ICPC 2027 + แท็บ english (ดู upgradeDoc ใน store.js)
+    schemaVersion: 3, // v2 = แผน ICPC 2027 + แท็บ english · v3 = แหล่งเรียน B2 (ดู upgradeDoc ใน store.js)
     settings: {
       // National/Bangkok 2027 เป็นประมาณการจากรอบปีก่อน — แก้ใน UI เมื่อประกาศวันจริง
       dates: { national: '2027-09-11', bangkok: '2027-11-20' },
