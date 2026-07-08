@@ -89,11 +89,11 @@ export default function SectionPanel({
               className="view-select mono"
               value={icpcView}
               onChange={(e) => onIcpcView(e.target.value)}
-              title="สลับแผนหลังแข่ง"
+              title="สลับแผนหลัง National"
             >
-              <option value="all">หลังแข่ง: ดูทั้งสองแผน</option>
-              <option value="qualified">หลังแข่ง: ✅ ติดรอบ</option>
-              <option value="notq">หลังแข่ง: 🔁 ไม่ติด</option>
+              <option value="all">หลัง National: ดูทั้งสองแผน</option>
+              <option value="qualified">หลัง National: ✅ ผ่านเข้า Regional</option>
+              <option value="notq">หลัง National: 🔁 ไม่ผ่าน</option>
             </select>
           )}
           {section.resettable && (

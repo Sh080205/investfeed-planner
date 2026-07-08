@@ -14,13 +14,14 @@ export const DAY_ORDER = [
 export const TAG_LABEL = {
   icpc: 'ICPC', ai: 'AI PROJECT', review: 'COURSE', skill: 'SKILL', plan: 'PLAN',
   fitness: 'FITNESS', road: 'ROADMAP', course: 'ELECTIVE', learn: 'FREE', class: 'CLASS',
+  eng: 'ENGLISH',
 };
 
-// แผนหลังแข่งของ section ICPC — รายการที่ไม่มี track จะแสดงเสมอ
+// แผนหลัง National ของ section ICPC — รายการที่ไม่มี track จะแสดงเสมอ
 export const TRACK_LABEL = {
   '': 'แผนหลัก (แสดงเสมอ)',
-  qualified: 'หลังแข่ง · ถ้าติดรอบ',
-  notq: 'หลังแข่ง · ถ้าไม่ติด',
+  qualified: 'หลัง National · ผ่านเข้า Regional',
+  notq: 'หลัง National · ไม่ผ่าน',
 };
 
 /* ---------- ISO week key เช่น "2026-W27" (ใช้รีเซ็ตตารางรายสัปดาห์) ---------- */
@@ -42,14 +43,21 @@ export function daysUntil(iso) {
   return Math.round((target - today) / 86400000);
 }
 
-// ข้อความเฟสใต้ countdown — อิงวัน contest ที่ใกล้ที่สุดก่อน แล้วค่อยไล่ National/Bangkok
+// ข้อความเฟสใต้ countdown — อิงระยะห่างจาก National (เส้นทางยาวสู่ ICPC 2027)
+// แล้วค่อยไล่ต่อไป Bangkok Regional หลัง National ผ่านไป
 export function phaseLabel(dates) {
-  const dC = daysUntil(dates.contest);
-  if (dC > 8) return 'GRIND · อัดหนัก เก็บ topic หลัก';
-  if (dC > 3) return 'SHARPEN · โหมดสนามจริง + เก็บจุดอ่อน';
-  if (dC >= 1) return 'TAPER · ลดโหลด พักให้พอ';
-  if (dC === 0) return '🏁 วันแข่ง — เต็มที่!';
   const dNat = daysUntil(dates.national);
-  if (dNat >= 0) return 'หลังแข่ง · เลือกแผนต่อในแท็บ icpc';
-  return 'มุ่ง Bangkok Regional';
+  if (dNat >= 0) {
+    if (dNat === 0) return '🏁 วันแข่ง National — เต็มที่!';
+    if (dNat <= 7) return 'TAPER · ลดโหลด พักให้พอ';
+    if (dNat <= 30) return 'GRIND · โค้งสุดท้ายก่อน National';
+    if (dNat <= 100) return 'TEAM MODE · ซ้อมทีมจริงจัง';
+    if (dNat <= 240) return 'RAMP-UP · เพิ่มความเข้มข้น + ตั้งทีม';
+    return 'FOUNDATION · เก็บ topic หลักให้แน่น';
+  }
+  const dBkk = daysUntil(dates.bangkok);
+  if (dBkk === 0) return '🏁 วันแข่ง Bangkok Regional!';
+  if (dBkk > 0 && dBkk <= 7) return 'TAPER · ก่อน Bangkok Regional';
+  if (dBkk > 0) return 'มุ่ง Bangkok Regional';
+  return 'จบฤดูกาล — วางแผนรอบถัดไป';
 }

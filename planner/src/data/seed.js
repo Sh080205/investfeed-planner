@@ -5,7 +5,8 @@
 //
 // เนื้อหา sections เดิมคัดลอกจาก planner_v2.html แบบคำต่อคำ และ **ใช้ item id เดิม**
 // เพื่อให้ migration ดึงสถานะที่เคยติ๊กไว้กลับมาได้ตรง ๆ
-// มีของใหม่ 2 อย่าง: section "ตารางเรียน" (จากตาราง Notion) และแผน ICPC ที่วางใหม่
+// ของใหม่: section "ตารางเรียน" (จากตาราง Notion), แผน ICPC เส้นทางสู่ปี 2027,
+// และ section "english" (แก้จุดอ่อนอ่านโจทย์ภาษาอังกฤษ)
 
 // โครงสร้าง section:
 //   id         ใช้เป็น key สถานะ + จับคู่ตอน migrate (ห้ามซ้ำ)
@@ -52,58 +53,63 @@ const SECTIONS = [
       { id: 'sat1', day: 'เสาร์ SAT', time: '09:00–12:00', activity: 'Virtual Contest (CF Div2 / ICPC Gym) — เป็นทีมถ้าได้', cat: 'icpc' },
       { id: 'sun1', day: 'อาทิตย์ SUN', time: '14:00–16:00', activity: 'โปรเจกต์ AI: deep work', cat: 'ai' },
       { id: 'sun2', day: 'อาทิตย์ SUN', time: '19:00–20:00', activity: 'สรุปสัปดาห์ + วางแผน + อ่าน paper/บทความ ML 1 ชิ้น', cat: 'plan' },
+      // ช่องซ้อมภาษาอังกฤษ (เพิ่มตามแผนแท็บ english — แก้เวลา/วันได้ตามสะดวก)
+      { id: 'eng-tue', day: 'อังคาร TUE', time: '21:00–21:20', activity: 'ENG: อ่านโจทย์ EN 1 ข้อ + สรุป spec เป็นไทย 3 บรรทัด + เก็บศัพท์ลง Anki', cat: 'eng' },
+      { id: 'eng-thu', day: 'พฤหัส THU', time: '21:30–21:50', activity: 'ENG: อ่านโจทย์ EN จับเวลา 1 ข้อ + ทบทวน Anki ศัพท์โจทย์', cat: 'eng' },
+      { id: 'eng-sun', day: 'อาทิตย์ SUN', time: '20:00–20:30', activity: 'ENG: อ่าน editorial ภาษาอังกฤษของโจทย์สัปดาห์นี้ + จดวลีที่เจอบ่อย', cat: 'eng' },
     ],
   },
 
-  // ---------- 3) ICPC (วางแผนใหม่ — นับถอยหลัง contest 19 ก.ค. แบบ taper) ----------
-  // จัดวันหนัก/เบาตามตารางเรียนจริง: จ+อ เรียนถึง 19:30 → ซ้อมเบา · พ/พฤ/ศ ว่างช่วงบ่าย-เย็น
-  // และเสาร์-อาทิตย์ → อัดหนัก · สามวันสุดท้ายก่อนแข่ง taper ลงให้พีคพอดีวันจริง
+  // ---------- 3) ICPC (เส้นทางยาวสู่การแข่งปี 2027 — แข่งตอนปี 4) ----------
+  // เลื่อนเป้าจากรอบ ก.ค. 2026 → Thailand National 2027 (~ก.ย.) และ Bangkok Regional (~พ.ย.)
+  // 4 เฟสตามปฏิทินจริง: เก็บพื้นฐานคู่เทอมเรียน → เข้มข้น+ตั้งทีม → ซ้อมทีม → แข่ง
+  // จุดอ่อนอ่านโจทย์ภาษาอังกฤษ → มีแผนแยกที่แท็บ english (ทำคู่กันตลอดทั้งปี)
   {
     id: 'icpc', tab: 'icpc', layout: 'group', resettable: false, checkable: true,
-    note: 'นับถอยหลัง contest อา 19 ก.ค. · taper หนัก→เบา · ทุก session แก้/เพิ่ม/ลบได้ · สลับแผนหลังแข่งได้ที่ตัวเลือกขวามือ',
+    note: 'เส้นทางสู่ ICPC 2027 (แข่งตอนปี 4) · 4 เฟสตามปฏิทิน · ทุกรายการแก้/เพิ่ม/ลบได้ · แผนหลัง National สลับดูได้ที่ตัวเลือกขวามือ',
     items: [
-      // ช่วงที่ 1 · GRIND — เก็บ topic หลักให้ครบ ปริมาณสูงสุด
-      { id: 'cd02', group: 'ช่วงที่ 1 · GRIND (พฤ 2 – ศ 10 ก.ค.) — อัดหนัก เก็บ topic หลัก', meta: 'พฤ 2 ก.ค. · 3 ข้อ · หลังเลิกเรียน', activity: 'DP หลัก: knapsack, LIS, coin change', cat: 'icpc' },
-      { id: 'cd03', group: 'ช่วงที่ 1 · GRIND (พฤ 2 – ศ 10 ก.ค.) — อัดหนัก เก็บ topic หลัก', meta: 'ศ 3 ก.ค. · 3 ข้อ · หลังเลิกเรียน', activity: 'Graph หลัก: BFS/DFS, Dijkstra, topological sort', cat: 'icpc' },
-      { id: 'cd04', group: 'ช่วงที่ 1 · GRIND (พฤ 2 – ศ 10 ก.ค.) — อัดหนัก เก็บ topic หลัก', meta: 'ส 4 ก.ค. · 5–6 ข้อ · เต็มวัน', activity: 'Virtual Contest #1 (CF Div.2 เต็มเวลา) + จด topic ที่พลาดไว้', cat: 'icpc' },
-      { id: 'cd05', group: 'ช่วงที่ 1 · GRIND (พฤ 2 – ศ 10 ก.ค.) — อัดหนัก เก็บ topic หลัก', meta: 'อา 5 ก.ค. · 4 ข้อ', activity: 'Upsolve contest เมื่อวานให้ครบ + Segment Tree / BIT', cat: 'icpc' },
-      { id: 'cd06', group: 'ช่วงที่ 1 · GRIND (พฤ 2 – ศ 10 ก.ค.) — อัดหนัก เก็บ topic หลัก', meta: 'จ 6 ก.ค. · 2 ข้อ · เบา (เรียน+TA ถึง 19:30)', activity: 'Two pointers + binary search on answer', cat: 'icpc' },
-      { id: 'cd07', group: 'ช่วงที่ 1 · GRIND (พฤ 2 – ศ 10 ก.ค.) — อัดหนัก เก็บ topic หลัก', meta: 'อ 7 ก.ค. · 2 ข้อ · เบา (เรียนถึง 19:30)', activity: 'Number Theory: sieve, modpow, nCr mod p', cat: 'icpc' },
-      { id: 'cd08', group: 'ช่วงที่ 1 · GRIND (พฤ 2 – ศ 10 ก.ค.) — อัดหนัก เก็บ topic หลัก', meta: 'พ 8 ก.ค. · 4 ข้อ · ว่างหลัง 10:00', activity: 'Advanced DP: bitmask DP, DP on trees', cat: 'icpc' },
-      { id: 'cd09', group: 'ช่วงที่ 1 · GRIND (พฤ 2 – ศ 10 ก.ค.) — อัดหนัก เก็บ topic หลัก', meta: 'พฤ 9 ก.ค. · 3 ข้อ · ว่างหลังเที่ยง', activity: 'Graph ขั้นสูง: SCC, bridges/articulation, MST', cat: 'icpc' },
-      { id: 'cd10', group: 'ช่วงที่ 1 · GRIND (พฤ 2 – ศ 10 ก.ค.) — อัดหนัก เก็บ topic หลัก', meta: 'ศ 10 ก.ค. · 3 ข้อ · หลัง lab', activity: 'Strings: hashing, KMP + greedy ขั้นสูง', cat: 'icpc' },
+      // เฟส 1 — ปูพื้นคู่กับเทอมเรียน (จังหวะยั่งยืน ไม่เบิร์นเอาต์)
+      { id: 'f1', group: 'เฟส 1 · FOUNDATION (ก.ค. – ธ.ค. 2026) — เก็บ topic หลักคู่กับเทอมเรียน', meta: '1 หัวข้อ/2 สัปดาห์ · 4–6 ข้อ/หัวข้อ', activity: 'DP: knapsack, LIS, coin change, interval → bitmask, digit, DP on trees', cat: 'icpc' },
+      { id: 'f2', group: 'เฟส 1 · FOUNDATION (ก.ค. – ธ.ค. 2026) — เก็บ topic หลักคู่กับเทอมเรียน', activity: 'Graph: BFS/DFS, Dijkstra, Bellman-Ford, Floyd-Warshall, topo sort → SCC, bridges, MST', cat: 'icpc' },
+      { id: 'f3', group: 'เฟส 1 · FOUNDATION (ก.ค. – ธ.ค. 2026) — เก็บ topic หลักคู่กับเทอมเรียน', activity: 'Data Structures: Segment Tree, BIT/Fenwick, Sparse Table, DSU', cat: 'icpc' },
+      { id: 'f4', group: 'เฟส 1 · FOUNDATION (ก.ค. – ธ.ค. 2026) — เก็บ topic หลักคู่กับเทอมเรียน', activity: 'Number Theory & Combinatorics: sieve, modpow, ext Euclid, nCr mod p, CRT', cat: 'icpc' },
+      { id: 'f5', group: 'เฟส 1 · FOUNDATION (ก.ค. – ธ.ค. 2026) — เก็บ topic หลักคู่กับเทอมเรียน', activity: 'Strings: hashing, KMP, Z-function, Trie', cat: 'icpc' },
+      { id: 'f6', group: 'เฟส 1 · FOUNDATION (ก.ค. – ธ.ค. 2026) — เก็บ topic หลักคู่กับเทอมเรียน', activity: 'เทคนิคพื้นฐานสนาม: binary search on answer, two pointers, greedy ขั้นสูง, sweep line', cat: 'icpc' },
+      { id: 'f7', group: 'เฟส 1 · FOUNDATION (ก.ค. – ธ.ค. 2026) — เก็บ topic หลักคู่กับเทอมเรียน', meta: 'ลง contest จริง 2 ครั้ง/เดือน', activity: 'Codeforces ต่อเนื่อง: ตั้งเป้า rating 1400+ ภายในสิ้นปี 2026', cat: 'icpc' },
+      { id: 'f8', group: 'เฟส 1 · FOUNDATION (ก.ค. – ธ.ค. 2026) — เก็บ topic หลักคู่กับเทอมเรียน', activity: 'ไล่ CSES คู่กับหัวข้อที่เรียน — ใช้เช็กว่าหัวข้อไหน "ครบ" แล้วจริง', cat: 'icpc' },
 
-      // ช่วงที่ 2 · SHARPEN — โหมดสนามจริง เก็บจุดอ่อน ลดปริมาณลง
-      { id: 'cd11', group: 'ช่วงที่ 2 · SHARPEN (ส 11 – พ 15 ก.ค.) — โหมดสนามจริง + เก็บจุดอ่อน', meta: 'ส 11 ก.ค. · 5–6 ข้อ · เต็มวัน', activity: 'Virtual Contest #2 + upsolve ทันทีหลังจบ', cat: 'icpc' },
-      { id: 'cd12', group: 'ช่วงที่ 2 · SHARPEN (ส 11 – พ 15 ก.ค.) — โหมดสนามจริง + เก็บจุดอ่อน', meta: 'อา 12 ก.ค. · 3 ข้อ', activity: 'เก็บจุดอ่อน: ทำซ้ำ topic ที่พลาดจาก 2 contests', cat: 'icpc' },
-      { id: 'cd13', group: 'ช่วงที่ 2 · SHARPEN (ส 11 – พ 15 ก.ค.) — โหมดสนามจริง + เก็บจุดอ่อน', meta: 'จ 13 ก.ค. · 1 ข้อ · เบา', activity: 'Speed drill: เขียน template (DSU, Dijkstra, sieve) จากความจำ + 1 ข้อ easy', cat: 'icpc' },
-      { id: 'cd14', group: 'ช่วงที่ 2 · SHARPEN (ส 11 – พ 15 ก.ค.) — โหมดสนามจริง + เก็บจุดอ่อน', meta: 'อ 14 ก.ค. · 2 ข้อ · เบา', activity: 'โจทย์จุดอ่อนระดับ easy–medium', cat: 'icpc' },
-      { id: 'cd15', group: 'ช่วงที่ 2 · SHARPEN (ส 11 – พ 15 ก.ค.) — โหมดสนามจริง + เก็บจุดอ่อน', meta: 'พ 15 ก.ค. · 4 ข้อ · วันหนักวันสุดท้าย', activity: 'Mock contest ย่อ 3 ชม. จับเวลาเหมือนแข่งจริง', cat: 'icpc' },
+      // เฟส 2 — เข้มข้นขึ้น + ตั้งทีมให้จบ
+      { id: 'r1', group: 'เฟส 2 · RAMP-UP (ม.ค. – พ.ค. 2027) — เพิ่มความเข้มข้น + ตั้งทีม', meta: 'สำคัญสุดของเฟสนี้', activity: 'ตั้งทีม 3 คนให้จบ (ชวนเพื่อน/รุ่นน้องสายแข่ง) + ตกลงตารางซ้อมร่วมกัน', cat: 'icpc' },
+      { id: 'r2', group: 'เฟส 2 · RAMP-UP (ม.ค. – พ.ค. 2027) — เพิ่มความเข้มข้น + ตั้งทีม', activity: 'Virtual contest เดี่ยวรายสัปดาห์ (CF Div.2 เต็มเวลา) + upsolve ทุกข้อที่หลุด', cat: 'icpc' },
+      { id: 'r3', group: 'เฟส 2 · RAMP-UP (ม.ค. – พ.ค. 2027) — เพิ่มความเข้มข้น + ตั้งทีม', activity: 'หัวข้อขั้นสูง: max-flow เบื้องต้น, segment tree แบบ lazy, LCA/binary lifting', cat: 'icpc' },
+      { id: 'r4', group: 'เฟส 2 · RAMP-UP (ม.ค. – พ.ค. 2027) — เพิ่มความเข้มข้น + ตั้งทีม', activity: 'เริ่มทำ team notebook/template จากโค้ดที่ใช้บ่อย (อิงโครง KACTL)', cat: 'icpc' },
+      { id: 'r5', group: 'เฟส 2 · RAMP-UP (ม.ค. – พ.ค. 2027) — เพิ่มความเข้มข้น + ตั้งทีม', activity: 'อ่านโจทย์เป็นภาษาอังกฤษล้วนทุกครั้ง — ทำคู่กับแผนในแท็บ english', cat: 'icpc' },
 
-      // ช่วงที่ 3 · TAPER — ลดโหลด รักษามือ พักให้พอ
-      { id: 'cd16', group: 'ช่วงที่ 3 · TAPER (พฤ 16 – ส 18 ก.ค.) — ลดโหลด พีคให้ตรงวันแข่ง', meta: 'พฤ 16 ก.ค. · 1–2 ข้อ', activity: 'ทบทวน template ทั้งชุด + upsolve จาก mock', cat: 'icpc' },
-      { id: 'cd17', group: 'ช่วงที่ 3 · TAPER (พฤ 16 – ส 18 ก.ค.) — ลดโหลด พีคให้ตรงวันแข่ง', meta: 'ศ 17 ก.ค. · 1–2 ข้อ', activity: 'วอร์มมือโจทย์ easy + เตรียมของ (บัตร, notebook, เครื่องเขียน)', cat: 'icpc' },
-      { id: 'cd18', group: 'ช่วงที่ 3 · TAPER (พฤ 16 – ส 18 ก.ค.) — ลดโหลด พีคให้ตรงวันแข่ง', meta: 'ส 18 ก.ค. · 0–1 ข้อ', activity: 'พักสมอง อ่าน notebook ผ่าน ๆ นอนเร็ว ห้ามโหมของใหม่', cat: 'icpc' },
+      // เฟส 3 — โหมดทีม (ปิดเทอม + ต้นปี 4)
+      { id: 't1', group: 'เฟส 3 · TEAM MODE (มิ.ย. – ส.ค. 2027) — ซ้อมทีมจริงจัง', activity: 'Team virtual contest 5 ชม. ทุกสัปดาห์ (vjudge: gym/regional เก่า)', cat: 'icpc' },
+      { id: 't2', group: 'เฟส 3 · TEAM MODE (มิ.ย. – ส.ค. 2027) — ซ้อมทีมจริงจัง', activity: 'แบ่งบทบาทให้ชัด: ใครอ่านโจทย์ช่วงไหน ใครคุมเครื่อง ใคร debug บนกระดาษ', cat: 'icpc' },
+      { id: 't3', group: 'เฟส 3 · TEAM MODE (มิ.ย. – ส.ค. 2027) — ซ้อมทีมจริงจัง', activity: 'Speed drill: เขียน algo คลาสสิก (DSU, Dijkstra, segtree) จากความจำให้เร็วและไม่ผิด', cat: 'icpc' },
+      { id: 't4', group: 'เฟส 3 · TEAM MODE (มิ.ย. – ส.ค. 2027) — ซ้อมทีมจริงจัง', activity: 'ทำ printed team notebook ให้เสร็จ + ซ้อมเปิดใช้จริงใน mock', cat: 'icpc' },
+      { id: 't5', group: 'เฟส 3 · TEAM MODE (มิ.ย. – ส.ค. 2027) — ซ้อมทีมจริงจัง', meta: 'มักเปิดรับสมัครช่วง ก.ค.–ส.ค.', activity: 'ตามประกาศรับสมัคร National 2027 + คุยอาจารย์ coach + ลงทะเบียนให้เรียบร้อย', cat: 'icpc' },
 
-      // วันแข่ง
-      { id: 'cd19', group: '🏁 วันแข่ง (อา 19 ก.ค.)', meta: 'อา 19 ก.ค.', activity: 'Contest day! วอร์ม 1 ข้อง่ายตอนเช้า ไปถึงสนามก่อนเวลา', cat: 'icpc' },
+      // เฟส 4 — แข่งจริง
+      { id: 'c1', group: 'เฟส 4 · RACE (ก.ย. – พ.ย. 2027) — National → Bangkok Regional', activity: 'ก่อนแข่ง 2 สัปดาห์: taper ลดของใหม่ เน้นทบทวน template + mock เบา ๆ', cat: 'icpc' },
+      { id: 'c2', group: 'เฟส 4 · RACE (ก.ย. – พ.ย. 2027) — National → Bangkok Regional', activity: 'Mock เต็มรูปแบบในสภาพเหมือนจริง 1–2 รอบ (เวลา/หนึ่งเครื่อง/กติกา)', cat: 'icpc' },
+      { id: 'c3', group: 'เฟส 4 · RACE (ก.ย. – พ.ย. 2027) — National → Bangkok Regional', activity: '🏁 Thailand National 2027 (~ก.ย.) — พีคให้ตรงวันนี้', cat: 'icpc' },
+      { id: 'c4', group: 'เฟส 4 · RACE (ก.ย. – พ.ย. 2027) — National → Bangkok Regional', activity: 'หลังทราบผล → สลับดูแผนตามผลที่ได้ (ตัวเลือกมุมขวาบน)', cat: 'icpc' },
 
-      // หลังแข่ง · กรณีติดรอบ — ยกระดับหัวข้อสู่ระดับสูง (track: 'qualified')
-      { id: 'pq1', track: 'qualified', group: 'หลังแข่ง · ถ้าติดรอบ — ซ้อมเข้มข้น หัวข้อระดับสูง', activity: 'Max-flow / min-cut จริงจัง (Dinic) + โจทย์ประยุกต์', cat: 'icpc' },
-      { id: 'pq2', track: 'qualified', group: 'หลังแข่ง · ถ้าติดรอบ — ซ้อมเข้มข้น หัวข้อระดับสูง', activity: 'Segment tree ขั้นสูง: lazy propagation, segment tree beats', cat: 'icpc' },
-      { id: 'pq3', track: 'qualified', group: 'หลังแข่ง · ถ้าติดรอบ — ซ้อมเข้มข้น หัวข้อระดับสูง', activity: 'FFT/NTT เบื้องต้น + โจทย์ polynomial', cat: 'icpc' },
-      { id: 'pq4', track: 'qualified', group: 'หลังแข่ง · ถ้าติดรอบ — ซ้อมเข้มข้น หัวข้อระดับสูง', activity: 'Geometry พื้นฐานสนามแข่ง: convex hull, sweep line', cat: 'icpc' },
-      { id: 'pq5', track: 'qualified', group: 'หลังแข่ง · ถ้าติดรอบ — ซ้อมเข้มข้น หัวข้อระดับสูง', activity: 'HLD / Euler tour + โจทย์ tree query', cat: 'icpc' },
-      { id: 'pq6', track: 'qualified', group: 'หลังแข่ง · ถ้าติดรอบ — ซ้อมเข้มข้น หัวข้อระดับสูง', activity: 'Team virtual contest ระดับ regional ทุกสัปดาห์ + upsolve 100%', cat: 'icpc' },
-      { id: 'pq7', track: 'qualified', group: 'หลังแข่ง · ถ้าติดรอบ — ซ้อมเข้มข้น หัวข้อระดับสูง', activity: 'อัปเดต team notebook หลังทุก contest มุ่ง National (ก.ย.) → Bangkok Regional (พ.ย.)', cat: 'icpc' },
+      // หลัง National · ผ่านเข้า Bangkok Regional (track: 'qualified')
+      { id: 'q1', track: 'qualified', group: 'หลัง National · ถ้าผ่านเข้า Bangkok Regional — ดันสู่ระดับ regional', activity: 'FFT/NTT เบื้องต้น + โจทย์ polynomial', cat: 'icpc' },
+      { id: 'q2', track: 'qualified', group: 'หลัง National · ถ้าผ่านเข้า Bangkok Regional — ดันสู่ระดับ regional', activity: 'HLD / Euler tour + โจทย์ tree query', cat: 'icpc' },
+      { id: 'q3', track: 'qualified', group: 'หลัง National · ถ้าผ่านเข้า Bangkok Regional — ดันสู่ระดับ regional', activity: 'Flows ขั้นสูง + bipartite matching', cat: 'icpc' },
+      { id: 'q4', track: 'qualified', group: 'หลัง National · ถ้าผ่านเข้า Bangkok Regional — ดันสู่ระดับ regional', activity: 'Geometry สนามแข่ง: convex hull, sweep line, closest pair', cat: 'icpc' },
+      { id: 'q5', track: 'qualified', group: 'หลัง National · ถ้าผ่านเข้า Bangkok Regional — ดันสู่ระดับ regional', activity: 'Mock ระดับ regional รายสัปดาห์ + อัปเดต notebook หลังทุกรอบ', cat: 'icpc' },
 
-      // หลังแข่ง · กรณีไม่ติด — แผนพัฒนาระยะยาว (track: 'notq')
-      { id: 'pn1', track: 'notq', group: 'หลังแข่ง · ถ้าไม่ติด — แผนพัฒนาระยะยาว', activity: 'Postmortem: ไล่ดูทุกข้อใน contest ว่าพลาดเพราะอะไร (ความรู้ / ความเร็ว / bug)', cat: 'icpc' },
-      { id: 'pn2', track: 'notq', group: 'หลังแข่ง · ถ้าไม่ติด — แผนพัฒนาระยะยาว', activity: 'ไล่เก็บ CSES หมวดที่เป็นจุดอ่อนให้ครบทีละหมวด', cat: 'icpc' },
-      { id: 'pn3', track: 'notq', group: 'หลังแข่ง · ถ้าไม่ติด — แผนพัฒนาระยะยาว', activity: 'Virtual contest เบา ๆ รายสัปดาห์ รักษามือ ไม่ต้องอัด', cat: 'icpc' },
-      { id: 'pn4', track: 'notq', group: 'หลังแข่ง · ถ้าไม่ติด — แผนพัฒนาระยะยาว', activity: 'ทำ template notebook ส่วนตัวให้เสร็จ ใช้ซ้อมรอบหน้า', cat: 'icpc' },
-      { id: 'pn5', track: 'notq', group: 'หลังแข่ง · ถ้าไม่ติด — แผนพัฒนาระยะยาว', activity: 'ทบทวน DP / Graph ให้ขึ้นใจ — ฐานของโจทย์ส่วนใหญ่', cat: 'icpc' },
-      { id: 'pn6', track: 'notq', group: 'หลังแข่ง · ถ้าไม่ติด — แผนพัฒนาระยะยาว', activity: 'ปรับสมดุลเวลา: คืนโฟกัสให้แผน DS/ML + โปรเจกต์', cat: 'icpc' },
+      // หลัง National · ไม่ผ่าน (track: 'notq') — ปี 4 เทอม 2 คือช่วงเก็บดอกผลจาก CP
+      { id: 'n1', track: 'notq', group: 'หลัง National · ถ้าไม่ผ่าน — เก็บดอกผลจาก CP ไปต่อ', activity: 'Postmortem ทีม: หลุดเพราะอะไร (ความรู้ / ความเร็ว / อ่านโจทย์ / ทีมเวิร์ก) จดให้ชัด', cat: 'icpc' },
+      { id: 'n2', track: 'notq', group: 'หลัง National · ถ้าไม่ผ่าน — เก็บดอกผลจาก CP ไปต่อ', activity: 'แปลงสกิลแข่งเป็นสกิลสัมภาษณ์งาน: ไล่ LeetCode medium–hard ให้ลื่น', cat: 'icpc' },
+      { id: 'n3', track: 'notq', group: 'หลัง National · ถ้าไม่ผ่าน — เก็บดอกผลจาก CP ไปต่อ', activity: 'คืนโฟกัสให้ capstone + สมัครฝึกงาน/งานสาย DS/ML (ปี 4 เทอม 2)', cat: 'icpc' },
+      { id: 'n4', track: 'notq', group: 'หลัง National · ถ้าไม่ผ่าน — เก็บดอกผลจาก CP ไปต่อ', activity: 'ยังชอบแข่ง: CF / AtCoder / online mirror ลงได้เรื่อย ๆ ไม่ผูกกับ ICPC', cat: 'icpc' },
 
       // Resources (คงจาก v2 — id เดิม สถานะเดิม migrate มาได้)
       { id: 'rs-usaco', group: 'แหล่งฝึกโจทย์ + Reference (ใช้ได้ตลอด)', activity: 'USACO Guide — ไกด์เรียงตามหัวข้อ + โจทย์คัดมาให้ ฟรี ⭐ ใช้ไล่ topic หลัก', cat: 'icpc', url: 'https://usaco.guide/' },
@@ -116,7 +122,35 @@ const SECTIONS = [
     ],
   },
 
-  // ---------- 4) Skills (เดิม) ----------
+  // ---------- 4) English (ใหม่ — แก้จุดอ่อน "อ่านโจทย์/เอกสารภาษาอังกฤษ") ----------
+  // ปัญหาหลักตอนแข่งไม่ใช่โค้ด แต่คืออ่านโจทย์ช้า/ไม่แม่น → ฝึกอ่านทุกวันทีละนิด
+  // ยึดหลัก: อ่านของจริง (โจทย์แข่ง/editorial) > เรียนแกรมมาร์, สม่ำเสมอ > อัดหนัก
+  {
+    id: 'english', tab: 'english', layout: 'group', resettable: false, checkable: true,
+    note: 'เป้าหมาย: อ่านโจทย์แข่ง/เอกสารเทคนิคได้เร็วโดยไม่พึ่ง translator · ฝึกทีละนิดแต่ทุกวัน · ทุกรายการแก้/เพิ่ม/ลบได้',
+    items: [
+      { id: 'en1', group: 'ฝึกอ่านโจทย์แข่ง (หัวใจของแผน — ทำประจำ)', meta: 'ทุกวัน · 15 นาที', activity: 'อ่านโจทย์ CF/AtCoder ภาษาอังกฤษวันละ 1 ข้อ แล้วสรุป spec เป็นไทย 3 บรรทัด (input / output / เงื่อนไข) — ไม่ต้องแก้โจทย์', cat: 'eng' },
+      { id: 'en2', group: 'ฝึกอ่านโจทย์แข่ง (หัวใจของแผน — ทำประจำ)', meta: 'สัปดาห์ละ 2 ครั้ง', activity: 'จับเวลาอ่านโจทย์: Div.2 A เข้าใจใน 3 นาที, B ใน 5 นาที — จดเวลาไว้ดูพัฒนาการ', cat: 'eng' },
+      { id: 'en3', group: 'ฝึกอ่านโจทย์แข่ง (หัวใจของแผน — ทำประจำ)', meta: 'ทุกครั้งที่ upsolve', activity: 'อ่าน editorial ภาษาอังกฤษให้จบก่อน ค่อยอนุญาตตัวเองเปิดตัวช่วยแปล', cat: 'eng' },
+      { id: 'en4', group: 'ฝึกอ่านโจทย์แข่ง (หัวใจของแผน — ทำประจำ)', activity: 'เดาความหมายจากบริบทก่อนแล้วค่อยเช็ก — ห้ามโยนทั้งย่อหน้าใส่ translator', cat: 'eng' },
+
+      { id: 'en5', group: 'คลังศัพท์โจทย์ (Anki / โน้ตส่วนตัว)', meta: 'อย่างน้อย 5 คำ/วัน', activity: 'สร้าง Anki deck "ศัพท์โจทย์แข่ง" — เก็บศัพท์ใหม่จากทุกข้อที่อ่าน', cat: 'eng' },
+      { id: 'en6', group: 'คลังศัพท์โจทย์ (Anki / โน้ตส่วนตัว)', activity: 'ท่องวลีที่เจอบ่อยให้ขึ้นใจ: at most/at least, pairwise distinct, contiguous, lexicographically, respectively, such that, it is guaranteed that', cat: 'eng' },
+      { id: 'en7', group: 'คลังศัพท์โจทย์ (Anki / โน้ตส่วนตัว)', activity: 'รวมศัพท์เฉพาะรายหมวด: graph (vertex/edge/weighted), DP (subsequence vs subarray), strings, geometry', cat: 'eng' },
+      { id: 'en8', group: 'คลังศัพท์โจทย์ (Anki / โน้ตส่วนตัว)', meta: 'วันละ 10 นาที', activity: 'ทบทวน Anki ทุกวัน (ตอนเช้าหรือก่อนนอน) — ต่อ streak ให้ยาวที่สุด', cat: 'eng' },
+
+      { id: 'en9', group: 'General English (เสริมจากวิชา English for Job Opportunities)', meta: '3 คลิป/สัปดาห์', activity: 'ดูคลิป CS/ML ภาษาอังกฤษเปิด sub อังกฤษ (ไม่ใช่ไทย) — ยิงสองเป้าคู่กับแท็บ learn', cat: 'eng' },
+      { id: 'en10', group: 'General English (เสริมจากวิชา English for Job Opportunities)', meta: '1 ชิ้น/สัปดาห์', activity: 'อ่านบทความ/paper ML เป็นภาษาอังกฤษ (ผูกกับนิสัย research ในแท็บ skills)', cat: 'eng' },
+      { id: 'en11', group: 'General English (เสริมจากวิชา English for Job Opportunities)', activity: 'ตั้งค่ามือถือ/คอม/แอปทั้งหมดเป็นภาษาอังกฤษ — บังคับตัวเองเจอศัพท์ทุกวัน', cat: 'eng' },
+
+      { id: 'en12', group: 'เช็กพัฒนาการ (milestone รายช่วง)', meta: 'เดือน 1–2 (ก.ค.–ส.ค. 2026)', activity: 'อ่านโจทย์ Div.2 A–B เข้าใจโดยเปิด dict ไม่เกิน 2 ครั้ง/ข้อ', cat: 'eng' },
+      { id: 'en13', group: 'เช็กพัฒนาการ (milestone รายช่วง)', meta: 'เดือน 3–4 (ก.ย.–ต.ค. 2026)', activity: 'อ่านโจทย์ Div.2 C + editorial จบได้โดยไม่ใช้ translator', cat: 'eng' },
+      { id: 'en14', group: 'เช็กพัฒนาการ (milestone รายช่วง)', meta: 'เดือน 5–6 (พ.ย.–ธ.ค. 2026)', activity: 'อ่านโจทย์ ICPC regional จริง (ใน vjudge) เข้าใจครบทั้งชุด', cat: 'eng' },
+      { id: 'en15', group: 'เช็กพัฒนาการ (milestone รายช่วง)', meta: 'ก่อน National 2027', activity: 'อ่านชุดโจทย์ 10–12 ข้อแบบแบ่งกันในทีม แล้วสรุปให้เพื่อนฟังได้คล่อง', cat: 'eng' },
+    ],
+  },
+
+  // ---------- 5) Skills (เดิม) ----------
   {
     id: 'skills', tab: 'skills', layout: 'group', resettable: false, checkable: true,
     note: 'อัพสกิลสาย DS/ML/AI ของเทอมนี้ — เปลี่ยนวิชาเรียนให้เป็นสกิลสายงาน',
@@ -135,7 +169,7 @@ const SECTIONS = [
     ],
   },
 
-  // ---------- 5) Projects (เดิม) ----------
+  // ---------- 6) Projects (เดิม) ----------
   {
     id: 'projects', tab: 'projects', layout: 'group', resettable: false, checkable: true,
     note: 'โปรเจกต์สะสม portfolio — ทำให้จบทีละตัว มีของโชว์จริง',
@@ -156,7 +190,7 @@ const SECTIONS = [
     ],
   },
 
-  // ---------- 6) Roadmap (เดิม) ----------
+  // ---------- 7) Roadmap (เดิม) ----------
   {
     id: 'roadmap', tab: 'roadmap', layout: 'group', resettable: false, checkable: true,
     note: 'เส้นทางยาว: ปี 3 → ทำงาน 1–3 ปี → เรียนต่อ AI research',
@@ -171,7 +205,7 @@ const SECTIONS = [
     ],
   },
 
-  // ---------- 7) Electives (เดิม) ----------
+  // ---------- 8) Electives (เดิม) ----------
   {
     id: 'electives', tab: 'electives', layout: 'group', resettable: false, checkable: true,
     note: 'วิชาเฉพาะเลือกที่แนะนำสาย DS/ML/AI · เก็บ 21 นก. (6 วิชา + โปรเจกต์) · ติ๊ก = ลงแล้ว · ⚠️ เช็กวิชาที่เปิดจริงแต่ละเทอม',
@@ -191,7 +225,7 @@ const SECTIONS = [
     ],
   },
 
-  // ---------- 8) แหล่งเรียนฟรี STEP 0–7 (เดิม) ----------
+  // ---------- 9) แหล่งเรียนฟรี STEP 0–7 (เดิม) ----------
   {
     id: 'learn', tab: 'learn', layout: 'group', resettable: false, checkable: true,
     note: 'แหล่งเรียนฟรี เรียงเป็น path ตามลำดับ STEP 0 → 7 · กดปุ่ม "เปิด ↗" ไปที่แหล่ง · ติ๊กการ์ด = เรียนจบ',
@@ -218,7 +252,7 @@ const SECTIONS = [
     ],
   },
 
-  // ---------- 9) Fitness (เดิม — รีเซ็ตรายสัปดาห์) ----------
+  // ---------- 10) Fitness (เดิม — รีเซ็ตรายสัปดาห์) ----------
   {
     id: 'fitness', tab: 'fitness', layout: 'days', resettable: true, checkable: true,
     note: 'ออกกำลังก่อนเริ่มวันเรียน 30–60 นาที/วัน',
@@ -237,11 +271,11 @@ const SECTIONS = [
 /** สร้าง doc เริ่มต้น (ก้อนข้อมูลทั้งหมดของแอป) */
 export function buildSeedDoc() {
   return {
-    schemaVersion: 1,
+    schemaVersion: 2, // v2 = แผน ICPC 2027 + แท็บ english (ดู upgradeDoc ใน store.js)
     settings: {
-      // contest = รอบวันที่ 19 ก.ค. · National/Bangkok เป็นประมาณการเดิมจาก v2 (แก้ได้ใน UI)
-      dates: { contest: '2026-07-19', national: '2026-09-12', bangkok: '2026-11-21' },
-      icpcView: 'all', // ตัวกรองแผนหลังแข่ง: all | qualified | notq
+      // National/Bangkok 2027 เป็นประมาณการจากรอบปีก่อน — แก้ใน UI เมื่อประกาศวันจริง
+      dates: { national: '2027-09-11', bangkok: '2027-11-20' },
+      icpcView: 'all', // ตัวกรองแผนหลัง National: all | qualified | notq
     },
     migratedCount: 0,
     migrationNoticeDismissed: false,

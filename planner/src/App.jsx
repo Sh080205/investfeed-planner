@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { STATES, isoWeekKey } from './data/constants.js';
-import { loadDoc, saveDoc, statusKey, downloadJSON } from './data/store.js';
+import { loadDoc, saveDoc, statusKey, downloadJSON, upgradeDoc } from './data/store.js';
 import { applyLegacy } from './data/migrate.js';
 import Sidebar from './components/Sidebar.jsx';
 import SectionPanel from './components/SectionPanel.jsx';
@@ -76,6 +76,7 @@ export default function App() {
         });
       } else if (obj && obj.schemaVersion && Array.isArray(obj.sections)) {
         if (!window.confirm('นำเข้าไฟล์ backup และแทนที่ข้อมูลทั้งหมดในแอป?')) return;
+        upgradeDoc(obj); // เผื่อเป็นไฟล์ backup จาก schema เวอร์ชันเก่า
         saveDoc(obj);
         setDoc(obj);
       } else {

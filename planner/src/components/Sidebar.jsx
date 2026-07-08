@@ -28,7 +28,7 @@ export default function Sidebar({ doc, weekKey, activeId, onSelect, onSaveDates,
       <div>
         <div className="ml-eyebrow"><span className="dot" />MISSION LOG · v3</div>
         <div className="ml-title">แผนพิชิต ICPC + สาย AI</div>
-        <div className="ml-sub">ซ้อมแข่ง · อัพสกิล DS/ML · โปรเจกต์ · roadmap · ฟิต — แก้ทุกตารางได้ใน UI</div>
+        <div className="ml-sub">ซ้อมแข่ง ICPC 2027 · English · อัพสกิล DS/ML · โปรเจกต์ · ฟิต — แก้ทุกตารางได้ใน UI</div>
       </div>
 
       <ProgressRing pct={pct} done={done} total={total} />

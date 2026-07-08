@@ -11,6 +11,7 @@ export function loadDoc() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const doc = JSON.parse(raw);
+      if (upgradeDoc(doc)) saveDoc(doc); // ยกระดับ schema เก่า → ใหม่ อัตโนมัติ
       pruneOldWeeks(doc);
       return doc;
     }
@@ -35,6 +36,59 @@ export function saveDoc(doc) {
   } catch (e) {
     console.error('บันทึกไม่สำเร็จ (localStorage ปิดหรือเต็ม)', e);
   }
+}
+
+/**
+ * ยกระดับ doc ที่บันทึกไว้ด้วย schema เก่าให้เป็นเวอร์ชันปัจจุบัน (คืน true ถ้ามีการแก้)
+ * ใช้ทั้งตอน loadDoc และตอน import ไฟล์ backup เก่า
+ *
+ * v1 → v2: แผน ICPC เปลี่ยนจาก countdown รอบ ก.ค. 2026 → เส้นทางยาวสู่ ICPC 2027 (แข่งตอนปี 4)
+ *          + เพิ่มแท็บ english (แก้จุดอ่อนอ่านโจทย์) + ช่อง ENG ใน weekly + วันแข่งปี 2027
+ */
+export function upgradeDoc(doc) {
+  if ((doc.schemaVersion || 1) >= 2) return false;
+  const seed = buildSeedDoc();
+
+  // 1) ICPC: แทนที่ด้วยแผนใหม่ทั้ง section — เก็บสถานะเดิมไว้เฉพาะ id ที่ยังอยู่ (พวก resources rs-*)
+  const seedIcpc = seed.sections.find((s) => s.id === 'icpc');
+  const icpcIdx = doc.sections.findIndex((s) => s.id === 'icpc');
+  if (icpcIdx >= 0) {
+    doc.sections[icpcIdx] = seedIcpc;
+    const oldStatuses = doc.statuses.icpc || {};
+    const validIds = new Set(seedIcpc.items.map((i) => i.id));
+    doc.statuses.icpc = {};
+    for (const [id, st] of Object.entries(oldStatuses)) {
+      if (validIds.has(id)) doc.statuses.icpc[id] = st;
+    }
+  } else {
+    doc.sections.push(seedIcpc);
+  }
+
+  // 2) เพิ่มแท็บ english ถัดจาก icpc (ถ้ายังไม่มี)
+  if (!doc.sections.some((s) => s.id === 'english')) {
+    const englishSeed = seed.sections.find((s) => s.id === 'english');
+    const at = doc.sections.findIndex((s) => s.id === 'icpc') + 1;
+    doc.sections.splice(at, 0, englishSeed);
+  }
+
+  // 3) เพิ่มช่องซ้อม ENG ในตาราง weekly (ถ้ายังไม่มี)
+  const weekly = doc.sections.find((s) => s.id === 'weekly');
+  if (weekly) {
+    const seedWeekly = seed.sections.find((s) => s.id === 'weekly');
+    for (const it of seedWeekly.items.filter((i) => i.id.startsWith('eng-'))) {
+      if (!weekly.items.some((i) => i.id === it.id)) weekly.items.push({ ...it });
+    }
+  }
+
+  // 4) วันแข่ง: เปลี่ยนเป็นประมาณการ 2027 เฉพาะเมื่อยังเป็นค่า default เดิม
+  //    (ถ้าผู้ใช้เคยตั้งวันเองไว้ จะไม่ไปทับ)
+  const d = doc.settings.dates;
+  if (d.national === '2026-09-12') d.national = seed.settings.dates.national;
+  if (d.bangkok === '2026-11-21') d.bangkok = seed.settings.dates.bangkok;
+  delete d.contest; // countdown ไม่มีแถว contest รอบ ก.ค. แล้ว
+
+  doc.schemaVersion = 2;
+  return true;
 }
 
 /** section รายสัปดาห์เก็บสถานะแยกตามสัปดาห์: 'weekly:2026-W27' — เปลี่ยน key = รีเซ็ต */

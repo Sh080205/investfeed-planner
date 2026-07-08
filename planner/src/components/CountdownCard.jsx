@@ -24,9 +24,8 @@ export default function CountdownCard({ dates, onSave }) {
   }
 
   const rows = [
-    { key: 'contest', name: 'Contest ถัดไป' },
-    { key: 'national', name: 'Thailand National' },
-    { key: 'bangkok', name: 'Bangkok Regional' },
+    { key: 'national', name: 'Thailand National 2027' },
+    { key: 'bangkok', name: 'Bangkok Regional 2027' },
   ];
 
   return (
@@ -64,7 +63,8 @@ export default function CountdownCard({ dates, onSave }) {
             </label>
           ))}
           <div className="cd-note">
-            Contest = รอบ 19 ก.ค. · National/Bangkok ยังเป็น<b>ประมาณการ</b> แก้เป็นวันจริงเมื่อประกาศ
+            วันปี 2027 เป็น<b>ประมาณการจากรอบปีก่อน</b> (National ~ก.ย. · Regional ~พ.ย.)
+            แก้เป็นวันจริงเมื่อประกาศ — ประกาศรับสมัครมักช่วง ก.ค.–ส.ค. 2027
           </div>
         </div>
       )}
