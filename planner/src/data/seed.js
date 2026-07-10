@@ -262,7 +262,16 @@ const SECTIONS = [
     ],
   },
 
-  // ---------- 8) Roadmap (เดิม) ----------
+  // ---------- 8) Library (ใหม่ — ชั้นหนังสือจากโฟลเดอร์ "Reseach skill") ----------
+  // ไม่มี items ใน seed — รายชื่อไฟล์ดึงสดจาก /api/books ตอนเปิดแท็บ (ดู BookShelf.jsx)
+  // layout 'books' เป็น layout พิเศษ: SectionPanel จะเรนเดอร์ BookShelf แทนรายการการ์ดปกติ
+  {
+    id: 'library', tab: 'หนังสือ', layout: 'books', resettable: false, checkable: false,
+    note: 'ชั้นหนังสือจากโฟลเดอร์ "Reseach skill" · PDF กดเปิดอ่านในแท็บใหม่ได้เลย · ใช้ได้เมื่อเปิดผ่าน server (เช่น localhost:3000/planner)',
+    items: [],
+  },
+
+  // ---------- 9) Roadmap (เดิม) ----------
   {
     id: 'roadmap', tab: 'roadmap', layout: 'group', resettable: false, checkable: true,
     note: 'เส้นทางยาว: ปี 3 → ทำงาน 1–3 ปี → เรียนต่อ AI research',
@@ -277,7 +286,7 @@ const SECTIONS = [
     ],
   },
 
-  // ---------- 9) Electives (เดิม) ----------
+  // ---------- 10) Electives (เดิม) ----------
   {
     id: 'electives', tab: 'electives', layout: 'group', resettable: false, checkable: true,
     note: 'วิชาเฉพาะเลือกที่แนะนำสาย DS/ML/AI · เก็บ 21 นก. (6 วิชา + โปรเจกต์) · ติ๊ก = ลงแล้ว · ⚠️ เช็กวิชาที่เปิดจริงแต่ละเทอม',
@@ -297,7 +306,7 @@ const SECTIONS = [
     ],
   },
 
-  // ---------- 10) แหล่งเรียนฟรี STEP 0–7 (เดิม) ----------
+  // ---------- 11) แหล่งเรียนฟรี STEP 0–7 (เดิม) ----------
   {
     id: 'learn', tab: 'learn', layout: 'group', resettable: false, checkable: true,
     note: 'แหล่งเรียนฟรี เรียงเป็น path ตามลำดับ STEP 0 → 7 · กดปุ่ม "เปิด ↗" ไปที่แหล่ง · ติ๊กการ์ด = เรียนจบ',
@@ -324,7 +333,7 @@ const SECTIONS = [
     ],
   },
 
-  // ---------- 11) Fitness (เดิม — รีเซ็ตรายสัปดาห์) ----------
+  // ---------- 12) Fitness (เดิม — รีเซ็ตรายสัปดาห์) ----------
   {
     id: 'fitness', tab: 'fitness', layout: 'days', resettable: true, checkable: true,
     note: 'ออกกำลังก่อนเริ่มวันเรียน 30–60 นาที/วัน',
@@ -343,7 +352,7 @@ const SECTIONS = [
 /** สร้าง doc เริ่มต้น (ก้อนข้อมูลทั้งหมดของแอป) */
 export function buildSeedDoc() {
   return {
-    schemaVersion: 4, // v2 = ICPC 2027 + english · v3 = แหล่งเรียน B2 · v4 = แท็บ research (ดู upgradeDoc ใน store.js)
+    schemaVersion: 5, // v2 = ICPC 2027 + english · v3 = แหล่งเรียน B2 · v4 = research · v5 = ชั้นหนังสือ (ดู upgradeDoc)
     settings: {
       // National/Bangkok 2027 เป็นประมาณการจากรอบปีก่อน — แก้ใน UI เมื่อประกาศวันจริง
       dates: { national: '2027-09-11', bangkok: '2027-11-20' },

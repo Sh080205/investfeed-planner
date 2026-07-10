@@ -7,5 +7,13 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
 // — สำคัญต่อ auto-migration เพราะจะอยู่ origin file:// เดียวกับ planner เดิม
 export default defineConfig({
   plugins: [react(), viteSingleFile()],
-  server: { port: 5173, strictPort: true },
+  server: {
+    port: 5173,
+    strictPort: true,
+    // โหมด dev: ส่งต่อ API ชั้นหนังสือไปที่ InvestFeed server (ต้องรัน node server.js อยู่)
+    proxy: {
+      '/api': 'http://localhost:3000',
+      '/books': 'http://localhost:3000',
+    },
+  },
 });

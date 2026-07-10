@@ -198,6 +198,44 @@ app.get('/planner/migrate-helper.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'planner', 'migrate-helper.html'));
 });
 
+// ---------- Book Library (ชั้นหนังสือ) ----------
+// เสิร์ฟไฟล์หนังสือ/สไลด์จากโฟลเดอร์ Reseach skill — เปลี่ยนที่เก็บได้ด้วย BOOKS_DIR ใน .env
+const BOOKS_DIR = process.env.BOOKS_DIR || 'C:\\Users\\Public\\Documents\\Reseach skill';
+const BOOK_EXTS = new Set(['.pdf', '.pptx', '.ppt', '.epub', '.docx']);
+
+// รายชื่อไฟล์ทั้งหมด (เดินโฟลเดอร์ recursive) — client ดึงไปแสดงเป็นชั้นหนังสือ
+app.get('/api/books', async (req, res) => {
+  async function walk(dir, rel) {
+    let out = [];
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    for (const e of entries) {
+      const abs = path.join(dir, e.name);
+      const relPath = rel ? rel + '/' + e.name : e.name;
+      if (e.isDirectory()) {
+        out = out.concat(await walk(abs, relPath));
+      } else if (BOOK_EXTS.has(path.extname(e.name).toLowerCase())) {
+        const st = await fs.stat(abs);
+        out.push({
+          name: e.name,
+          path: relPath,
+          folder: rel, // '' = ไฟล์ที่อยู่ root ของโฟลเดอร์หนังสือ
+          sizeMB: +(st.size / 1048576).toFixed(1),
+          ext: path.extname(e.name).slice(1).toLowerCase(),
+        });
+      }
+    }
+    return out;
+  }
+  try {
+    res.json({ dir: BOOKS_DIR, books: await walk(BOOKS_DIR, '') });
+  } catch (err) {
+    res.status(500).json({ error: 'อ่านโฟลเดอร์หนังสือไม่ได้: ' + err.message });
+  }
+});
+
+// ตัวไฟล์จริง — browser เปิด PDF ในแท็บได้เลย ไฟล์อื่นจะเป็นดาวน์โหลด
+app.use('/books', express.static(BOOKS_DIR));
+
 app.get('/api/news', (req, res) => {
   const { category = 'all', search = '', page = '1', limit = '24' } = req.query;
   const pageNum = Math.max(1, parseInt(page) || 1);

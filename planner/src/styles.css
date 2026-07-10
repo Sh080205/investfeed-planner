@@ -222,6 +222,20 @@ a.ml-reset.back-link {
 .tag.eng { background: rgba(195, 232, 141, 0.12); color: #c3e88d; }
 .tag.res { background: rgba(255, 212, 59, 0.1); color: #ffd43b; }
 
+/* ---------- ชั้นหนังสือ (แท็บ "หนังสือ") ---------- */
+.book-search {
+  display: block; width: 100%; max-width: 360px; margin-bottom: 14px;
+  background: var(--bg); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 12px; font: inherit; font-size: 12.5px;
+}
+.book-hint {
+  color: var(--text-muted); font-size: 12.5px; line-height: 1.8;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+}
+a.book-card { text-decoration: none; color: inherit; display: flex; }
+a.book-card:hover .ml-activity { color: var(--running); }
+
 .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .card-link {
   font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; text-decoration: none;

@@ -46,3 +46,5 @@ npm start
 
 - `data/` และ `.env` ไม่ถูก commit (ดู [.gitignore](.gitignore)) — `data/` จะถูกสร้างใหม่ตอนรัน
 - ข้อมูล Planner เก็บใน localStorage ของ browser (ต่ออุปกรณ์) — มีปุ่ม Export/Import JSON ใน UI
+- แท็บ "หนังสือ" ใน planner เสิร์ฟไฟล์จากโฟลเดอร์หนังสือบนเครื่อง (ตั้งที่ `BOOKS_DIR` ใน `.env`,
+  default คือ `C:\Users\Public\Documents\Reseach skill`) ผ่าน `/api/books` + `/books/<path>`

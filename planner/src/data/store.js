@@ -46,6 +46,7 @@ export function saveDoc(doc) {
  *          + เพิ่มแท็บ english (แก้จุดอ่อนอ่านโจทย์) + ช่อง ENG ใน weekly + วันแข่งปี 2027
  * v2 → v3: เพิ่มกลุ่ม "แหล่งเรียนระดับ B2" (id ขึ้นต้น enr) ในแท็บ english
  * v3 → v4: เพิ่มแท็บ research (แผนอ่าน 18 สัปดาห์ โครงงาน FPGA air quality)
+ * v4 → v5: เพิ่มแท็บ "หนังสือ" (ชั้นหนังสือ PDF ดึงรายชื่อสดจาก server)
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -116,6 +117,18 @@ export function upgradeDoc(doc) {
       else doc.sections.push(researchSeed);
     }
     doc.schemaVersion = 4;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 5) {
+    // เพิ่มแท็บชั้นหนังสือต่อจาก research
+    if (!doc.sections.some((s) => s.id === 'library')) {
+      const librarySeed = seed.sections.find((s) => s.id === 'library');
+      const at = doc.sections.findIndex((s) => s.id === 'research');
+      if (at >= 0) doc.sections.splice(at + 1, 0, librarySeed);
+      else doc.sections.push(librarySeed);
+    }
+    doc.schemaVersion = 5;
     changed = true;
   }
 

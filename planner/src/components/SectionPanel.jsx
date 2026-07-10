@@ -2,6 +2,7 @@ import React from 'react';
 import { DAY_ORDER } from '../data/constants.js';
 import { statusKey } from '../data/store.js';
 import ItemCard from './ItemCard.jsx';
+import BookShelf from './BookShelf.jsx';
 
 export default function SectionPanel({
   section, doc, weekKey,
@@ -99,12 +100,17 @@ export default function SectionPanel({
           {section.resettable && (
             <button className="ml-reset" onClick={() => onResetWeek(section)}>รีเซ็ตสัปดาห์นี้</button>
           )}
-          <button className="ml-reset add" onClick={() => onAdd({})}>+ เพิ่มรายการ</button>
+          {/* ชั้นหนังสือเป็นรายการสดจาก server — ไม่มีการเพิ่ม/แก้รายการเอง */}
+          {section.layout !== 'books' && (
+            <button className="ml-reset add" onClick={() => onAdd({})}>+ เพิ่มรายการ</button>
+          )}
         </span>
       </div>
 
       <div id="mlList">
-        {section.layout === 'days' ? renderDays() : renderGroups()}
+        {section.layout === 'books' ? <BookShelf />
+          : section.layout === 'days' ? renderDays()
+          : renderGroups()}
       </div>
     </>
   );
