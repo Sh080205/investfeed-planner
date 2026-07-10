@@ -62,6 +62,21 @@ export default function App() {
     update((d) => { delete d.statuses[statusKey(section, weekKey)]; });
   }
 
+  /* ---------- ลากการ์ดย้ายวัน/จัดลำดับ (layout รายวัน) ----------
+     beforeId = วางแทรกหน้าการ์ดไหน (null = ต่อท้ายวันนั้น) */
+  function moveItem(section, itemId, day, beforeId) {
+    update((d) => {
+      const sec = d.sections.find((s) => s.id === section.id);
+      const from = sec.items.findIndex((i) => i.id === itemId);
+      if (from < 0) return;
+      const [it] = sec.items.splice(from, 1);
+      it.day = day;
+      const at = beforeId ? sec.items.findIndex((i) => i.id === beforeId) : -1;
+      if (at < 0) sec.items.push(it);
+      else sec.items.splice(at, 0, it);
+    });
+  }
+
   /* ---------- Import: รองรับทั้ง backup ของแอปนี้ และไฟล์จาก migrate-helper ---------- */
   function onImportFile(file) {
     file.text().then((text) => {
@@ -116,6 +131,7 @@ export default function App() {
           onEdit={(item) => setEditor({ sectionId: active.id, itemId: item.id })}
           onDelete={deleteItem}
           onResetWeek={resetWeek}
+          onMoveItem={moveItem}
           icpcView={doc.settings.icpcView || 'all'}
           onIcpcView={(v) => update((d) => { d.settings.icpcView = v; })}
         />

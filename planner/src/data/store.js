@@ -49,6 +49,8 @@ export function saveDoc(doc) {
  * v4 → v5: เพิ่มแท็บ "หนังสือ" (ชั้นหนังสือ PDF ดึงรายชื่อสดจาก server)
  * v5 → v6: แผนอ่าน research อัปเดต — ทุกรายการลิงก์ไปไฟล์หนังสือจริง + ใส่วันที่จริง
  *          (สัปดาห์ 1 = 13–19 ก.ค. 2026) · สถานะที่ติ๊กไว้คงเดิม (id ไม่เปลี่ยน)
+ * v6 → v7: weekly จัดใหม่ให้เข้ากับตารางเรียนจริง + เพิ่มช่อง research 4 ช่อง/สัปดาห์
+ *          (รายการที่ผู้ใช้เพิ่มเองถูกเก็บไว้ · สถานะ weekly รีเซ็ตรายสัปดาห์อยู่แล้ว)
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -146,6 +148,23 @@ export function upgradeDoc(doc) {
       doc.sections[idx] = { ...seedResearch, items: [...seedResearch.items, ...customItems] };
     }
     doc.schemaVersion = 6;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 7) {
+    // weekly: แทนด้วยตารางใหม่ (เลี่ยงชนคาบเรียน + มีช่องโครงงาน research)
+    // — รายการที่ผู้ใช้เพิ่มเอง (id นอก seed) เก็บต่อท้ายไว้ · tue2 (SQL/pandas เดิม) ถูกถอด
+    const seedWeekly = seed.sections.find((s) => s.id === 'weekly');
+    const idx = doc.sections.findIndex((s) => s.id === 'weekly');
+    if (idx >= 0) {
+      const seedIds = new Set(seedWeekly.items.map((i) => i.id));
+      const removedIds = new Set(['tue2']);
+      const customItems = doc.sections[idx].items.filter(
+        (i) => !seedIds.has(i.id) && !removedIds.has(i.id)
+      );
+      doc.sections[idx] = { ...seedWeekly, items: [...seedWeekly.items, ...customItems] };
+    }
+    doc.schemaVersion = 7;
     changed = true;
   }
 

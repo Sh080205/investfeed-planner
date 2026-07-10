@@ -50,23 +50,26 @@ const SECTIONS = [
     ],
   },
 
-  // ---------- 2) ตารางซ้อมประจำสัปดาห์ (เดิม — รีเซ็ตรายสัปดาห์) ----------
+  // ---------- 2) ตารางซ้อมประจำสัปดาห์ (v7 — จัดใหม่ให้เข้ากับตารางเรียนจริง + โครงงาน research) ----------
+  // ช่วงเวลาเลี่ยงคาบเรียน (ดูแท็บ "ตารางเรียน"): จ เลิก TA 19:30 · อ เลิก OS 19:30
+  // พ ว่างหลัง 10:00 · พฤ ว่างบ่าย · ศ เลิก lab 16:00 — น้ำหนักสัปดาห์: research 4 ช่อง
+  // (~7 ชม. ตามแผน 18 สัปดาห์) · ICPC 4 ช่อง (เฟส FOUNDATION) · ENG 3 ช่องสั้น
   {
     id: 'weekly', tab: 'weekly', layout: 'days', resettable: true, checkable: true,
-    note: 'ตารางประจำสัปดาห์ · รีเซ็ตอัตโนมัติ',
+    note: 'ตารางประจำสัปดาห์ · รีเซ็ตอัตโนมัติ · ลากการ์ดย้ายวัน/สลับลำดับได้ · ลาก "✥ กล่องข้อความ" ไปวางที่วันเพื่อเพิ่มงานวันนั้น',
     items: [
-      { id: 'mon1', day: 'จันทร์ MON', time: '19:30–21:00', activity: 'ICPC: ทำโจทย์เดี่ยว 2–3 ข้อ ตาม topic ของ phase ปัจจุบัน', cat: 'icpc' },
-      { id: 'tue1', day: 'อังคาร TUE', time: '09:00–11:00', activity: 'ทบทวน Prob&Stat (วิชาเลเวอเรจสูงสุดต่อสาย DS/ML)', cat: 'review' },
-      { id: 'tue2', day: 'อังคาร TUE', time: '19:00–20:30', activity: 'Skill: ฝึก SQL / pandas drills', cat: 'skill' },
-      { id: 'wed1', day: 'พุธ WED', time: '13:00–15:00', activity: 'ICPC: upsolve โจทย์ที่ค้างจาก contest เสาร์', cat: 'icpc' },
-      { id: 'wed2', day: 'พุธ WED', time: '19:00–20:30', activity: 'ทำโปรเจกต์ AI (Project ปัจจุบัน)', cat: 'ai' },
-      { id: 'thu1', day: 'พฤหัส THU', time: '13:00–15:00', activity: 'Skill: statistics→data / DL track ตาม roadmap', cat: 'skill' },
-      { id: 'thu2', day: 'พฤหัส THU', time: '20:00–21:30', activity: 'ทบทวน OS / Embedded (สลับกัน)', cat: 'review' },
-      { id: 'fri1', day: 'ศุกร์ FRI', time: '16:30–18:00', activity: 'ICPC: เรียน topic ใหม่ + โจทย์ประกอบ', cat: 'icpc' },
-      { id: 'sat1', day: 'เสาร์ SAT', time: '09:00–12:00', activity: 'Virtual Contest (CF Div2 / ICPC Gym) — เป็นทีมถ้าได้', cat: 'icpc' },
-      { id: 'sun1', day: 'อาทิตย์ SUN', time: '14:00–16:00', activity: 'โปรเจกต์ AI: deep work', cat: 'ai' },
-      { id: 'sun2', day: 'อาทิตย์ SUN', time: '19:00–20:00', activity: 'สรุปสัปดาห์ + วางแผน + อ่าน paper/บทความ ML 1 ชิ้น', cat: 'plan' },
-      // ช่องซ้อมภาษาอังกฤษ (เพิ่มตามแผนแท็บ english — แก้เวลา/วันได้ตามสะดวก)
+      { id: 'mon1', day: 'จันทร์ MON', time: '20:00–21:30', activity: 'ICPC: โจทย์เดี่ยว 2 ข้อ ตาม topic เฟสปัจจุบัน (หลัง TA เลิก)', cat: 'icpc' },
+      { id: 'tue1', day: 'อังคาร TUE', time: '20:00–21:00', activity: 'Research: อ่านหนังสือตามแผนสัปดาห์นี้ + จดโน้ต (ดูแท็บ research)', cat: 'res' },
+      { id: 'wed1', day: 'พุธ WED', time: '13:00–15:30', activity: 'Research: deep work โครงงาน — โค้ด/ทดลอง/เตรียมข้อมูล', cat: 'res' },
+      { id: 'wed2', day: 'พุธ WED', time: '19:30–21:00', activity: 'ICPC: upsolve โจทย์ค้างจาก virtual contest เสาร์', cat: 'icpc' },
+      { id: 'thu1', day: 'พฤหัส THU', time: '13:00–15:00', activity: 'Research: อ่านต่อ + เขียน summary note 📝 แชร์ทีม', cat: 'res' },
+      { id: 'thu2', day: 'พฤหัส THU', time: '20:00–21:30', activity: 'ทบทวนวิชาเรียน: Prob&Stat / OS / Embedded (สลับตามงานและสอบ)', cat: 'review' },
+      { id: 'fri1', day: 'ศุกร์ FRI', time: '16:30–18:00', activity: 'ICPC: เรียน topic ใหม่ + โจทย์ประกอบ 1–2 ข้อ', cat: 'icpc' },
+      { id: 'sat1', day: 'เสาร์ SAT', time: '09:00–12:00', activity: 'ICPC: Virtual Contest (CF Div.2 เต็มเวลา) + จดข้อที่หลุด', cat: 'icpc' },
+      { id: 'sat2', day: 'เสาร์ SAT', time: '14:00–16:00', activity: 'Research: ตามเก็บงานสัปดาห์นี้ให้ครบตามแผน + sync กับทีม', cat: 'res' },
+      { id: 'sun1', day: 'อาทิตย์ SUN', time: '14:00–16:00', activity: 'โปรเจกต์ AI / portfolio: deep work', cat: 'ai' },
+      { id: 'sun2', day: 'อาทิตย์ SUN', time: '19:00–20:00', activity: 'สรุปสัปดาห์ + วางแผนสัปดาห์หน้า + อ่าน paper/บทความ ML 1 ชิ้น', cat: 'plan' },
+      // ช่องซ้อมภาษาอังกฤษ (จากแผนแท็บ english — แก้เวลา/วันได้ตามสะดวก)
       { id: 'eng-tue', day: 'อังคาร TUE', time: '21:00–21:20', activity: 'ENG: อ่านโจทย์ EN 1 ข้อ + สรุป spec เป็นไทย 3 บรรทัด + เก็บศัพท์ลง Anki', cat: 'eng' },
       { id: 'eng-thu', day: 'พฤหัส THU', time: '21:30–21:50', activity: 'ENG: อ่านโจทย์ EN จับเวลา 1 ข้อ + ทบทวน Anki ศัพท์โจทย์', cat: 'eng' },
       { id: 'eng-sun', day: 'อาทิตย์ SUN', time: '20:00–20:30', activity: 'ENG: อ่าน editorial ภาษาอังกฤษของโจทย์สัปดาห์นี้ + จดวลีที่เจอบ่อย', cat: 'eng' },
@@ -365,7 +368,7 @@ const SECTIONS = [
 /** สร้าง doc เริ่มต้น (ก้อนข้อมูลทั้งหมดของแอป) */
 export function buildSeedDoc() {
   return {
-    schemaVersion: 6, // v2=ICPC 2027+english · v3=แหล่งเรียน B2 · v4=research · v5=ชั้นหนังสือ · v6=แผนอ่านลิงก์หนังสือ+วันที่จริง
+    schemaVersion: 7, // v2=ICPC 2027+english · v3=B2 · v4=research · v5=ชั้นหนังสือ · v6=ลิงก์หนังสือ+วันที่ · v7=weekly ใหม่
     settings: {
       // National/Bangkok 2027 เป็นประมาณการจากรอบปีก่อน — แก้ใน UI เมื่อประกาศวันจริง
       dates: { national: '2027-09-11', bangkok: '2027-11-20' },

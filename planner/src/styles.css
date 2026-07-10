@@ -236,6 +236,20 @@ a.ml-reset.back-link {
 a.book-card { text-decoration: none; color: inherit; display: flex; }
 a.book-card:hover .ml-activity { color: var(--running); }
 
+/* ---------- drag & drop (layout รายวัน) ---------- */
+.ml-card.dragging { opacity: 0.4; }
+.day-col.drag-over { outline: 1.5px dashed var(--running); outline-offset: 4px; border-radius: 8px; }
+.day-empty {
+  border: 1px dashed var(--border); border-radius: var(--radius);
+  padding: 16px 8px; text-align: center; color: var(--text-muted); font-size: 10.5px;
+}
+.drag-chip {
+  font-size: 11px; color: var(--skill); background: rgba(61, 214, 196, 0.06);
+  border: 1px dashed rgba(61, 214, 196, 0.5); border-radius: 6px;
+  padding: 4px 8px; cursor: grab; user-select: none; white-space: nowrap;
+}
+.drag-chip:active { cursor: grabbing; }
+
 .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .card-link {
   font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; text-decoration: none;

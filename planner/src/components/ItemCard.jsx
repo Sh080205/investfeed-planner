@@ -1,7 +1,11 @@
 import React from 'react';
 import { STATE_LABEL, TAG_LABEL } from '../data/constants.js';
 
-export default function ItemCard({ section, item, state, onCycle, onEdit, onDelete }) {
+export default function ItemCard({
+  section, item, state,
+  onCycle, onEdit, onDelete,
+  draggable = false, onDropOnCard,
+}) {
   const checkable = section.checkable !== false;
   // บรรทัด meta ของการ์ด: เวลา · สถานที่/โน้ต (อันไหนว่างก็ข้าม)
   const metaText = [item.time, item.meta].filter(Boolean).join(' · ');
@@ -13,6 +17,26 @@ export default function ItemCard({ section, item, state, onCycle, onEdit, onDele
     }
   };
 
+  /* ---------- drag & drop (เปิดเฉพาะ layout รายวัน) ---------- */
+  const dragProps = draggable
+    ? {
+        draggable: true,
+        onDragStart: (e) => {
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'move', id: item.id }));
+          e.currentTarget.classList.add('dragging');
+        },
+        onDragEnd: (e) => e.currentTarget.classList.remove('dragging'),
+        onDragOver: (e) => e.preventDefault(),
+        // วางบนการ์ด = แทรกหน้าการ์ดนี้ (stopPropagation กันไม่ให้คอลัมน์รับซ้ำ)
+        onDrop: (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (onDropOnCard) onDropOnCard(e);
+        },
+      }
+    : {};
+
   return (
     <div
       className={'ml-card' + (checkable && state === 'done' ? ' done' : '') + (checkable ? '' : ' static')}
@@ -21,6 +45,7 @@ export default function ItemCard({ section, item, state, onCycle, onEdit, onDele
       aria-pressed={checkable ? state === 'done' : undefined}
       onClick={checkable ? onCycle : undefined}
       onKeyDown={handleKey}
+      {...dragProps}
     >
       {/* ปุ่มแก้ไข/ลบ — stopPropagation กันไม่ให้ไปโดน cycle สถานะ */}
       <div className="card-actions">
