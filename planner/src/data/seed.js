@@ -18,6 +18,19 @@
 // โครงสร้าง item: { id, activity, cat, day?, time?, meta?, group?, url?, track? }
 //   track (เฉพาะ ICPC): '' = แผนหลัก | 'qualified' = หลังแข่งถ้าติดรอบ | 'notq' = ถ้าไม่ติด
 
+// path ไฟล์หนังสือบนชั้น (server เสิร์ฟที่ /books/...) — ใช้ลิงก์จากแผนอ่านในแท็บ research
+// เปิดได้เมื่อรันผ่าน InvestFeed server เท่านั้น (เหมือนแท็บ "หนังสือ")
+const BOOK = {
+  hp: '/books/computer%20architecture/Computer%20architecture%20a%20quantitative%20approach%206th%20ed.pdf',
+  cod: '/books/computer%20architecture/Computer%20organization%20and%20design%20the%20hardwaresoftware%20interface%205th%20ed.pdf',
+  silberschatz: '/books/OS/Abraham-Silberschatz-Operating-System-Concepts-10th-2018.pdf',
+  tanenbaum: '/books/OS/Andrew%20S.%20Tanenbaum%20-%20Modern%20Operating%20Systems.pdf',
+  dataDriven: '/books/Machine%20learning/Data%20Driven.pdf',
+  mlCookbook: '/books/Machine%20learning/machinelearningwithpythoncookbook_secondedition_V5.pdf',
+  dsml: '/books/Machine%20learning/DSML.pdf',
+  walpole: '/books/Prob%20%26%20stat/503%20STAT%20-%20Text%20Book.pdf',
+};
+
 const SECTIONS = [
   // ---------- 1) ตารางเรียน (ใหม่ — จากตารางใน Notion) ----------
   {
@@ -210,55 +223,55 @@ const SECTIONS = [
   // Tier 1 แกนกลาง (H&P Ch.7, Walpole Ch.10) อ่านทุกคน · 📝 = อ่านจบต้องทำ summary note แชร์ทีม
   {
     id: 'research', tab: 'research', layout: 'group', resettable: false, checkable: true,
-    note: 'โครงงาน: FPGA-Accelerated Air Quality Anomaly Detection (TCN · PM2.5/NO2/CO) · 18 สัปดาห์ · ทีม: ML-1 ML-2 HW-1 HW-2 (กด ✎ แก้เป็นชื่อจริงได้) · 📝 = อ่านจบต้องสรุปแชร์ทีม',
+    note: 'โครงงาน: FPGA-Accelerated Air Quality Anomaly Detection (TCN · PM2.5/NO2/CO) · สัปดาห์ 1 เริ่ม จ 13 ก.ค. 2026 · ทีม: ML-1 ML-2 HW-1 HW-2 (กด ✎ แก้ชื่อจริงได้) · 📝 = อ่านจบต้องสรุปแชร์ทีม · กด "เปิด ↗" อ่านหนังสือจากชั้นได้เลย',
     items: [
       // Milestones หลัก
-      { id: 'ms1', group: '🎯 Milestones หลัก', meta: 'สัปดาห์ 2', activity: 'จบ Literature Review — สรุปช่องว่างงานวิจัย + ตาราง related work', cat: 'res' },
-      { id: 'ms2', group: '🎯 Milestones หลัก', meta: 'สัปดาห์ 10', activity: 'จบ Paper 1 draft (ML: TCN anomaly detection บนข้อมูล multivariate air quality)', cat: 'res' },
-      { id: 'ms3', group: '🎯 Milestones หลัก', meta: 'สัปดาห์ 14', activity: 'ได้ bitstream แรก รันบนบอร์ด FPGA จริง', cat: 'res' },
-      { id: 'ms4', group: '🎯 Milestones หลัก', meta: 'สัปดาห์ 18', activity: 'จบ Paper 2 draft (FPGA acceleration + performance comparison)', cat: 'res' },
+      { id: 'ms1', group: '🎯 Milestones หลัก', meta: 'สัปดาห์ 2 · ภายใน อา 26 ก.ค. 2026', activity: 'จบ Literature Review — สรุปช่องว่างงานวิจัย + ตาราง related work', cat: 'res' },
+      { id: 'ms2', group: '🎯 Milestones หลัก', meta: 'สัปดาห์ 10 · ภายใน อา 20 ก.ย. 2026', activity: 'จบ Paper 1 draft (ML: TCN anomaly detection บนข้อมูล multivariate air quality)', cat: 'res' },
+      { id: 'ms3', group: '🎯 Milestones หลัก', meta: 'สัปดาห์ 14 · ภายใน อา 18 ต.ค. 2026', activity: 'ได้ bitstream แรก รันบนบอร์ด FPGA จริง', cat: 'res' },
+      { id: 'ms4', group: '🎯 Milestones หลัก', meta: 'สัปดาห์ 18 · ภายใน อา 15 พ.ย. 2026', activity: 'จบ Paper 2 draft (FPGA acceleration + performance comparison)', cat: 'res' },
 
       // เฟส 1 ช่วงแรก — พื้นฐาน + โมเดล TCN
-      { id: 'rw1', group: 'เฟส 1 · ML — สัปดาห์ 1–5: พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 1 · ทุกคน · 📝 สรุปแชร์', activity: '[Tier 2] OSTEP Ch.6 (Limited Direct Execution) + Ch.36 (I/O Devices) — primer อ่านก่อนเพื่อน → ปูพื้น OS/I/O ก่อนคุยเรื่อง accelerator', cat: 'res', url: 'https://pages.cs.wisc.edu/~remzi/OSTEP/' },
-      { id: 'rw2', group: 'เฟส 1 · ML — สัปดาห์ 1–5: พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 1–3 · HW-1 + HW-2', activity: '[Tier 1] COD 5th App.B (B.2–B.8 digital logic) → พื้นฐานวงจรก่อนเข้า HLS/FPGA (เฟส 2)', cat: 'res' },
-      { id: 'rw3', group: 'เฟส 1 · ML — สัปดาห์ 1–5: พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 2–4 · ML-1 + ML-2 · 📝 สรุปแชร์', activity: '[Self] TCN paper (Bai et al. 2018) — โมเดลแกนของโครงงาน → กำหนดสถาปัตยกรรมโมเดลเฟส 1', cat: 'res', url: 'https://arxiv.org/abs/1803.01271' },
-      { id: 'rw4', group: 'เฟส 1 · ML — สัปดาห์ 1–5: พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 2–4 · ML-1 · 📝 สรุปแชร์', activity: '[Tier 1] Data-Driven Mechanical Engineering Ch.7 (Time Series) → feature engineering ของข้อมูล PM2.5/NO2/CO', cat: 'res' },
-      { id: 'rw5', group: 'เฟส 1 · ML — สัปดาห์ 1–5: พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 3–5 · ML-2 · 📝 สรุปแชร์', activity: '[Tier 1] Walpole Prob&Stats 9th Ch.6 (sampling distributions) → พื้นฐานสถิติสำหรับนิยาม anomaly threshold', cat: 'res' },
-      { id: 'rw6', group: 'เฟส 1 · ML — สัปดาห์ 1–5: พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 3–6 · ML-1 + ML-2', activity: '[Self] PyTorch tutorials (official) → เขียน training pipeline ของ TCN', cat: 'res', url: 'https://pytorch.org/tutorials/' },
-      { id: 'rw7', group: 'เฟส 1 · ML — สัปดาห์ 1–5: พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 3–6 · ML-2', activity: '[Tier 2] Data-Driven Ch.5, 8–9 → เทคนิคโมเดล + validation เสริมเฟส 1', cat: 'res' },
-      { id: 'rw8', group: 'เฟส 1 · ML — สัปดาห์ 1–5: พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 4–5 · ML-1', activity: '[Tier 1] Data-Driven Ch.2 (EDA) → สำรวจ dataset คุณภาพอากาศจริงก่อน train', cat: 'res' },
-      { id: 'rw9', group: 'เฟส 1 · ML — สัปดาห์ 1–5: พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 1–8 · ML-1 + ML-2 · ตามวิชาเรียน', activity: '[Tier 2] Walpole Ch.2–4, 8–9 — อ่านตามจังหวะวิชา Prob&Stat เทอมนี้ → ฐานทฤษฎีให้ Ch.6/Ch.10', cat: 'res' },
-      { id: 'rw10', group: 'เฟส 1 · ML — สัปดาห์ 1–5: พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 4–6 · HW-1', activity: '[Tier 2] COD Ch.1 (1.6–1.7 performance), Ch.3 (3.1–3.5 arithmetic) → metric ประสิทธิภาพ + เลขคณิตสำหรับ quantization', cat: 'res' },
+      { id: 'rw1', group: 'เฟส 1 · ML — สัปดาห์ 1–5 (13 ก.ค. – 16 ส.ค.): พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 1 · ทุกคน · 📝 สรุปแชร์', activity: '[Tier 2] OSTEP Ch.6 (Limited Direct Execution) + Ch.36 (I/O Devices) — primer อ่านก่อนเพื่อน → ปูพื้น OS/I/O ก่อนคุยเรื่อง accelerator', cat: 'res', url: 'https://pages.cs.wisc.edu/~remzi/OSTEP/' },
+      { id: 'rw2', group: 'เฟส 1 · ML — สัปดาห์ 1–5 (13 ก.ค. – 16 ส.ค.): พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 1–3 · HW-1 + HW-2', activity: '[Tier 1] COD 5th App.B (B.2–B.8 digital logic) → พื้นฐานวงจรก่อนเข้า HLS/FPGA (เฟส 2)', cat: 'res', url: BOOK.cod },
+      { id: 'rw3', group: 'เฟส 1 · ML — สัปดาห์ 1–5 (13 ก.ค. – 16 ส.ค.): พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 2–4 · ML-1 + ML-2 · 📝 สรุปแชร์', activity: '[Self] TCN paper (Bai et al. 2018) — โมเดลแกนของโครงงาน → กำหนดสถาปัตยกรรมโมเดลเฟส 1', cat: 'res', url: 'https://arxiv.org/abs/1803.01271' },
+      { id: 'rw4', group: 'เฟส 1 · ML — สัปดาห์ 1–5 (13 ก.ค. – 16 ส.ค.): พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 2–4 · ML-1 · 📝 สรุปแชร์', activity: '[Tier 1] Data-Driven Mechanical Engineering Ch.7 (Time Series) → feature engineering ของข้อมูล PM2.5/NO2/CO', cat: 'res', url: BOOK.dataDriven },
+      { id: 'rw5', group: 'เฟส 1 · ML — สัปดาห์ 1–5 (13 ก.ค. – 16 ส.ค.): พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 3–5 · ML-2 · 📝 สรุปแชร์', activity: '[Tier 1] Walpole Prob&Stats 9th Ch.6 (sampling distributions) → พื้นฐานสถิติสำหรับนิยาม anomaly threshold', cat: 'res', url: BOOK.walpole },
+      { id: 'rw6', group: 'เฟส 1 · ML — สัปดาห์ 1–5 (13 ก.ค. – 16 ส.ค.): พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 3–6 · ML-1 + ML-2', activity: '[Self] PyTorch tutorials (official) → เขียน training pipeline ของ TCN', cat: 'res', url: 'https://pytorch.org/tutorials/' },
+      { id: 'rw7', group: 'เฟส 1 · ML — สัปดาห์ 1–5 (13 ก.ค. – 16 ส.ค.): พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 3–6 · ML-2', activity: '[Tier 2] Data-Driven Ch.5, 8–9 → เทคนิคโมเดล + validation เสริมเฟส 1', cat: 'res', url: BOOK.dataDriven },
+      { id: 'rw8', group: 'เฟส 1 · ML — สัปดาห์ 1–5 (13 ก.ค. – 16 ส.ค.): พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 4–5 · ML-1', activity: '[Tier 1] Data-Driven Ch.2 (EDA) → สำรวจ dataset คุณภาพอากาศจริงก่อน train', cat: 'res', url: BOOK.dataDriven },
+      { id: 'rw9', group: 'เฟส 1 · ML — สัปดาห์ 1–5 (13 ก.ค. – 16 ส.ค.): พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 1–8 · ML-1 + ML-2 · ตามวิชาเรียน', activity: '[Tier 2] Walpole Ch.2–4, 8–9 — อ่านตามจังหวะวิชา Prob&Stat เทอมนี้ → ฐานทฤษฎีให้ Ch.6/Ch.10', cat: 'res', url: BOOK.walpole },
+      { id: 'rw10', group: 'เฟส 1 · ML — สัปดาห์ 1–5 (13 ก.ค. – 16 ส.ค.): พื้นฐาน + โมเดล TCN', meta: 'สัปดาห์ 4–6 · HW-1', activity: '[Tier 2] COD Ch.1 (1.6–1.7 performance), Ch.3 (3.1–3.5 arithmetic) → metric ประสิทธิภาพ + เลขคณิตสำหรับ quantization', cat: 'res', url: BOOK.cod },
 
       // เฟส 1 ช่วงหลัง — ประเมินผล + Paper 1
-      { id: 'rw11', group: 'เฟส 1 · ML — สัปดาห์ 5–10: ประเมินผล + Paper 1', meta: 'สัปดาห์ 5–8 · ML-1 · 📝 สรุปแชร์', activity: '[Self] Anomaly evaluation protocols (survey papers) → ออกแบบ experiment + metrics ของ Paper 1', cat: 'res' },
-      { id: 'rw12', group: 'เฟส 1 · ML — สัปดาห์ 5–10: ประเมินผล + Paper 1', meta: 'สัปดาห์ 6–8 · HW-1 + HW-2 · 📝 สรุปแชร์', activity: '[Tier 1] COD Ch.4 (4.5–4.8 pipeline), Ch.5 (5.1–5.4, 5.9 cache) → หัวใจการออกแบบ accelerator + memory hierarchy', cat: 'res' },
-      { id: 'rw13', group: 'เฟส 1 · ML — สัปดาห์ 5–10: ประเมินผล + Paper 1', meta: 'สัปดาห์ 8–10 · ⭐ ทุกคน · 📝 สรุปแชร์', activity: '[Tier 1 แกนกลาง] H&P 6th Ch.7 (Domain-Specific Architectures) → เหตุผลเชิงสถาปัตยกรรมของ FPGA accelerator ใช้อ้างใน Paper 2', cat: 'res' },
-      { id: 'rw14', group: 'เฟส 1 · ML — สัปดาห์ 5–10: ประเมินผล + Paper 1', meta: 'สัปดาห์ 8–10 · ⭐ ทุกคน · 📝 สรุปแชร์', activity: '[Tier 1 แกนกลาง] Walpole Ch.10 (hypothesis testing) → ทดสอบนัยสำคัญของผลการทดลองทั้ง Paper 1 และ 2', cat: 'res' },
-      { id: 'rw15', group: 'เฟส 1 · ML — สัปดาห์ 5–10: ประเมินผล + Paper 1', meta: 'สัปดาห์ 8–10 · HW-2', activity: '[Tier 1] Silberschatz OS 10th Ch.12 (I/O Systems) → เข้าใจ I/O path ก่อนต่อบอร์ดกับ host', cat: 'res' },
-      { id: 'rw16', group: 'เฟส 1 · ML — สัปดาห์ 5–10: ประเมินผล + Paper 1', meta: 'สัปดาห์ 8–10 · HW-2', activity: '[Tier 1] Tanenbaum Modern OS Ch.5 (5.1–5.2 I/O hardware/software) → มุมมอง driver/DMA สำหรับเฟส 2', cat: 'res' },
-      { id: 'rw17', group: 'เฟส 1 · ML — สัปดาห์ 5–10: ประเมินผล + Paper 1', meta: 'สัปดาห์ 9–10 · HW-1', activity: '[Tier 2] H&P Ch.1 (1.8–1.9 measuring/benchmarking) → ระเบียบวิธีวัดผล ใช้ทั้งสอง paper', cat: 'res' },
-      { id: 'rw18', group: 'เฟส 1 · ML — สัปดาห์ 5–10: ประเมินผล + Paper 1', meta: 'สัปดาห์ 8–10 · ML-1 + ML-2', activity: '[Self] LaTeX/Overleaf + academic writing → เขียน Paper 1 draft ให้จบสัปดาห์ 10', cat: 'res', url: 'https://www.overleaf.com/learn' },
+      { id: 'rw11', group: 'เฟส 1 · ML — สัปดาห์ 5–10 (10 ส.ค. – 20 ก.ย.): ประเมินผล + Paper 1', meta: 'สัปดาห์ 5–8 · ML-1 · 📝 สรุปแชร์', activity: '[Self] Anomaly evaluation protocols (survey papers) → ออกแบบ experiment + metrics ของ Paper 1', cat: 'res' },
+      { id: 'rw12', group: 'เฟส 1 · ML — สัปดาห์ 5–10 (10 ส.ค. – 20 ก.ย.): ประเมินผล + Paper 1', meta: 'สัปดาห์ 6–8 · HW-1 + HW-2 · 📝 สรุปแชร์', activity: '[Tier 1] COD Ch.4 (4.5–4.8 pipeline), Ch.5 (5.1–5.4, 5.9 cache) → หัวใจการออกแบบ accelerator + memory hierarchy', cat: 'res', url: BOOK.cod },
+      { id: 'rw13', group: 'เฟส 1 · ML — สัปดาห์ 5–10 (10 ส.ค. – 20 ก.ย.): ประเมินผล + Paper 1', meta: 'สัปดาห์ 8–10 · ⭐ ทุกคน · 📝 สรุปแชร์', activity: '[Tier 1 แกนกลาง] H&P 6th Ch.7 (Domain-Specific Architectures) → เหตุผลเชิงสถาปัตยกรรมของ FPGA accelerator ใช้อ้างใน Paper 2', cat: 'res', url: BOOK.hp },
+      { id: 'rw14', group: 'เฟส 1 · ML — สัปดาห์ 5–10 (10 ส.ค. – 20 ก.ย.): ประเมินผล + Paper 1', meta: 'สัปดาห์ 8–10 · ⭐ ทุกคน · 📝 สรุปแชร์', activity: '[Tier 1 แกนกลาง] Walpole Ch.10 (hypothesis testing) → ทดสอบนัยสำคัญของผลการทดลองทั้ง Paper 1 และ 2', cat: 'res', url: BOOK.walpole },
+      { id: 'rw15', group: 'เฟส 1 · ML — สัปดาห์ 5–10 (10 ส.ค. – 20 ก.ย.): ประเมินผล + Paper 1', meta: 'สัปดาห์ 8–10 · HW-2', activity: '[Tier 1] Silberschatz OS 10th Ch.12 (I/O Systems) → เข้าใจ I/O path ก่อนต่อบอร์ดกับ host', cat: 'res', url: BOOK.silberschatz },
+      { id: 'rw16', group: 'เฟส 1 · ML — สัปดาห์ 5–10 (10 ส.ค. – 20 ก.ย.): ประเมินผล + Paper 1', meta: 'สัปดาห์ 8–10 · HW-2', activity: '[Tier 1] Tanenbaum Modern OS Ch.5 (5.1–5.2 I/O hardware/software) → มุมมอง driver/DMA สำหรับเฟส 2', cat: 'res', url: BOOK.tanenbaum },
+      { id: 'rw17', group: 'เฟส 1 · ML — สัปดาห์ 5–10 (10 ส.ค. – 20 ก.ย.): ประเมินผล + Paper 1', meta: 'สัปดาห์ 9–10 · HW-1', activity: '[Tier 2] H&P Ch.1 (1.8–1.9 measuring/benchmarking) → ระเบียบวิธีวัดผล ใช้ทั้งสอง paper', cat: 'res', url: BOOK.hp },
+      { id: 'rw18', group: 'เฟส 1 · ML — สัปดาห์ 5–10 (10 ส.ค. – 20 ก.ย.): ประเมินผล + Paper 1', meta: 'สัปดาห์ 8–10 · ML-1 + ML-2', activity: '[Self] LaTeX/Overleaf + academic writing → เขียน Paper 1 draft ให้จบสัปดาห์ 10', cat: 'res', url: 'https://www.overleaf.com/learn' },
 
       // สะพาน ML → FPGA
-      { id: 'rw19', group: 'สะพาน ML → FPGA — สัปดาห์ 9–13: Quantization + HLS', meta: 'สัปดาห์ 9–12 · ML-2 + HW-1 · 📝 สรุปแชร์', activity: '[Self] Brevitas QAT (quantization-aware training) → แปลง TCN เป็น INT8 ก่อนลง FPGA', cat: 'res', url: 'https://github.com/Xilinx/brevitas' },
-      { id: 'rw20', group: 'สะพาน ML → FPGA — สัปดาห์ 9–13: Quantization + HLS', meta: 'สัปดาห์ 9–13 · HW-1 + HW-2 · 📝 สรุปแชร์', activity: '[Self] Vitis HLS: Kastner "Parallel Programming for FPGAs" + AMD UG1399 → เขียน TCN kernel เป็น HLS C++', cat: 'res', url: 'https://kastner.ucsd.edu/hlsbook/' },
+      { id: 'rw19', group: 'สะพาน ML → FPGA — สัปดาห์ 9–13 (7 ก.ย. – 11 ต.ค.): Quantization + HLS', meta: 'สัปดาห์ 9–12 · ML-2 + HW-1 · 📝 สรุปแชร์', activity: '[Self] Brevitas QAT (quantization-aware training) → แปลง TCN เป็น INT8 ก่อนลง FPGA', cat: 'res', url: 'https://github.com/Xilinx/brevitas' },
+      { id: 'rw20', group: 'สะพาน ML → FPGA — สัปดาห์ 9–13 (7 ก.ย. – 11 ต.ค.): Quantization + HLS', meta: 'สัปดาห์ 9–13 · HW-1 + HW-2 · 📝 สรุปแชร์', activity: '[Self] Vitis HLS: Kastner "Parallel Programming for FPGAs" + AMD UG1399 → เขียน TCN kernel เป็น HLS C++', cat: 'res', url: 'https://kastner.ucsd.edu/hlsbook/' },
 
       // เฟส 2 ช่วงแรก — Vivado + bitstream แรก
-      { id: 'rw21', group: 'เฟส 2 · FPGA — สัปดาห์ 11–14: Vivado + bitstream แรก', meta: 'สัปดาห์ 11–14 · HW-1', activity: '[Self] Vivado tutorials → block design + synthesize ให้ได้ bitstream แรก (milestone สัปดาห์ 14)', cat: 'res' },
-      { id: 'rw22', group: 'เฟส 2 · FPGA — สัปดาห์ 11–14: Vivado + bitstream แรก', meta: 'สัปดาห์ 11–14 · HW-2 · 📝 สรุปแชร์', activity: '[Self] AXI protocol (Zynq TRM UG585) → เชื่อม accelerator กับ PS ผ่าน AXI DMA', cat: 'res' },
-      { id: 'rw23', group: 'เฟส 2 · FPGA — สัปดาห์ 11–14: Vivado + bitstream แรก', meta: 'สัปดาห์ 12–13 · HW-2', activity: '[Tier 2] Silberschatz Ch.9–10 (memory/virtual memory แบบ concept) → เข้าใจ address space ตอน map buffer ระหว่าง CPU กับ FPGA', cat: 'res' },
-      { id: 'rw24', group: 'เฟส 2 · FPGA — สัปดาห์ 11–14: Vivado + bitstream แรก', meta: 'สัปดาห์ 13–15 · HW-2', activity: '[Tier 2] Tanenbaum Ch.10 (10.3, 10.5 Linux process/I/O) → ฐานก่อนใช้ PetaLinux', cat: 'res' },
-      { id: 'rw25', group: 'เฟส 2 · FPGA — สัปดาห์ 11–14: Vivado + bitstream แรก', meta: 'สัปดาห์ 13–16 · HW-1', activity: '[Self] PetaLinux (Xilinx wiki) → สร้าง Linux image รันบนบอร์ด + เขียน userspace app คุยกับ driver', cat: 'res' },
+      { id: 'rw21', group: 'เฟส 2 · FPGA — สัปดาห์ 11–14 (21 ก.ย. – 18 ต.ค.): Vivado + bitstream แรก', meta: 'สัปดาห์ 11–14 · HW-1', activity: '[Self] Vivado tutorials → block design + synthesize ให้ได้ bitstream แรก (milestone สัปดาห์ 14)', cat: 'res' },
+      { id: 'rw22', group: 'เฟส 2 · FPGA — สัปดาห์ 11–14 (21 ก.ย. – 18 ต.ค.): Vivado + bitstream แรก', meta: 'สัปดาห์ 11–14 · HW-2 · 📝 สรุปแชร์', activity: '[Self] AXI protocol (Zynq TRM UG585) → เชื่อม accelerator กับ PS ผ่าน AXI DMA', cat: 'res' },
+      { id: 'rw23', group: 'เฟส 2 · FPGA — สัปดาห์ 11–14 (21 ก.ย. – 18 ต.ค.): Vivado + bitstream แรก', meta: 'สัปดาห์ 12–13 · HW-2', activity: '[Tier 2] Silberschatz Ch.9–10 (memory/virtual memory แบบ concept) → เข้าใจ address space ตอน map buffer ระหว่าง CPU กับ FPGA', cat: 'res', url: BOOK.silberschatz },
+      { id: 'rw24', group: 'เฟส 2 · FPGA — สัปดาห์ 11–14 (21 ก.ย. – 18 ต.ค.): Vivado + bitstream แรก', meta: 'สัปดาห์ 13–15 · HW-2', activity: '[Tier 2] Tanenbaum Ch.10 (10.3, 10.5 Linux process/I/O) → ฐานก่อนใช้ PetaLinux', cat: 'res', url: BOOK.tanenbaum },
+      { id: 'rw25', group: 'เฟส 2 · FPGA — สัปดาห์ 11–14 (21 ก.ย. – 18 ต.ค.): Vivado + bitstream แรก', meta: 'สัปดาห์ 13–16 · HW-1', activity: '[Self] PetaLinux (Xilinx wiki) → สร้าง Linux image รันบนบอร์ด + เขียน userspace app คุยกับ driver', cat: 'res' },
 
       // เฟส 2 ช่วงท้าย — วัดผล + Paper 2
-      { id: 'rw26', group: 'เฟส 2 · FPGA — สัปดาห์ 15–18: วัดผล + Paper 2', meta: 'สัปดาห์ 15–16 · HW-1', activity: '[Tier 2] COD Ch.6 (6.3, 6.6 parallelism/GPU) → ตาราง performance comparison ใน Paper 2', cat: 'res' },
-      { id: 'rw27', group: 'เฟส 2 · FPGA — สัปดาห์ 15–18: วัดผล + Paper 2', meta: 'สัปดาห์ 15–17 · HW-1 + ML-1 · 📝 สรุปแชร์', activity: '[Tier 2] H&P Ch.2 (2.1–2.3 memory hierarchy) + Roofline model (Ch.4 บางส่วน) → วิเคราะห์ bottleneck ของ accelerator ใน Paper 2', cat: 'res' },
-      { id: 'rw28', group: 'เฟส 2 · FPGA — สัปดาห์ 15–18: วัดผล + Paper 2', meta: 'สัปดาห์ 16–18 · ทุกคน (HW นำ)', activity: '[Self] LaTeX + academic writing รอบสอง → เขียน Paper 2 draft ให้จบสัปดาห์ 18', cat: 'res', url: 'https://www.overleaf.com/learn' },
+      { id: 'rw26', group: 'เฟส 2 · FPGA — สัปดาห์ 15–18 (19 ต.ค. – 15 พ.ย.): วัดผล + Paper 2', meta: 'สัปดาห์ 15–16 · HW-1', activity: '[Tier 2] COD Ch.6 (6.3, 6.6 parallelism/GPU) → ตาราง performance comparison ใน Paper 2', cat: 'res', url: BOOK.cod },
+      { id: 'rw27', group: 'เฟส 2 · FPGA — สัปดาห์ 15–18 (19 ต.ค. – 15 พ.ย.): วัดผล + Paper 2', meta: 'สัปดาห์ 15–17 · HW-1 + ML-1 · 📝 สรุปแชร์', activity: '[Tier 2] H&P Ch.2 (2.1–2.3 memory hierarchy) + Roofline model (Ch.4 บางส่วน) → วิเคราะห์ bottleneck ของ accelerator ใน Paper 2', cat: 'res', url: BOOK.hp },
+      { id: 'rw28', group: 'เฟส 2 · FPGA — สัปดาห์ 15–18 (19 ต.ค. – 15 พ.ย.): วัดผล + Paper 2', meta: 'สัปดาห์ 16–18 · ทุกคน (HW นำ)', activity: '[Self] LaTeX + academic writing รอบสอง → เขียน Paper 2 draft ให้จบสัปดาห์ 18', cat: 'res', url: 'https://www.overleaf.com/learn' },
 
       // Tier 3 — reference ท้ายแผน (ตามข้อกำหนด: ไม่ลงตาราง แต่ระบุไว้)
-      { id: 'rw29', group: 'Tier 3 · Reference — เปิดเมื่อใช้ (ไม่ลงตาราง)', meta: 'ใช้ตลอดสัปดาห์ 3–10', activity: 'ML Python Cookbook 2nd: Ch.3–4 (data), 7 (datetime), 11–12 (evaluation/selection), 20–21 (NN/PyTorch), 23 (deploy) — เปิดเป็น recipe ตอนเขียนโค้ด', cat: 'res' },
-      { id: 'rw30', group: 'Tier 3 · Reference — เปิดเมื่อใช้ (ไม่ลงตาราง)', meta: 'reference', activity: 'Kroese — Data Science & Machine Learning: Ch.2 (statistical learning), 4 (unsupervised), 9 (deep learning) — ทฤษฎีเสริมเวลาติดคณิต', cat: 'res' },
+      { id: 'rw29', group: 'Tier 3 · Reference — เปิดเมื่อใช้ (ไม่ลงตาราง)', meta: 'ใช้ตลอดสัปดาห์ 3–10', activity: 'ML Python Cookbook 2nd: Ch.3–4 (data), 7 (datetime), 11–12 (evaluation/selection), 20–21 (NN/PyTorch), 23 (deploy) — เปิดเป็น recipe ตอนเขียนโค้ด', cat: 'res', url: BOOK.mlCookbook },
+      { id: 'rw30', group: 'Tier 3 · Reference — เปิดเมื่อใช้ (ไม่ลงตาราง)', meta: 'reference', activity: 'Kroese — Data Science & Machine Learning: Ch.2 (statistical learning), 4 (unsupervised), 9 (deep learning) — ทฤษฎีเสริมเวลาติดคณิต', cat: 'res', url: BOOK.dsml },
     ],
   },
 
@@ -352,7 +365,7 @@ const SECTIONS = [
 /** สร้าง doc เริ่มต้น (ก้อนข้อมูลทั้งหมดของแอป) */
 export function buildSeedDoc() {
   return {
-    schemaVersion: 5, // v2 = ICPC 2027 + english · v3 = แหล่งเรียน B2 · v4 = research · v5 = ชั้นหนังสือ (ดู upgradeDoc)
+    schemaVersion: 6, // v2=ICPC 2027+english · v3=แหล่งเรียน B2 · v4=research · v5=ชั้นหนังสือ · v6=แผนอ่านลิงก์หนังสือ+วันที่จริง
     settings: {
       // National/Bangkok 2027 เป็นประมาณการจากรอบปีก่อน — แก้ใน UI เมื่อประกาศวันจริง
       dates: { national: '2027-09-11', bangkok: '2027-11-20' },

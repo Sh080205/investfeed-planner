@@ -47,6 +47,8 @@ export function saveDoc(doc) {
  * v2 → v3: เพิ่มกลุ่ม "แหล่งเรียนระดับ B2" (id ขึ้นต้น enr) ในแท็บ english
  * v3 → v4: เพิ่มแท็บ research (แผนอ่าน 18 สัปดาห์ โครงงาน FPGA air quality)
  * v4 → v5: เพิ่มแท็บ "หนังสือ" (ชั้นหนังสือ PDF ดึงรายชื่อสดจาก server)
+ * v5 → v6: แผนอ่าน research อัปเดต — ทุกรายการลิงก์ไปไฟล์หนังสือจริง + ใส่วันที่จริง
+ *          (สัปดาห์ 1 = 13–19 ก.ค. 2026) · สถานะที่ติ๊กไว้คงเดิม (id ไม่เปลี่ยน)
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -129,6 +131,21 @@ export function upgradeDoc(doc) {
       else doc.sections.push(librarySeed);
     }
     doc.schemaVersion = 5;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 6) {
+    // แทนที่ section research ด้วยเวอร์ชันมีลิงก์หนังสือ + วันที่จริง
+    // — สถานะที่ติ๊กไว้อยู่ใน doc.statuses.research (id เดิมทั้งหมด) จึงไม่หาย
+    // — รายการที่ผู้ใช้เพิ่มเอง (id ไม่อยู่ใน seed) เก็บต่อท้ายไว้ให้
+    const seedResearch = seed.sections.find((s) => s.id === 'research');
+    const idx = doc.sections.findIndex((s) => s.id === 'research');
+    if (idx >= 0) {
+      const seedIds = new Set(seedResearch.items.map((i) => i.id));
+      const customItems = doc.sections[idx].items.filter((i) => !seedIds.has(i.id));
+      doc.sections[idx] = { ...seedResearch, items: [...seedResearch.items, ...customItems] };
+    }
+    doc.schemaVersion = 6;
     changed = true;
   }
 
