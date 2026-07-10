@@ -45,6 +45,7 @@ export function saveDoc(doc) {
  * v1 → v2: แผน ICPC เปลี่ยนจาก countdown รอบ ก.ค. 2026 → เส้นทางยาวสู่ ICPC 2027 (แข่งตอนปี 4)
  *          + เพิ่มแท็บ english (แก้จุดอ่อนอ่านโจทย์) + ช่อง ENG ใน weekly + วันแข่งปี 2027
  * v2 → v3: เพิ่มกลุ่ม "แหล่งเรียนระดับ B2" (id ขึ้นต้น enr) ในแท็บ english
+ * v3 → v4: เพิ่มแท็บ research (แผนอ่าน 18 สัปดาห์ โครงงาน FPGA air quality)
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -103,6 +104,18 @@ export function upgradeDoc(doc) {
       }
     }
     doc.schemaVersion = 3;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 4) {
+    // เพิ่มแท็บ research (แผนอ่านโครงงาน FPGA) ต่อจาก projects
+    if (!doc.sections.some((s) => s.id === 'research')) {
+      const researchSeed = seed.sections.find((s) => s.id === 'research');
+      const at = doc.sections.findIndex((s) => s.id === 'projects');
+      if (at >= 0) doc.sections.splice(at + 1, 0, researchSeed);
+      else doc.sections.push(researchSeed);
+    }
+    doc.schemaVersion = 4;
     changed = true;
   }
 

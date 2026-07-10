@@ -14,7 +14,7 @@ export const DAY_ORDER = [
 export const TAG_LABEL = {
   icpc: 'ICPC', ai: 'AI PROJECT', review: 'COURSE', skill: 'SKILL', plan: 'PLAN',
   fitness: 'FITNESS', road: 'ROADMAP', course: 'ELECTIVE', learn: 'FREE', class: 'CLASS',
-  eng: 'ENGLISH',
+  eng: 'ENGLISH', res: 'RESEARCH',
 };
 
 // แผนหลัง National ของ section ICPC — รายการที่ไม่มี track จะแสดงเสมอ

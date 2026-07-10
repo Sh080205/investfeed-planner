@@ -220,6 +220,7 @@ a.ml-reset.back-link {
 .tag.learn { background: rgba(61, 214, 196, 0.12); color: var(--skill); }
 .tag.class { background: rgba(79, 163, 255, 0.12); color: var(--running); }
 .tag.eng { background: rgba(195, 232, 141, 0.12); color: #c3e88d; }
+.tag.res { background: rgba(255, 212, 59, 0.1); color: #ffd43b; }
 
 .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .card-link {
