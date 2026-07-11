@@ -32,21 +32,22 @@ const BOOK = {
 };
 
 const SECTIONS = [
-  // ---------- 1) ตารางเรียน (ใหม่ — จากตารางใน Notion) ----------
+  // ---------- 1) ตารางเรียน (v8 — เพิ่มระดับความยาก ★ / เวลาที่ต้องเผื่อ ⏱ / วิธีเรียนต่อวิชา) ----------
+  // ★ = ความยาก (1–5) · ⏱ = เวลานอกห้องเรียนที่ต้องใช้ — ตัวกินเวลา: ML (462) + Embedded/Lab (323/324)
   {
     id: 'classes', tab: 'ตารางเรียน', layout: 'days', resettable: false, checkable: false,
-    note: 'ตารางเรียนเทอมนี้ · แก้วิชา/วัน/เวลา/ห้อง ได้จากปุ่ม ✎ บนการ์ด',
+    note: 'ตารางเรียนเทอมนี้ · ★ = ความยาก · ⏱ = เวลานอกห้องที่ต้องเผื่อ/สัปดาห์ · ตัวกินเวลา: ML + Embedded/Lab · แก้ได้จากปุ่ม ✎',
     items: [
-      { id: 'cl-mon1', day: 'จันทร์ MON', time: '9:00–12:00', meta: 'ห้อง 17304', activity: 'ระบบฝังตัวเบื้องต้น (Introduction to Embedded Systems)', cat: 'class' },
-      { id: 'cl-mon2', day: 'จันทร์ MON', time: '13:00–16:00', meta: 'ห้อง 17204', activity: 'English for Job Opportunities', cat: 'class' },
+      { id: 'cl-mon1', day: 'จันทร์ MON', time: '9:00–12:00', meta: 'ห้อง 17304 · ★★★★☆ · ⏱ 5–7 ชม. (รวม Lab ศุกร์)', activity: 'ระบบฝังตัวเบื้องต้น (Introduction to Embedded Systems) — เข้าใจ interrupt/timer จริง + จำ register/pin/config · สองวิชารวมกัน แล็บกินเวลา', cat: 'class' },
+      { id: 'cl-mon2', day: 'จันทร์ MON', time: '13:00–16:00', meta: 'ห้อง 17204 · ★☆☆☆☆ · ⏱ ~1 ชม.', activity: 'English for Job Opportunities — เบา แต่ใช้เป็นเวทีฝึกจริงของแผนแท็บ english (resume/สัมภาษณ์)', cat: 'class' },
       { id: 'cl-mon3', day: 'จันทร์ MON', time: '16:30–19:30', meta: '', activity: 'TA วิชา Compro', cat: 'class' },
-      { id: 'cl-tue1', day: 'อังคาร TUE', time: '9:00–12:00', meta: 'Lab Com 3', activity: 'ปฏิบัติการผสานเทคโนโลยีสารสนเทศ (IT Integration Lab)', cat: 'class' },
-      { id: 'cl-tue2', day: 'อังคาร TUE', time: '13:00–16:00', meta: 'ห้อง 1402', activity: 'ความน่าจะเป็นและสถิติสำหรับสารสนเทศศาสตร์ (Prob & Stat)', cat: 'class' },
-      { id: 'cl-tue3', day: 'อังคาร TUE', time: '16:30–19:30', meta: 'ห้อง 17306', activity: 'ระบบปฏิบัติการ (Operating Systems)', cat: 'class' },
+      { id: 'cl-tue1', day: 'อังคาร TUE', time: '9:00–12:00', meta: 'Lab Com 3 · ★★☆☆☆ · ⏱ 2–3 ชม.', activity: 'ปฏิบัติการผสานเทคโนโลยีสารสนเทศ (IT Integration Lab) — ทักษะล้วน: Linux/Git/CI-CD ทำจนคล่อง ไม่ใช่ท่อง · ต่อยอดเป็นสกิล MLOps', cat: 'class' },
+      { id: 'cl-tue2', day: 'อังคาร TUE', time: '13:00–16:00', meta: 'ห้อง 1402 · ★★★★☆ · ⏱ 4–5 ชม.', activity: 'ความน่าจะเป็นและสถิติสำหรับสารสนเทศศาสตร์ (Prob & Stat) — เข้าใจนำ + จำสูตรบ้าง: คณิตสะสมต่อเนื่อง ปั่นโจทย์เยอะ หัวใจคือ "รู้ว่าเมื่อไรใช้อะไร" · ฐานของ ML + โครงงาน', cat: 'class' },
+      { id: 'cl-tue3', day: 'อังคาร TUE', time: '16:30–19:30', meta: 'ห้อง 17306 · ★★★★☆ · ⏱ 4–5 ชม.', activity: 'ระบบปฏิบัติการ (Operating Systems) — เข้าใจล้วน ๆ: กลไกเยอะ อ่านหนัก ฝึกโจทย์คำนวณ (Gantt, page fault) · ท่องแค่ชื่อ algorithm', cat: 'class' },
       { id: 'cl-wed1', day: 'พุธ WED', time: '08:00–10:00', meta: 'อาคารพลศึกษา', activity: 'ว่ายน้ำเพื่อสุขภาพ', cat: 'class' },
-      { id: 'cl-thu1', day: 'พฤหัส THU', time: '9:00–12:00', meta: 'ห้อง 1302', activity: 'วิทยาศาสตร์ข้อมูลเบื้องต้น (Introduction to Data Science)', cat: 'class' },
-      { id: 'cl-fri1', day: 'ศุกร์ FRI', time: '9:00–12:00', meta: 'ห้องติดต่อผู้สอน', activity: 'การเรียนรู้ของเครื่อง (Machine Learning)', cat: 'class' },
-      { id: 'cl-fri2', day: 'ศุกร์ FRI', time: '13:00–16:00', meta: 'ห้อง Lab Logic', activity: 'ปฏิบัติการระบบฝังตัว (Embedded Systems Lab)', cat: 'class' },
+      { id: 'cl-thu1', day: 'พฤหัส THU', time: '9:00–12:00', meta: 'ห้อง 1302 · ★★☆☆☆ · ⏱ 2–3 ชม.', activity: 'วิทยาศาสตร์ข้อมูลเบื้องต้น (Introduction to Data Science) — เข้าใจ workflow + ปฏิบัติ: pandas/EDA/viz จำน้อยมาก เขียนโค้ดให้คล่อง · ช่อง Research/AI ใน weekly นับเป็นซ้อมวิชานี้ได้', cat: 'class' },
+      { id: 'cl-fri1', day: 'ศุกร์ FRI', time: '9:00–12:00', meta: 'ห้องติดต่อผู้สอน · ★★★★★ · ⏱ 6–8 ชม.', activity: 'การเรียนรู้ของเครื่อง (Machine Learning) — เข้าใจลึกล้วน ๆ: concept + คณิต + โค้ด + โปรเจกต์ ต่อยอดจาก Prob&Stat · วิชาสำคัญสุดของสาย ให้เวลามากสุด', cat: 'class' },
+      { id: 'cl-fri2', day: 'ศุกร์ FRI', time: '13:00–16:00', meta: 'ห้อง Lab Logic · ★★★★☆ · ⏱ (รวมใน 5–7 ชม. ของ Embedded)', activity: 'ปฏิบัติการระบบฝังตัว (Embedded Systems Lab) — ทักษะ + เวลา: ต่อวงจร debug ฮาร์ดแวร์ เขียนรายงาน · เผื่อเวลาหลังแล็บเสมอ', cat: 'class' },
     ],
   },
 
@@ -63,7 +64,7 @@ const SECTIONS = [
       { id: 'wed1', day: 'พุธ WED', time: '13:00–15:30', activity: 'Research: deep work โครงงาน — โค้ด/ทดลอง/เตรียมข้อมูล', cat: 'res' },
       { id: 'wed2', day: 'พุธ WED', time: '19:30–21:00', activity: 'ICPC: upsolve โจทย์ค้างจาก virtual contest เสาร์', cat: 'icpc' },
       { id: 'thu1', day: 'พฤหัส THU', time: '13:00–15:00', activity: 'Research: อ่านต่อ + เขียน summary note 📝 แชร์ทีม', cat: 'res' },
-      { id: 'thu2', day: 'พฤหัส THU', time: '20:00–21:30', activity: 'ทบทวนวิชาเรียน: Prob&Stat / OS / Embedded (สลับตามงานและสอบ)', cat: 'review' },
+      { id: 'thu2', day: 'พฤหัส THU', time: '20:00–21:30', activity: 'ทบทวนวิชาเรียน: เรียงตามตัวกินเวลา — ML / Embedded / Prob&Stat (ปั่นโจทย์) / OS สลับตามงานและสอบ', cat: 'review' },
       { id: 'fri1', day: 'ศุกร์ FRI', time: '16:30–18:00', activity: 'ICPC: เรียน topic ใหม่ + โจทย์ประกอบ 1–2 ข้อ', cat: 'icpc' },
       { id: 'sat1', day: 'เสาร์ SAT', time: '09:00–12:00', activity: 'ICPC: Virtual Contest (CF Div.2 เต็มเวลา) + จดข้อที่หลุด', cat: 'icpc' },
       { id: 'sat2', day: 'เสาร์ SAT', time: '14:00–16:00', activity: 'Research: ตามเก็บงานสัปดาห์นี้ให้ครบตามแผน + sync กับทีม', cat: 'res' },
@@ -368,7 +369,7 @@ const SECTIONS = [
 /** สร้าง doc เริ่มต้น (ก้อนข้อมูลทั้งหมดของแอป) */
 export function buildSeedDoc() {
   return {
-    schemaVersion: 7, // v2=ICPC 2027+english · v3=B2 · v4=research · v5=ชั้นหนังสือ · v6=ลิงก์หนังสือ+วันที่ · v7=weekly ใหม่
+    schemaVersion: 8, // v2=ICPC+english · v3=B2 · v4=research · v5=ชั้นหนังสือ · v6=ลิงก์หนังสือ · v7=weekly ใหม่ · v8=ความยาก/เวลารายวิชา
     settings: {
       // National/Bangkok 2027 เป็นประมาณการจากรอบปีก่อน — แก้ใน UI เมื่อประกาศวันจริง
       dates: { national: '2027-09-11', bangkok: '2027-11-20' },

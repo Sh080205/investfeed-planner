@@ -51,6 +51,8 @@ export function saveDoc(doc) {
  *          (สัปดาห์ 1 = 13–19 ก.ค. 2026) · สถานะที่ติ๊กไว้คงเดิม (id ไม่เปลี่ยน)
  * v6 → v7: weekly จัดใหม่ให้เข้ากับตารางเรียนจริง + เพิ่มช่อง research 4 ช่อง/สัปดาห์
  *          (รายการที่ผู้ใช้เพิ่มเองถูกเก็บไว้ · สถานะ weekly รีเซ็ตรายสัปดาห์อยู่แล้ว)
+ * v7 → v8: ตารางเรียนเพิ่มระดับความยาก ★ / เวลาที่ต้องเผื่อ ⏱ / วิธีเรียนต่อวิชา
+ *          + thu2 ใน weekly เรียงทบทวนตามตัวกินเวลา
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -165,6 +167,26 @@ export function upgradeDoc(doc) {
       doc.sections[idx] = { ...seedWeekly, items: [...seedWeekly.items, ...customItems] };
     }
     doc.schemaVersion = 7;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 8) {
+    // ตารางเรียน: แทนด้วยเวอร์ชันมีความยาก/เวลา/วิธีเรียน — วิชาที่ผู้ใช้เพิ่มเองเก็บต่อท้าย
+    const seedClasses = seed.sections.find((s) => s.id === 'classes');
+    const idx = doc.sections.findIndex((s) => s.id === 'classes');
+    if (idx >= 0) {
+      const seedIds = new Set(seedClasses.items.map((i) => i.id));
+      const customItems = doc.sections[idx].items.filter((i) => !seedIds.has(i.id));
+      doc.sections[idx] = { ...seedClasses, items: [...seedClasses.items, ...customItems] };
+    }
+    // thu2: อัปเดตข้อความให้เรียงทบทวนตามตัวกินเวลา
+    const weekly = doc.sections.find((s) => s.id === 'weekly');
+    const thu2 = weekly?.items.find((i) => i.id === 'thu2');
+    if (thu2) {
+      const seedThu2 = seed.sections.find((s) => s.id === 'weekly').items.find((i) => i.id === 'thu2');
+      if (seedThu2) thu2.activity = seedThu2.activity;
+    }
+    doc.schemaVersion = 8;
     changed = true;
   }
 
