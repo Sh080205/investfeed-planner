@@ -34,7 +34,7 @@ body {
 
 .app {
   display: flex; align-items: flex-start; gap: 28px;
-  max-width: 1280px; margin: 0 auto; padding: 30px 24px 60px;
+  max-width: 1440px; margin: 0 auto; padding: 30px 24px 60px;
 }
 
 /* ---------- Sidebar ---------- */
@@ -148,7 +148,14 @@ a.ml-reset.back-link {
   padding: 10px 12px; margin-bottom: 14px;
 }
 
-.day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; align-items: start; }
+/* week view: คอลัมน์กว้างพออ่านสบาย (min 190px) — จอกว้างขยายเต็ม, จอแคบเลื่อนแนวนอนเฉพาะกริด */
+.day-grid {
+  display: grid; grid-template-columns: repeat(7, minmax(190px, 1fr));
+  gap: 10px; align-items: start; overflow-x: auto; padding-bottom: 6px;
+}
+.day-grid::-webkit-scrollbar { height: 8px; }
+.day-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.day-grid::-webkit-scrollbar-track { background: transparent; }
 .day-col-header {
   font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
   display: flex; justify-content: space-between; align-items: center;
