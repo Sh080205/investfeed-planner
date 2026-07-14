@@ -39,6 +39,15 @@ export default function SectionPanel({
   function dropOnCard(e, day, targetItem) {
     const p = readDragPayload(e);
     if (!p) return;
+    // ปลายทางเป็นการ์ดในถาด (day==='') → อนุญาตเฉพาะจัดลำดับการ์ด pool
+    // กันการ์ดปกติถูกเซ็ต day='' แล้วหายไป (ไม่โผล่ทั้งในวันและในถาด)
+    if (day === '') {
+      if (p.type === 'move' && p.id !== targetItem.id) {
+        const it = section.items.find((i) => i.id === p.id);
+        if (it && it.pool) onMoveItem(section, p.id, '', targetItem.id);
+      }
+      return;
+    }
     if (p.type === 'move' && p.id !== targetItem.id) onMoveItem(section, p.id, day, targetItem.id); // แทรกหน้าการ์ดเป้า
     else if (p.type === 'new') onAdd({ day });
   }

@@ -54,6 +54,7 @@ export function saveDoc(doc) {
  * v7 → v8: ตารางเรียนเพิ่มระดับความยาก ★ / เวลาที่ต้องเผื่อ ⏱ / วิธีเรียนต่อวิชา
  *          + thu2 ใน weekly เรียงทบทวนตามตัวกินเวลา
  * v8 → v9: เพิ่ม "ถาดวิชา" (pool) ใน weekly — การ์ดอ่านหนังสือรายวิชา ลากเข้า/ออกวันได้
+ * v9 → v10: กู้การ์ดปกติที่หลุดหาย (day='' แต่ไม่ใช่ pool) จากบั๊กลากลงถาด — คืนวันเดิมจาก seed
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -203,6 +204,21 @@ export function upgradeDoc(doc) {
       weekly.note = seedWeekly.note; // อัปเดตคำอธิบายให้พูดถึงถาดวิชา
     }
     doc.schemaVersion = 9;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 10) {
+    // กู้การ์ดที่หลุดหาย: ใน weekly ถ้าการ์ด "ไม่ใช่ pool" แต่ไม่มีวัน (เกิดจากบั๊กก่อนแก้
+    // ที่ลากการ์ดปกติไปวางบนการ์ดในถาด) → คืนวันเดิมจาก seed หรือลงวันจันทร์เป็น fallback
+    const seedWeekly = seed.sections.find((s) => s.id === 'weekly');
+    const seedDay = new Map(seedWeekly.items.map((i) => [i.id, i.day]));
+    const weekly = doc.sections.find((s) => s.id === 'weekly');
+    if (weekly) {
+      for (const it of weekly.items) {
+        if (!it.pool && !it.day) it.day = seedDay.get(it.id) || 'จันทร์ MON';
+      }
+    }
+    doc.schemaVersion = 10;
     changed = true;
   }
 

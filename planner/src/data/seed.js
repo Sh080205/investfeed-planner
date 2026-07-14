@@ -381,7 +381,7 @@ const SECTIONS = [
 /** สร้าง doc เริ่มต้น (ก้อนข้อมูลทั้งหมดของแอป) */
 export function buildSeedDoc() {
   return {
-    schemaVersion: 9, // ...v7=weekly ใหม่ · v8=ความยาก/เวลารายวิชา · v9=ถาดวิชา (pool) ใน weekly
+    schemaVersion: 10, // ...v8=ความยาก/เวลา · v9=ถาดวิชา (pool) · v10=กู้การ์ดที่หลุดหายจากบั๊กถาด
     settings: {
       // National/Bangkok 2027 เป็นประมาณการจากรอบปีก่อน — แก้ใน UI เมื่อประกาศวันจริง
       dates: { national: '2027-09-11', bangkok: '2027-11-20' },
