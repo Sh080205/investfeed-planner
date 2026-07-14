@@ -53,6 +53,7 @@ export function saveDoc(doc) {
  *          (รายการที่ผู้ใช้เพิ่มเองถูกเก็บไว้ · สถานะ weekly รีเซ็ตรายสัปดาห์อยู่แล้ว)
  * v7 → v8: ตารางเรียนเพิ่มระดับความยาก ★ / เวลาที่ต้องเผื่อ ⏱ / วิธีเรียนต่อวิชา
  *          + thu2 ใน weekly เรียงทบทวนตามตัวกินเวลา
+ * v8 → v9: เพิ่ม "ถาดวิชา" (pool) ใน weekly — การ์ดอ่านหนังสือรายวิชา ลากเข้า/ออกวันได้
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -187,6 +188,21 @@ export function upgradeDoc(doc) {
       if (seedThu2) thu2.activity = seedThu2.activity;
     }
     doc.schemaVersion = 8;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 9) {
+    // เพิ่มการ์ดวิชา (pool) เข้าถาดของ weekly — เก็บ placement/custom เดิมไว้ทั้งหมด
+    const seedWeekly = seed.sections.find((s) => s.id === 'weekly');
+    const weekly = doc.sections.find((s) => s.id === 'weekly');
+    if (weekly) {
+      const have = new Set(weekly.items.map((i) => i.id));
+      for (const it of seedWeekly.items.filter((i) => i.pool)) {
+        if (!have.has(it.id)) weekly.items.push({ ...it });
+      }
+      weekly.note = seedWeekly.note; // อัปเดตคำอธิบายให้พูดถึงถาดวิชา
+    }
+    doc.schemaVersion = 9;
     changed = true;
   }
 

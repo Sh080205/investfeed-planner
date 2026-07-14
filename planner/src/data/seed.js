@@ -15,8 +15,9 @@
 //   resettable true = สถานะติ๊กรีเซ็ตใหม่ทุกสัปดาห์ (weekly, fitness)
 //   checkable  false = การ์ดข้อมูลล้วน ไม่มีสถานะติ๊ก (ตารางเรียน)
 //
-// โครงสร้าง item: { id, activity, cat, day?, time?, meta?, group?, url?, track? }
+// โครงสร้าง item: { id, activity, cat, day?, time?, meta?, group?, url?, track?, pool? }
 //   track (เฉพาะ ICPC): '' = แผนหลัก | 'qualified' = หลังแข่งถ้าติดรอบ | 'notq' = ถ้าไม่ติด
+//   pool  (เฉพาะ weekly): true = การ์ดวิชาใน "ถาดวิชา" · day:'' = ยังอยู่ในถาด, day:'จันทร์ MON' = จองไว้แล้ว
 
 // path ไฟล์หนังสือบนชั้น (server เสิร์ฟที่ /books/...) — ใช้ลิงก์จากแผนอ่านในแท็บ research
 // เปิดได้เมื่อรันผ่าน InvestFeed server เท่านั้น (เหมือนแท็บ "หนังสือ")
@@ -29,6 +30,7 @@ const BOOK = {
   mlCookbook: '/books/Machine%20learning/machinelearningwithpythoncookbook_secondedition_V5.pdf',
   dsml: '/books/Machine%20learning/DSML.pdf',
   walpole: '/books/Prob%20%26%20stat/503%20STAT%20-%20Text%20Book.pdf',
+  esp32: '/books/Embedded/kolban-ESP32.pdf',
 };
 
 const SECTIONS = [
@@ -57,7 +59,7 @@ const SECTIONS = [
   // (~7 ชม. ตามแผน 18 สัปดาห์) · ICPC 4 ช่อง (เฟส FOUNDATION) · ENG 3 ช่องสั้น
   {
     id: 'weekly', tab: 'weekly', layout: 'days', resettable: true, checkable: true,
-    note: 'ตารางประจำสัปดาห์ · รีเซ็ตอัตโนมัติ · ลากการ์ดย้ายวัน/สลับลำดับได้ · ลาก "✥ กล่องข้อความ" ไปวางที่วันเพื่อเพิ่มงานวันนั้น',
+    note: 'ตารางประจำสัปดาห์ · รีเซ็ตอัตโนมัติ · ลากการ์ดย้ายวัน/สลับลำดับได้ · 📚 ถาดวิชาด้านล่าง: ลากการ์ดวิชาขึ้นไปวางในวันเพื่อจองเวลาอ่าน ลากกลับลงถาดเพื่อเก็บ',
     items: [
       { id: 'mon1', day: 'จันทร์ MON', time: '20:00–21:30', activity: 'ICPC: โจทย์เดี่ยว 2 ข้อ ตาม topic เฟสปัจจุบัน (หลัง TA เลิก)', cat: 'icpc' },
       { id: 'tue1', day: 'อังคาร TUE', time: '20:00–21:00', activity: 'Research: อ่านหนังสือตามแผนสัปดาห์นี้ + จดโน้ต (ดูแท็บ research)', cat: 'res' },
@@ -74,6 +76,16 @@ const SECTIONS = [
       { id: 'eng-tue', day: 'อังคาร TUE', time: '21:00–21:20', activity: 'ENG: อ่านโจทย์ EN 1 ข้อ + สรุป spec เป็นไทย 3 บรรทัด + เก็บศัพท์ลง Anki', cat: 'eng' },
       { id: 'eng-thu', day: 'พฤหัส THU', time: '21:30–21:50', activity: 'ENG: อ่านโจทย์ EN จับเวลา 1 ข้อ + ทบทวน Anki ศัพท์โจทย์', cat: 'eng' },
       { id: 'eng-sun', day: 'อาทิตย์ SUN', time: '20:00–20:30', activity: 'ENG: อ่าน editorial ภาษาอังกฤษของโจทย์สัปดาห์นี้ + จดวลีที่เจอบ่อย', cat: 'eng' },
+
+      // ---- ถาดวิชา (pool) — อ่านหนังสือนอกเวลาเรียน 1 การ์ด/วิชา จาก "ตารางเรียน" ----
+      // day:'' = ยังเก็บอยู่ในถาด · ลากขึ้นไปวางในวันเพื่อจองเวลา · เป้าชั่วโมงอิงความยากในแท็บตารางเรียน
+      // การ์ดที่มี url จะกดปุ่ม "เปิด ↗" อ่านหนังสือจากชั้นได้เลย
+      { id: 'rd-ml', pool: true, day: '', activity: '📖 อ่าน/ทบทวน Machine Learning (462) — เป้า 6–8 ชม./สัปดาห์', cat: 'review' },
+      { id: 'rd-embed', pool: true, day: '', activity: '📖 อ่าน/ทบทวน Embedded (323/324) — เป้า 5–7 ชม./สัปดาห์', cat: 'review', url: BOOK.esp32 },
+      { id: 'rd-prob', pool: true, day: '', activity: '📖 อ่าน/ปั่นโจทย์ Prob & Stat (312) — เป้า 4–5 ชม./สัปดาห์', cat: 'review', url: BOOK.walpole },
+      { id: 'rd-os', pool: true, day: '', activity: '📖 อ่าน/ทบทวน Operating Systems (332) — เป้า 4–5 ชม./สัปดาห์', cat: 'review', url: BOOK.silberschatz },
+      { id: 'rd-ds', pool: true, day: '', activity: '📖 ฝึก Intro to Data Science (351) — เป้า 2–3 ชม./สัปดาห์', cat: 'review', url: BOOK.dataDriven },
+      { id: 'rd-itlab', pool: true, day: '', activity: '📖 ฝึกมือ IT Integration Lab (342) — เป้า 2–3 ชม./สัปดาห์', cat: 'review' },
     ],
   },
 
@@ -369,7 +381,7 @@ const SECTIONS = [
 /** สร้าง doc เริ่มต้น (ก้อนข้อมูลทั้งหมดของแอป) */
 export function buildSeedDoc() {
   return {
-    schemaVersion: 8, // v2=ICPC+english · v3=B2 · v4=research · v5=ชั้นหนังสือ · v6=ลิงก์หนังสือ · v7=weekly ใหม่ · v8=ความยาก/เวลารายวิชา
+    schemaVersion: 9, // ...v7=weekly ใหม่ · v8=ความยาก/เวลารายวิชา · v9=ถาดวิชา (pool) ใน weekly
     settings: {
       // National/Bangkok 2027 เป็นประมาณการจากรอบปีก่อน — แก้ใน UI เมื่อประกาศวันจริง
       dates: { national: '2027-09-11', bangkok: '2027-11-20' },

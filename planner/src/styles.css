@@ -257,6 +257,27 @@ a.book-card:hover .ml-activity { color: var(--running); }
 }
 .drag-chip:active { cursor: grabbing; }
 
+/* ---------- ถาดวิชา (tray ด้านล่าง weekly) ---------- */
+.tray {
+  margin-top: 20px; border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface); padding: 12px 14px;
+}
+.tray.drag-over { outline: 1.5px dashed var(--running); outline-offset: 3px; }
+.tray-head {
+  font-size: 11px; color: var(--text-muted); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.tray-cards { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
+.tray-cards .ml-card { width: 250px; flex-shrink: 0; margin-bottom: 0; cursor: grab; }
+.tray-cards .ml-card:active { cursor: grabbing; }
+.tray-cards::-webkit-scrollbar { height: 8px; }
+.tray-cards::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.tray-cards::-webkit-scrollbar-track { background: transparent; }
+.tray-empty {
+  color: var(--text-muted); font-size: 11px; padding: 14px; width: 100%; text-align: center;
+  border: 1px dashed var(--border); border-radius: 8px;
+}
+
 .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .card-link {
   font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; text-decoration: none;

@@ -42,6 +42,14 @@ export default function SectionPanel({
     if (p.type === 'move' && p.id !== targetItem.id) onMoveItem(section, p.id, day, targetItem.id); // แทรกหน้าการ์ดเป้า
     else if (p.type === 'new') onAdd({ day });
   }
+  // วางลง "ถาดวิชา" = พักการ์ด (day = '') — รับเฉพาะการ์ด pool เท่านั้น กันการ์ดปกติหาย
+  function dropOnTray(e) {
+    e.preventDefault();
+    const p = readDragPayload(e);
+    if (!p || p.type !== 'move') return;
+    const it = section.items.find((i) => i.id === p.id);
+    if (it && it.pool) onMoveItem(section, p.id, '', null);
+  }
 
   const card = (item, day) => (
     <ItemCard
@@ -57,30 +65,53 @@ export default function SectionPanel({
     />
   );
 
-  /* ---------- layout 'days': คอลัมน์ จ–อา (โชว์ครบทุกวันเพื่อเป็นเป้าวาง) ---------- */
+  /* ---------- layout 'days': คอลัมน์ จ–อา (โชว์ครบทุกวันเพื่อเป็นเป้าวาง) + ถาดวิชา ---------- */
   function renderDays() {
+    // การ์ด pool ที่ยังไม่จองวัน = อยู่ในถาด · ที่จองวันแล้วจะไปโผล่ในคอลัมน์วันตามปกติ
+    const poolItems = items.filter((i) => i.pool);
+    const parked = poolItems.filter((i) => !i.day);
     return (
-      <div className="day-grid">
-        {DAY_ORDER.map((day) => {
-          const dayItems = items.filter((i) => i.day === day);
-          return (
-            <div
-              className="day-col"
-              key={day}
-              onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }}
-              onDragLeave={(e) => e.currentTarget.classList.remove('drag-over')}
-              onDrop={(e) => { e.currentTarget.classList.remove('drag-over'); dropOnDay(e, day); }}
-            >
-              <div className="day-col-header mono">
-                <span>{day}</span>
-                <button className="icon-btn" title={'เพิ่มรายการวัน' + day} onClick={() => onAdd({ day })}>+</button>
+      <>
+        <div className="day-grid">
+          {DAY_ORDER.map((day) => {
+            const dayItems = items.filter((i) => i.day === day);
+            return (
+              <div
+                className="day-col"
+                key={day}
+                onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }}
+                onDragLeave={(e) => e.currentTarget.classList.remove('drag-over')}
+                onDrop={(e) => { e.currentTarget.classList.remove('drag-over'); dropOnDay(e, day); }}
+              >
+                <div className="day-col-header mono">
+                  <span>{day}</span>
+                  <button className="icon-btn" title={'เพิ่มรายการวัน' + day} onClick={() => onAdd({ day })}>+</button>
+                </div>
+                {dayItems.map((item) => card(item, day))}
+                {!dayItems.length && <div className="day-empty">ลากการ์ดมาวางที่นี่</div>}
               </div>
-              {dayItems.map((item) => card(item, day))}
-              {!dayItems.length && <div className="day-empty">ลากการ์ดมาวางที่นี่</div>}
+            );
+          })}
+        </div>
+
+        {poolItems.length > 0 && (
+          <div
+            className="tray"
+            onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }}
+            onDragLeave={(e) => e.currentTarget.classList.remove('drag-over')}
+            onDrop={(e) => { e.currentTarget.classList.remove('drag-over'); dropOnTray(e); }}
+          >
+            <div className="tray-head mono">
+              📚 ถาดวิชา — ลากขึ้นไปวางในวันเพื่อจองเวลาอ่าน · ลากกลับมาที่นี่เพื่อเก็บ
             </div>
-          );
-        })}
-      </div>
+            <div className="tray-cards">
+              {parked.length === 0
+                ? <div className="tray-empty">จองครบทุกวิชาแล้ว — ลากการ์ดจากวันกลับมาที่นี่เพื่อเก็บ</div>
+                : parked.map((item) => card(item, ''))}
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 

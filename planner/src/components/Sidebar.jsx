@@ -7,8 +7,10 @@ import CountdownCard from './CountdownCard.jsx';
 function sectionProgress(doc, section, weekKey) {
   if (section.checkable === false) return null;
   const map = doc.statuses[statusKey(section, weekKey)] || {};
-  const total = section.items.length;
-  const done = section.items.filter((i) => map[i.id] === 'done').length;
+  // การ์ดวิชาที่ยังพักอยู่ในถาด (pool && ยังไม่จองวัน) ไม่นับเป็นงานของสัปดาห์นี้
+  const counted = section.items.filter((i) => !(i.pool && !i.day));
+  const total = counted.length;
+  const done = counted.filter((i) => map[i.id] === 'done').length;
   return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
 }
 
