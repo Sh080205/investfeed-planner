@@ -17,7 +17,8 @@
 //
 // โครงสร้าง item: { id, activity, cat, day?, time?, meta?, group?, url?, track?, pool? }
 //   track (เฉพาะ ICPC): '' = แผนหลัก | 'qualified' = หลังแข่งถ้าติดรอบ | 'notq' = ถ้าไม่ติด
-//   pool  (เฉพาะ weekly): true = การ์ดวิชาใน "ถาดวิชา" · day:'' = ยังอยู่ในถาด, day:'จันทร์ MON' = จองไว้แล้ว
+//   pool  (เฉพาะ weekly): true = การ์ดในถาด · day:'' = ยังอยู่ในถาด, day:'จันทร์ MON' = จองไว้แล้ว
+//   kind  (เฉพาะการ์ด pool): ไม่ระบุ = ถาดวิชา · 'book' = ถาดหนังสือ (สองถาดแยกกัน ไม่ปนกัน)
 
 // path ไฟล์หนังสือบนชั้น (server เสิร์ฟที่ /books/...) — ใช้ลิงก์จากแผนอ่านในแท็บ research
 // เปิดได้เมื่อรันผ่าน InvestFeed server เท่านั้น (เหมือนแท็บ "หนังสือ")
@@ -31,6 +32,7 @@ const BOOK = {
   dsml: '/books/Machine%20learning/DSML.pdf',
   walpole: '/books/Prob%20%26%20stat/503%20STAT%20-%20Text%20Book.pdf',
   esp32: '/books/Embedded/kolban-ESP32.pdf',
+  ostep: '/books/OS/Remzi%20Arpaci-Dusseau,%20Andrea%20Arpaci-Dusseau%20-%20Operating%20Systems_%20Three%20Easy%20Pieces%20(2023,%20Arpaci-Dusseau%20Books).pdf',
 };
 
 const SECTIONS = [
@@ -59,7 +61,7 @@ const SECTIONS = [
   // (~7 ชม. ตามแผน 18 สัปดาห์) · ICPC 4 ช่อง (เฟส FOUNDATION) · ENG 3 ช่องสั้น
   {
     id: 'weekly', tab: 'weekly', layout: 'days', resettable: true, checkable: true,
-    note: 'ตารางประจำสัปดาห์ · รีเซ็ตอัตโนมัติ · ลากการ์ดย้ายวัน/สลับลำดับได้ · 📚 ถาดวิชาด้านล่าง: ลากการ์ดวิชาขึ้นไปวางในวันเพื่อจองเวลาอ่าน ลากกลับลงถาดเพื่อเก็บ',
+    note: 'ตารางประจำสัปดาห์ · รีเซ็ตอัตโนมัติ · ลากการ์ดย้ายวัน/สลับลำดับได้ · 📚 ถาดวิชา + 📕 ถาดหนังสือด้านล่าง (สองถาดแยกกัน): ลากขึ้นไปวางในวันเพื่อจองเวลา ลากกลับลงถาดเพื่อเก็บ',
     items: [
       { id: 'mon1', day: 'จันทร์ MON', time: '20:00–21:30', activity: 'ICPC: โจทย์เดี่ยว 2 ข้อ ตาม topic เฟสปัจจุบัน (หลัง TA เลิก)', cat: 'icpc' },
       { id: 'tue1', day: 'อังคาร TUE', time: '20:00–21:00', activity: 'Research: อ่านหนังสือตามแผนสัปดาห์นี้ + จดโน้ต (ดูแท็บ research)', cat: 'res' },
@@ -86,6 +88,19 @@ const SECTIONS = [
       { id: 'rd-os', pool: true, day: '', activity: '📖 อ่าน/ทบทวน Operating Systems (332) — เป้า 4–5 ชม./สัปดาห์', cat: 'review', url: BOOK.silberschatz },
       { id: 'rd-ds', pool: true, day: '', activity: '📖 ฝึก Intro to Data Science (351) — เป้า 2–3 ชม./สัปดาห์', cat: 'review', url: BOOK.dataDriven },
       { id: 'rd-itlab', pool: true, day: '', activity: '📖 ฝึกมือ IT Integration Lab (342) — เป้า 2–3 ชม./สัปดาห์', cat: 'review' },
+
+      // ---- ถาดหนังสือ (pool, kind:'book') — ลากหนังสือไปวางในวันเพื่อจองเวลาอ่านเล่มนั้น ----
+      // แยกจากถาดวิชาชัดเจน · การ์ดมี url ไปไฟล์บนชั้น กดปุ่ม "เปิด ↗" อ่านได้เลย
+      { id: 'bk-mlcook', pool: true, kind: 'book', day: '', activity: '📕 ML with Python Cookbook — recipe โค้ด ML/DS', cat: 'book', url: BOOK.mlCookbook },
+      { id: 'bk-datadriven', pool: true, kind: 'book', day: '', activity: '📕 Data-Driven — time series + EDA (DS + โครงงาน)', cat: 'book', url: BOOK.dataDriven },
+      { id: 'bk-dsml', pool: true, kind: 'book', day: '', activity: '📕 Data Science & ML (Kroese) — ทฤษฎี ML', cat: 'book', url: BOOK.dsml },
+      { id: 'bk-silber', pool: true, kind: 'book', day: '', activity: '📕 Operating System Concepts (Silberschatz) — วิชา OS', cat: 'book', url: BOOK.silberschatz },
+      { id: 'bk-tanenbaum', pool: true, kind: 'book', day: '', activity: '📕 Modern Operating Systems (Tanenbaum) — วิชา OS', cat: 'book', url: BOOK.tanenbaum },
+      { id: 'bk-ostep', pool: true, kind: 'book', day: '', activity: '📕 OSTEP — Operating Systems: Three Easy Pieces', cat: 'book', url: BOOK.ostep },
+      { id: 'bk-walpole', pool: true, kind: 'book', day: '', activity: '📕 503 STAT (Walpole) — วิชา Prob & Stat', cat: 'book', url: BOOK.walpole },
+      { id: 'bk-esp32', pool: true, kind: 'book', day: '', activity: '📕 ESP32 (kolban) — วิชา Embedded', cat: 'book', url: BOOK.esp32 },
+      { id: 'bk-cod', pool: true, kind: 'book', day: '', activity: '📕 Computer Organization & Design (COD) — โครงงาน HW', cat: 'book', url: BOOK.cod },
+      { id: 'bk-hp', pool: true, kind: 'book', day: '', activity: '📕 Computer Architecture (H&P) — โครงงาน HW', cat: 'book', url: BOOK.hp },
     ],
   },
 
@@ -381,7 +396,7 @@ const SECTIONS = [
 /** สร้าง doc เริ่มต้น (ก้อนข้อมูลทั้งหมดของแอป) */
 export function buildSeedDoc() {
   return {
-    schemaVersion: 10, // ...v8=ความยาก/เวลา · v9=ถาดวิชา (pool) · v10=กู้การ์ดที่หลุดหายจากบั๊กถาด
+    schemaVersion: 11, // ...v9=ถาดวิชา · v10=กู้การ์ดหลุดหาย · v11=ถาดหนังสือ (pool kind:book) แยกจากถาดวิชา
     settings: {
       // National/Bangkok 2027 เป็นประมาณการจากรอบปีก่อน — แก้ใน UI เมื่อประกาศวันจริง
       dates: { national: '2027-09-11', bangkok: '2027-11-20' },

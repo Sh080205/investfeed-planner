@@ -36,28 +36,33 @@ export default function SectionPanel({
     if (p.type === 'move') onMoveItem(section, p.id, day, null); // วางบนพื้นคอลัมน์ = ต่อท้ายวันนั้น
     else if (p.type === 'new') onAdd({ day }); // กล่องข้อความใหม่ → เปิดฟอร์มโดยเลือกวันให้แล้ว
   }
+  // ชนิดถาดของการ์ด pool: null = ไม่ใช่ pool · 'book' = ถาดหนังสือ · 'subject' = ถาดวิชา
+  const poolKind = (it) => (it && it.pool ? (it.kind === 'book' ? 'book' : 'subject') : null);
+
   function dropOnCard(e, day, targetItem) {
     const p = readDragPayload(e);
     if (!p) return;
-    // ปลายทางเป็นการ์ดในถาด (day==='') → อนุญาตเฉพาะจัดลำดับการ์ด pool
-    // กันการ์ดปกติถูกเซ็ต day='' แล้วหายไป (ไม่โผล่ทั้งในวันและในถาด)
+    // ปลายทางเป็นการ์ดในถาด (day==='') → อนุญาตเฉพาะจัดลำดับ pool "ชนิดเดียวกัน"
+    // กันการ์ดปกติหาย + กันเอาการ์ดวิชาไปปนถาดหนังสือ (และกลับกัน)
     if (day === '') {
       if (p.type === 'move' && p.id !== targetItem.id) {
         const it = section.items.find((i) => i.id === p.id);
-        if (it && it.pool) onMoveItem(section, p.id, '', targetItem.id);
+        if (it && poolKind(it) && poolKind(it) === poolKind(targetItem)) {
+          onMoveItem(section, p.id, '', targetItem.id);
+        }
       }
       return;
     }
     if (p.type === 'move' && p.id !== targetItem.id) onMoveItem(section, p.id, day, targetItem.id); // แทรกหน้าการ์ดเป้า
     else if (p.type === 'new') onAdd({ day });
   }
-  // วางลง "ถาดวิชา" = พักการ์ด (day = '') — รับเฉพาะการ์ด pool เท่านั้น กันการ์ดปกติหาย
-  function dropOnTray(e) {
+  // วางลงถาด = พักการ์ด (day='') — รับเฉพาะการ์ด pool "ชนิดตรงกับถาด" กันปนกันและกันการ์ดปกติหาย
+  function dropOnTray(e, kind) {
     e.preventDefault();
     const p = readDragPayload(e);
     if (!p || p.type !== 'move') return;
     const it = section.items.find((i) => i.id === p.id);
-    if (it && it.pool) onMoveItem(section, p.id, '', null);
+    if (it && poolKind(it) === kind) onMoveItem(section, p.id, '', null);
   }
 
   const card = (item, day) => (
@@ -74,11 +79,31 @@ export default function SectionPanel({
     />
   );
 
-  /* ---------- layout 'days': คอลัมน์ จ–อา (โชว์ครบทุกวันเพื่อเป็นเป้าวาง) + ถาดวิชา ---------- */
+  /* ---------- ถาด (tray) 1 อัน — ใช้ทั้งถาดวิชาและถาดหนังสือ แยกกันด้วย kind ---------- */
+  function renderTray(kind, label, emptyText, extraClass) {
+    const parked = items.filter((i) => i.pool && poolKind(i) === kind && !i.day);
+    return (
+      <div
+        className={'tray ' + extraClass}
+        onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }}
+        onDragLeave={(e) => e.currentTarget.classList.remove('drag-over')}
+        onDrop={(e) => { e.currentTarget.classList.remove('drag-over'); dropOnTray(e, kind); }}
+      >
+        <div className="tray-head mono">{label}</div>
+        <div className="tray-cards">
+          {parked.length === 0
+            ? <div className="tray-empty">{emptyText}</div>
+            : parked.map((item) => card(item, ''))}
+        </div>
+      </div>
+    );
+  }
+
+  /* ---------- layout 'days': คอลัมน์ จ–อา (โชว์ครบทุกวันเพื่อเป็นเป้าวาง) + ถาด ---------- */
   function renderDays() {
     // การ์ด pool ที่ยังไม่จองวัน = อยู่ในถาด · ที่จองวันแล้วจะไปโผล่ในคอลัมน์วันตามปกติ
-    const poolItems = items.filter((i) => i.pool);
-    const parked = poolItems.filter((i) => !i.day);
+    const hasSubjectPool = items.some((i) => poolKind(i) === 'subject');
+    const hasBookPool = items.some((i) => poolKind(i) === 'book');
     return (
       <>
         <div className="day-grid">
@@ -103,22 +128,17 @@ export default function SectionPanel({
           })}
         </div>
 
-        {poolItems.length > 0 && (
-          <div
-            className="tray"
-            onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }}
-            onDragLeave={(e) => e.currentTarget.classList.remove('drag-over')}
-            onDrop={(e) => { e.currentTarget.classList.remove('drag-over'); dropOnTray(e); }}
-          >
-            <div className="tray-head mono">
-              📚 ถาดวิชา — ลากขึ้นไปวางในวันเพื่อจองเวลาอ่าน · ลากกลับมาที่นี่เพื่อเก็บ
-            </div>
-            <div className="tray-cards">
-              {parked.length === 0
-                ? <div className="tray-empty">จองครบทุกวิชาแล้ว — ลากการ์ดจากวันกลับมาที่นี่เพื่อเก็บ</div>
-                : parked.map((item) => card(item, ''))}
-            </div>
-          </div>
+        {hasSubjectPool && renderTray(
+          'subject',
+          '📚 ถาดวิชา — ลากขึ้นไปวางในวันเพื่อจองเวลาอ่าน · ลากกลับมาที่นี่เพื่อเก็บ',
+          'จองครบทุกวิชาแล้ว — ลากการ์ดจากวันกลับมาที่นี่เพื่อเก็บ',
+          'subject-tray'
+        )}
+        {hasBookPool && renderTray(
+          'book',
+          '📕 ถาดหนังสือ — ลากเล่มที่อยากอ่านขึ้นไปวางในวัน · ลากกลับมาที่นี่เพื่อเก็บ (แยกจากถาดวิชา)',
+          'จองครบทุกเล่มแล้ว — ลากการ์ดจากวันกลับมาที่นี่เพื่อเก็บ',
+          'book-tray'
         )}
       </>
     );

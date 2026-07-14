@@ -55,6 +55,7 @@ export function saveDoc(doc) {
  *          + thu2 ใน weekly เรียงทบทวนตามตัวกินเวลา
  * v8 → v9: เพิ่ม "ถาดวิชา" (pool) ใน weekly — การ์ดอ่านหนังสือรายวิชา ลากเข้า/ออกวันได้
  * v9 → v10: กู้การ์ดปกติที่หลุดหาย (day='' แต่ไม่ใช่ pool) จากบั๊กลากลงถาด — คืนวันเดิมจาก seed
+ * v10 → v11: เพิ่ม "ถาดหนังสือ" (pool kind:'book') ใน weekly แยกจากถาดวิชา
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -219,6 +220,21 @@ export function upgradeDoc(doc) {
       }
     }
     doc.schemaVersion = 10;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 11) {
+    // เพิ่มการ์ดหนังสือ (pool kind:'book') เข้าถาดหนังสือของ weekly — เก็บ placement/custom เดิมไว้
+    const seedWeekly = seed.sections.find((s) => s.id === 'weekly');
+    const weekly = doc.sections.find((s) => s.id === 'weekly');
+    if (weekly) {
+      const have = new Set(weekly.items.map((i) => i.id));
+      for (const it of seedWeekly.items.filter((i) => i.kind === 'book')) {
+        if (!have.has(it.id)) weekly.items.push({ ...it });
+      }
+      weekly.note = seedWeekly.note; // อัปเดตคำอธิบายให้พูดถึงถาดหนังสือ
+    }
+    doc.schemaVersion = 11;
     changed = true;
   }
 
