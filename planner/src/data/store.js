@@ -56,6 +56,9 @@ export function saveDoc(doc) {
  * v8 → v9: เพิ่ม "ถาดวิชา" (pool) ใน weekly — การ์ดอ่านหนังสือรายวิชา ลากเข้า/ออกวันได้
  * v9 → v10: กู้การ์ดปกติที่หลุดหาย (day='' แต่ไม่ใช่ pool) จากบั๊กลากลงถาด — คืนวันเดิมจาก seed
  * v10 → v11: เพิ่ม "ถาดหนังสือ" (pool kind:'book') ใน weekly แยกจากถาดวิชา
+ * v11 → v12: บันทึกผลตกรอบ regional ก.ค. 2026 (2/5 — อ่านโจทย์ไม่ผ่าน)
+ *            → เพิ่ม Postmortem (pm*) หัวลิสต์ icpc + กลุ่มแก้อาการ (enx*) หัวลิสต์ english
+ *            + กติกาห้ามดู I/O ใน eng-tue + ช่อง eng-sat อ่านโจทย์หลัง virtual
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -235,6 +238,48 @@ export function upgradeDoc(doc) {
       weekly.note = seedWeekly.note; // อัปเดตคำอธิบายให้พูดถึงถาดหนังสือ
     }
     doc.schemaVersion = 11;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 12) {
+    const seedOf = (id) => seed.sections.find((s) => s.id === id);
+
+    // 1) icpc: แทรกกลุ่ม Postmortem (pm*) ไว้หัวลิสต์ + note สถานะจริง
+    const icpc = doc.sections.find((s) => s.id === 'icpc');
+    if (icpc) {
+      const have = new Set(icpc.items.map((i) => i.id));
+      const pmItems = seedOf('icpc').items.filter((i) => i.id.startsWith('pm') && !have.has(i.id));
+      icpc.items.splice(0, 0, ...pmItems.map((i) => ({ ...i })));
+      icpc.note = seedOf('icpc').note;
+    }
+
+    // 2) english: แทรกกลุ่มแก้อาการ (enx*) ไว้หัวลิสต์ + note
+    const english = doc.sections.find((s) => s.id === 'english');
+    if (english) {
+      const have = new Set(english.items.map((i) => i.id));
+      const enxItems = seedOf('english').items.filter((i) => i.id.startsWith('enx') && !have.has(i.id));
+      english.items.splice(0, 0, ...enxItems.map((i) => ({ ...i })));
+      english.note = seedOf('english').note;
+    }
+
+    // 3) weekly: กติกาห้ามดู I/O ใน eng-tue + เพิ่ม eng-sat (แทรกก่อน sat2 ให้เรียงตามเวลา)
+    const weekly = doc.sections.find((s) => s.id === 'weekly');
+    if (weekly) {
+      const sw = seedOf('weekly');
+      const tue = weekly.items.find((i) => i.id === 'eng-tue');
+      const seedTue = sw.items.find((i) => i.id === 'eng-tue');
+      if (tue && seedTue) tue.activity = seedTue.activity;
+      if (!weekly.items.some((i) => i.id === 'eng-sat')) {
+        const seedSat = sw.items.find((i) => i.id === 'eng-sat');
+        if (seedSat) {
+          const at = weekly.items.findIndex((i) => i.id === 'sat2');
+          if (at >= 0) weekly.items.splice(at, 0, { ...seedSat });
+          else weekly.items.push({ ...seedSat });
+        }
+      }
+    }
+
+    doc.schemaVersion = 12;
     changed = true;
   }
 
