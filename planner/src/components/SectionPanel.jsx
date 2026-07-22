@@ -3,6 +3,7 @@ import { DAY_ORDER } from '../data/constants.js';
 import { statusKey } from '../data/store.js';
 import ItemCard from './ItemCard.jsx';
 import BookShelf from './BookShelf.jsx';
+import FinanceTracker from './FinanceTracker.jsx';
 
 // อ่าน payload ของการลาก — { type: 'move', id } = ย้ายการ์ดเดิม · { type: 'new' } = กล่องข้อความใหม่
 function readDragPayload(e) {
@@ -17,6 +18,7 @@ export default function SectionPanel({
   section, doc, weekKey,
   onCycle, onAdd, onEdit, onDelete, onResetWeek, onMoveItem,
   icpcView, onIcpcView,
+  finance, onAddTx, onDeleteTx,
 }) {
   const stMap = doc.statuses[statusKey(section, weekKey)] || {};
   const stateOf = (item) => stMap[item.id] || 'pending';
@@ -206,15 +208,16 @@ export default function SectionPanel({
               ✥ กล่องข้อความ
             </span>
           )}
-          {/* ชั้นหนังสือเป็นรายการสดจาก server — ไม่มีการเพิ่ม/แก้รายการเอง */}
-          {section.layout !== 'books' && (
+          {/* books/money มีฟอร์ม/รายการของตัวเอง ไม่ใช้ปุ่มเพิ่มการ์ดทั่วไป */}
+          {section.layout !== 'books' && section.layout !== 'money' && (
             <button className="ml-reset add" onClick={() => onAdd({})}>+ เพิ่มรายการ</button>
           )}
         </span>
       </div>
 
       <div id="mlList">
-        {section.layout === 'books' ? <BookShelf />
+        {section.layout === 'money' ? <FinanceTracker finance={finance} onAddTx={onAddTx} onDeleteTx={onDeleteTx} />
+          : section.layout === 'books' ? <BookShelf />
           : section.layout === 'days' ? renderDays()
           : renderGroups()}
       </div>

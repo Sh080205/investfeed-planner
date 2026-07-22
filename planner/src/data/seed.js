@@ -393,7 +393,16 @@ const SECTIONS = [
     ],
   },
 
-  // ---------- 12) Fitness (เดิม — รีเซ็ตรายสัปดาห์) ----------
+  // ---------- 12) Finance (ใหม่ — รายรับรายจ่าย layout พิเศษ 'money') ----------
+  // ข้อมูลธุรกรรมไม่ได้อยู่ใน items แต่อยู่ที่ doc.finance.transactions (ดู FinanceTracker.jsx)
+  // layout 'money' ให้ SectionPanel เรนเดอร์ FinanceTracker แทนการ์ดปกติ
+  {
+    id: 'finance', tab: 'เงิน', layout: 'money', resettable: false, checkable: false,
+    note: 'รายรับรายจ่าย · คำนวณเงินที่ใช้ได้ + เฉลี่ยต่อวัน · เลือกดูรายเดือน · ข้อมูลรวมใน Export/Import JSON',
+    items: [],
+  },
+
+  // ---------- 13) Fitness (เดิม — รีเซ็ตรายสัปดาห์) ----------
   {
     id: 'fitness', tab: 'fitness', layout: 'days', resettable: true, checkable: true,
     note: 'ออกกำลังก่อนเริ่มวันเรียน 30–60 นาที/วัน',
@@ -412,7 +421,7 @@ const SECTIONS = [
 /** สร้าง doc เริ่มต้น (ก้อนข้อมูลทั้งหมดของแอป) */
 export function buildSeedDoc() {
   return {
-    schemaVersion: 12, // ...v10=กู้การ์ดหลุด · v11=ถาดหนังสือ · v12=postmortem ตกรอบ regional + แก้อาการอ่านโจทย์
+    schemaVersion: 13, // ...v11=ถาดหนังสือ · v12=postmortem regional · v13=รายรับรายจ่าย (finance)
     settings: {
       // National/Bangkok 2027 เป็นประมาณการจากรอบปีก่อน — แก้ใน UI เมื่อประกาศวันจริง
       dates: { national: '2027-09-11', bangkok: '2027-11-20' },
@@ -422,5 +431,6 @@ export function buildSeedDoc() {
     migrationNoticeDismissed: false,
     sections: JSON.parse(JSON.stringify(SECTIONS)),
     statuses: {}, // { [sectionId หรือ 'sectionId:week']: { [itemId]: 'pending'|'running'|'done' } }
+    finance: { transactions: [] }, // รายรับรายจ่าย: { id, type:'income'|'expense', amount, category, note, date }
   };
 }

@@ -59,6 +59,7 @@ export function saveDoc(doc) {
  * v11 → v12: บันทึกผลตกรอบ regional ก.ค. 2026 (2/5 — อ่านโจทย์ไม่ผ่าน)
  *            → เพิ่ม Postmortem (pm*) หัวลิสต์ icpc + กลุ่มแก้อาการ (enx*) หัวลิสต์ english
  *            + กติกาห้ามดู I/O ใน eng-tue + ช่อง eng-sat อ่านโจทย์หลัง virtual
+ * v12 → v13: เพิ่มแท็บ "เงิน" (finance) รายรับรายจ่าย + doc.finance.transactions
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -282,6 +283,22 @@ export function upgradeDoc(doc) {
     doc.schemaVersion = 12;
     changed = true;
   }
+
+  if (doc.schemaVersion < 13) {
+    // เพิ่มแท็บ finance ก่อน fitness (ถ้ายังไม่มี) + เตรียมที่เก็บธุรกรรม
+    if (!doc.sections.some((s) => s.id === 'finance')) {
+      const financeSeed = seed.sections.find((s) => s.id === 'finance');
+      const at = doc.sections.findIndex((s) => s.id === 'fitness');
+      if (at >= 0) doc.sections.splice(at, 0, financeSeed);
+      else doc.sections.push(financeSeed);
+    }
+    if (!doc.finance) doc.finance = { transactions: [] };
+    doc.schemaVersion = 13;
+    changed = true;
+  }
+
+  // กันเหนียว: doc เก่าที่อัปเกรดครบแล้วแต่ยังไม่มี finance (เช่น import ไฟล์เก่า)
+  if (!doc.finance) { doc.finance = { transactions: [] }; changed = true; }
 
   return changed;
 }

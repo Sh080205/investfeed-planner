@@ -62,6 +62,19 @@ export default function App() {
     update((d) => { delete d.statuses[statusKey(section, weekKey)]; });
   }
 
+  /* ---------- Finance (รายรับรายจ่าย) ---------- */
+  function addTx(tx) {
+    update((d) => {
+      if (!d.finance) d.finance = { transactions: [] };
+      d.finance.transactions.push({ id: 'tx' + Date.now().toString(36), ...tx });
+    });
+  }
+  function deleteTx(id) {
+    update((d) => {
+      if (d.finance) d.finance.transactions = d.finance.transactions.filter((t) => t.id !== id);
+    });
+  }
+
   /* ---------- ลากการ์ดย้ายวัน/จัดลำดับ (layout รายวัน) ----------
      beforeId = วางแทรกหน้าการ์ดไหน (null = ต่อท้ายวันนั้น) */
   function moveItem(section, itemId, day, beforeId) {
@@ -134,6 +147,9 @@ export default function App() {
           onMoveItem={moveItem}
           icpcView={doc.settings.icpcView || 'all'}
           onIcpcView={(v) => update((d) => { d.settings.icpcView = v; })}
+          finance={doc.finance || { transactions: [] }}
+          onAddTx={addTx}
+          onDeleteTx={deleteTx}
         />
       </main>
 
