@@ -55,30 +55,28 @@ const SECTIONS = [
     ],
   },
 
-  // ---------- 2) ตารางซ้อมประจำสัปดาห์ (v7 — จัดใหม่ให้เข้ากับตารางเรียนจริง + โครงงาน research) ----------
-  // ช่วงเวลาเลี่ยงคาบเรียน (ดูแท็บ "ตารางเรียน"): จ เลิก TA 19:30 · อ เลิก OS 19:30
-  // พ ว่างหลัง 10:00 · พฤ ว่างบ่าย · ศ เลิก lab 16:00 — น้ำหนักสัปดาห์: research 4 ช่อง
-  // (~7 ชม. ตามแผน 18 สัปดาห์) · ICPC 4 ช่อง (เฟส FOUNDATION) · ENG 3 ช่องสั้น
+  // ---------- 2) ตารางสัปดาห์ (v14 — โหมดอ่านสอบไฟนอล 17–23 ส.ค. 69) ----------
+  // จัดตามตารางสอบจริง: จ=Prob&Stat · อ=IT Lab · พ=Data Sci · พฤ=English · ศ=OS · ส=ML · อา=Embedded
+  // แต่ละวันทบทวน "วิชาที่สอบวันนั้น" (การ์ดแรกมีวันสอบ/เวลา/ห้อง) + เสริมวิชาหนัก (ML/Prob&Stat/OS)
+  // การ์ดถาดวิชา/หนังสือด้านล่างยังใช้ได้ — ลากเล่มที่ต้องทบทวนมาจองเวลาได้ · หลังสอบขอคืนตารางเดิมได้
   {
     id: 'weekly', tab: 'weekly', layout: 'days', resettable: true, checkable: true,
-    note: 'ตารางประจำสัปดาห์ · รีเซ็ตอัตโนมัติ · ลากการ์ดย้ายวัน/สลับลำดับได้ · 📚 ถาดวิชา + 📕 ถาดหนังสือด้านล่าง (สองถาดแยกกัน): ลากขึ้นไปวางในวันเพื่อจองเวลา ลากกลับลงถาดเพื่อเก็บ',
+    note: '🔴 โหมดอ่านสอบ — ไฟนอล 17–23 ส.ค. 69 (จ→อา) · แต่ละวันทบทวนวิชาที่สอบวันนั้น + เสริมวิชาหนัก · ลากถาดวิชา/หนังสือด้านล่างมาจองเวลาได้ · หลังสอบบอกผมให้คืนตารางซ้อมเดิม',
     items: [
-      { id: 'mon1', day: 'จันทร์ MON', time: '20:00–21:30', activity: 'ICPC: โจทย์เดี่ยว 2 ข้อ ตาม topic เฟสปัจจุบัน (หลัง TA เลิก)', cat: 'icpc' },
-      { id: 'tue1', day: 'อังคาร TUE', time: '20:00–21:00', activity: 'Research: อ่านหนังสือตามแผนสัปดาห์นี้ + จดโน้ต (ดูแท็บ research)', cat: 'res' },
-      { id: 'wed1', day: 'พุธ WED', time: '13:00–15:30', activity: 'Research: deep work โครงงาน — โค้ด/ทดลอง/เตรียมข้อมูล', cat: 'res' },
-      { id: 'wed2', day: 'พุธ WED', time: '19:30–21:00', activity: 'ICPC: upsolve โจทย์ค้างจาก virtual contest เสาร์', cat: 'icpc' },
-      { id: 'thu1', day: 'พฤหัส THU', time: '13:00–15:00', activity: 'Research: อ่านต่อ + เขียน summary note 📝 แชร์ทีม', cat: 'res' },
-      { id: 'thu2', day: 'พฤหัส THU', time: '20:00–21:30', activity: 'ทบทวนวิชาเรียน: เรียงตามตัวกินเวลา — ML / Embedded / Prob&Stat (ปั่นโจทย์) / OS สลับตามงานและสอบ', cat: 'review' },
-      { id: 'fri1', day: 'ศุกร์ FRI', time: '16:30–18:00', activity: 'ICPC: เรียน topic ใหม่ + โจทย์ประกอบ 1–2 ข้อ', cat: 'icpc' },
-      { id: 'sat1', day: 'เสาร์ SAT', time: '09:00–12:00', activity: 'ICPC: Virtual Contest (CF Div.2 เต็มเวลา) + จดข้อที่หลุด', cat: 'icpc' },
-      { id: 'eng-sat', day: 'เสาร์ SAT', time: '13:00–13:30', activity: 'ENG: กลับไปอ่านโจทย์ virtual เช้านี้ที่ไม่ได้แตะ — สรุป spec เป็นไทยทุกข้อ (ไม่ต้องแก้)', cat: 'eng' },
-      { id: 'sat2', day: 'เสาร์ SAT', time: '14:00–16:00', activity: 'Research: ตามเก็บงานสัปดาห์นี้ให้ครบตามแผน + sync กับทีม', cat: 'res' },
-      { id: 'sun1', day: 'อาทิตย์ SUN', time: '14:00–16:00', activity: 'โปรเจกต์ AI / portfolio: deep work', cat: 'ai' },
-      { id: 'sun2', day: 'อาทิตย์ SUN', time: '19:00–20:00', activity: 'สรุปสัปดาห์ + วางแผนสัปดาห์หน้า + อ่าน paper/บทความ ML 1 ชิ้น', cat: 'plan' },
-      // ช่องซ้อมภาษาอังกฤษ (จากแผนแท็บ english — แก้เวลา/วันได้ตามสะดวก)
-      { id: 'eng-tue', day: 'อังคาร TUE', time: '21:00–21:20', activity: 'ENG: อ่านโจทย์ EN 1 ข้อ — ห้ามดู sample I/O ก่อนสรุป spec เป็นไทย 3 บรรทัด + เก็บศัพท์ลง Anki', cat: 'eng' },
-      { id: 'eng-thu', day: 'พฤหัส THU', time: '21:30–21:50', activity: 'ENG: อ่านโจทย์ EN จับเวลา 1 ข้อ + ทบทวน Anki ศัพท์โจทย์', cat: 'eng' },
-      { id: 'eng-sun', day: 'อาทิตย์ SUN', time: '20:00–20:30', activity: 'ENG: อ่าน editorial ภาษาอังกฤษของโจทย์สัปดาห์นี้ + จดวลีที่เจอบ่อย', cat: 'eng' },
+      { id: 'ex-mon1', day: 'จันทร์ MON', time: '19:00–21:00', meta: '🔴 สอบ จ 17 ส.ค. · 12:00–15:00 · ห้อง 13D', activity: 'ทบทวน Prob & Stat (312): ปั่นโจทย์ distribution / hypothesis test / regression + สรุปสูตรลงชีตเดียว — วิชาแรก + หนัก เริ่มก่อนเลย', cat: 'review' },
+      { id: 'ex-mon2', day: 'จันทร์ MON', time: '21:00–22:00', activity: 'ML (462) รอบเบา: อ่านโน้ต concept ที่ยังงง — วิชาหนักสุด ทยอยเก็บทุกวัน', cat: 'review' },
+      { id: 'ex-tue1', day: 'อังคาร TUE', time: '19:00–20:30', meta: '🔴 สอบ อ 18 ส.ค. · 12:00–14:00 · ห้อง 1404A', activity: 'ทบทวน IT Integration Lab (342): ไล่ Docker / Git / CI-CD ให้พิมพ์ command ได้เอง + เข้าใจ workflow', cat: 'review' },
+      { id: 'ex-tue2', day: 'อังคาร TUE', time: '20:30–22:00', activity: 'OS (332): scheduling (Gantt), page fault — ทำโจทย์คำนวณ (สอบศุกร์)', cat: 'review' },
+      { id: 'ex-wed1', day: 'พุธ WED', time: '15:00–17:00', meta: '🔴 สอบ พ 19 ส.ค. · 15:30–18:30 · ห้อง 17305A', activity: 'ทบทวน Intro to Data Science (351): pandas / EDA / viz workflow + รันโค้ดตัวอย่างให้คล่อง', cat: 'review' },
+      { id: 'ex-wed2', day: 'พุธ WED', time: '19:30–21:30', activity: 'ML (462): คณิตเบื้องหลัง (gradient, loss, bias/variance) + sklearn', cat: 'review' },
+      { id: 'ex-thu1', day: 'พฤหัส THU', time: '19:00–20:00', meta: '🔴 สอบ พฤ 20 ส.ค. · 12:00–14:00 · ห้อง 17307A', activity: 'ทบทวน English for Job (01355): ศัพท์/รูปประโยคสัมภาษณ์งาน + resume — วิชาเบา ใช้เวลาน้อย', cat: 'review' },
+      { id: 'ex-thu2', day: 'พฤหัส THU', time: '20:00–21:30', activity: 'ปั่นโจทย์ Prob & Stat เพิ่ม — เก็บบทที่ยังไม่แม่น', cat: 'review' },
+      { id: 'ex-fri1', day: 'ศุกร์ FRI', time: '16:30–18:00', meta: '🔴 สอบ ศ 21 ส.ค. · 08:30–11:30 · ห้อง 13J (เช้า!)', activity: 'ทบทวน Operating Systems (332): process/thread, memory, sync, deadlock — สอบเช้า คืนนี้นอนให้พอ', cat: 'review' },
+      { id: 'ex-fri2', day: 'ศุกร์ FRI', time: '19:00–20:30', activity: 'Embedded (323): interrupt / timer / GPIO + register config (สอบอาทิตย์)', cat: 'review' },
+      { id: 'ex-sat1', day: 'เสาร์ SAT', time: '09:00–12:00', meta: '🔴 สอบ ส 22 ส.ค. · 15:30–18:30 · ห้อง 17301A', activity: 'ทบทวน ML (462) เต็มรอบ: ไล่ทุกหัวข้อ + ทำโจทย์ตัวอย่าง — วิชาหนักสุด ให้เวลามากสุด', cat: 'review' },
+      { id: 'ex-sat2', day: 'เสาร์ SAT', time: '13:30–15:00', activity: 'ทำ past exam / โจทย์ตัวอย่าง ML + Prob & Stat จับเวลาเหมือนสอบจริง', cat: 'review' },
+      { id: 'ex-sun1', day: 'อาทิตย์ SUN', time: '09:00–11:30', meta: '🔴 สอบ อา 23 ส.ค. · 12:00–15:00 · ห้อง 17403A', activity: 'ทบทวน Embedded (323) เต็มรอบ: ไล่ lab/datasheet + สรุป register — วิชาสุดท้าย', cat: 'review' },
+      { id: 'ex-sun2', day: 'อาทิตย์ SUN', time: '19:00–20:00', activity: 'สรุปสัปดาห์ + เช็กจุดอ่อนที่ยังเหลือ + วางแผนทบทวนสัปดาห์หน้า', cat: 'plan' },
 
       // ---- ถาดวิชา (pool) — อ่านหนังสือนอกเวลาเรียน 1 การ์ด/วิชา จาก "ตารางเรียน" ----
       // day:'' = ยังเก็บอยู่ในถาด · ลากขึ้นไปวางในวันเพื่อจองเวลา · เป้าชั่วโมงอิงความยากในแท็บตารางเรียน
@@ -421,7 +419,7 @@ const SECTIONS = [
 /** สร้าง doc เริ่มต้น (ก้อนข้อมูลทั้งหมดของแอป) */
 export function buildSeedDoc() {
   return {
-    schemaVersion: 13, // ...v11=ถาดหนังสือ · v12=postmortem regional · v13=รายรับรายจ่าย (finance)
+    schemaVersion: 14, // ...v12=postmortem · v13=finance · v14=weekly โหมดอ่านสอบ (ไฟนอล ส.ค. 69)
     settings: {
       // National/Bangkok 2027 เป็นประมาณการจากรอบปีก่อน — แก้ใน UI เมื่อประกาศวันจริง
       dates: { national: '2027-09-11', bangkok: '2027-11-20' },

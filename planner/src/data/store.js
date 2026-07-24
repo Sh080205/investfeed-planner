@@ -60,6 +60,8 @@ export function saveDoc(doc) {
  *            → เพิ่ม Postmortem (pm*) หัวลิสต์ icpc + กลุ่มแก้อาการ (enx*) หัวลิสต์ english
  *            + กติกาห้ามดู I/O ใน eng-tue + ช่อง eng-sat อ่านโจทย์หลัง virtual
  * v12 → v13: เพิ่มแท็บ "เงิน" (finance) รายรับรายจ่าย + doc.finance.transactions
+ * v13 → v14: weekly → โหมดอ่านสอบไฟนอล (แทนรูทีน ICPC/research เดิมด้วยรอบทบทวน 7 วิชา)
+ *            คงการ์ดถาด (pool) พร้อมวันที่จองไว้ + รายการที่ผู้ใช้เพิ่มเอง (id 'u…')
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -294,6 +296,22 @@ export function upgradeDoc(doc) {
     }
     if (!doc.finance) doc.finance = { transactions: [] };
     doc.schemaVersion = 13;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 14) {
+    // weekly → โหมดอ่านสอบ: แทนรายการรูทีนเดิม (ex-* จาก seed) แต่คงถาด (pool) + custom ('u…')
+    const seedWeekly = seed.sections.find((s) => s.id === 'weekly');
+    const weekly = doc.sections.find((s) => s.id === 'weekly');
+    if (weekly) {
+      const examItems = seedWeekly.items.filter((i) => !i.pool).map((i) => ({ ...i }));
+      const curPool = weekly.items.filter((i) => i.pool); // การ์ดถาด + วันที่ผู้ใช้จองไว้ (คงไว้)
+      const pool = curPool.length ? curPool : seedWeekly.items.filter((i) => i.pool).map((i) => ({ ...i }));
+      const custom = weekly.items.filter((i) => !i.pool && String(i.id).startsWith('u')); // ที่ผู้ใช้เพิ่มเอง
+      weekly.items = [...examItems, ...pool, ...custom];
+      weekly.note = seedWeekly.note;
+    }
+    doc.schemaVersion = 14;
     changed = true;
   }
 
