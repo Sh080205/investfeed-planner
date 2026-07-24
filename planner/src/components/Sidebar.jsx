@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { statusKey } from '../data/store.js';
 import ProgressRing from './ProgressRing.jsx';
 import CountdownCard from './CountdownCard.jsx';
+import ExamCountdown from './ExamCountdown.jsx';
 
 /** ความคืบหน้าของ section (null = section ที่ไม่ติ๊กสถานะ เช่น ตารางเรียน) */
 function sectionProgress(doc, section, weekKey) {
@@ -34,6 +35,9 @@ export default function Sidebar({ doc, weekKey, activeId, onSelect, onSaveDates,
       </div>
 
       <ProgressRing pct={pct} done={done} total={total} />
+
+      {/* สอบไฟนอลใกล้กว่า contest → วางไว้บน · ซ่อนเองเมื่อสอบครบ */}
+      <ExamCountdown />
 
       <CountdownCard dates={doc.settings.dates} onSave={onSaveDates} />
 

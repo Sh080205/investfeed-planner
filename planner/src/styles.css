@@ -89,6 +89,19 @@ body {
   padding: 6px; border-radius: 7px; background: var(--surface-2); border: 1px solid var(--border);
   color: var(--icpc); margin-top: 10px;
 }
+/* การ์ดนับถอยหลังสอบไฟนอล */
+.exam-cd { border-color: rgba(255, 122, 107, 0.35); }
+.dot-exam { background: var(--fitness); box-shadow: 0 0 8px var(--fitness); }
+.exam-next { text-align: center; padding: 2px 0 6px; }
+.exam-next-label { font-size: 10px; color: var(--text-muted); }
+.exam-next-days { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 800; color: var(--fitness); line-height: 1.2; }
+.exam-next-name { font-size: 13px; font-weight: 600; color: var(--text); margin-top: 2px; }
+.exam-next-meta { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+.exam-list { display: flex; flex-direction: column; gap: 5px; border-top: 1px solid var(--border); padding-top: 8px; }
+.exam-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 11px; }
+.exam-row-name { color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.exam-row-days { color: var(--text); flex-shrink: 0; font-size: 10.5px; }
+
 .cd-editor { display: none; flex-direction: column; gap: 8px; }
 .cd-editor.show { display: flex; }
 .cd-editor label { font-size: 10.5px; color: var(--text-muted); display: flex; flex-direction: column; gap: 3px; }
