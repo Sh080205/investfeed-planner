@@ -74,6 +74,13 @@ export default function App() {
       if (d.finance) d.finance.transactions = d.finance.transactions.filter((t) => t.id !== id);
     });
   }
+  /** ตั้งวันที่เงินคงเหลือต้องใช้ถึง (ใช้คำนวณเงินต่อวัน) */
+  function setBudgetUntil(iso) {
+    update((d) => {
+      if (!d.finance) d.finance = { transactions: [] };
+      d.finance.budgetUntil = iso;
+    });
+  }
 
   /* ---------- ลากการ์ดย้ายวัน/จัดลำดับ (layout รายวัน) ----------
      beforeId = วางแทรกหน้าการ์ดไหน (null = ต่อท้ายวันนั้น) */
@@ -150,6 +157,7 @@ export default function App() {
           finance={doc.finance || { transactions: [] }}
           onAddTx={addTx}
           onDeleteTx={deleteTx}
+          onSetBudgetUntil={setBudgetUntil}
         />
       </main>
 

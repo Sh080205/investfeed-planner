@@ -18,7 +18,7 @@ export default function SectionPanel({
   section, doc, weekKey,
   onCycle, onAdd, onEdit, onDelete, onResetWeek, onMoveItem,
   icpcView, onIcpcView,
-  finance, onAddTx, onDeleteTx,
+  finance, onAddTx, onDeleteTx, onSetBudgetUntil,
 }) {
   const stMap = doc.statuses[statusKey(section, weekKey)] || {};
   const stateOf = (item) => stMap[item.id] || 'pending';
@@ -216,7 +216,8 @@ export default function SectionPanel({
       </div>
 
       <div id="mlList">
-        {section.layout === 'money' ? <FinanceTracker finance={finance} onAddTx={onAddTx} onDeleteTx={onDeleteTx} />
+        {section.layout === 'money'
+          ? <FinanceTracker finance={finance} onAddTx={onAddTx} onDeleteTx={onDeleteTx} onSetBudgetUntil={onSetBudgetUntil} />
           : section.layout === 'books' ? <BookShelf />
           : section.layout === 'days' ? renderDays()
           : renderGroups()}

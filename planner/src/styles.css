@@ -350,6 +350,24 @@ a.book-card:hover .ml-activity { color: var(--running); }
 .fin-tile.balance.neg .fin-tile-val { color: var(--fitness); }
 .fin-tile-sub { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
 .fin-tile-sub.warn { color: var(--fitness); }
+.fin-tile-sub b { color: var(--running); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+/* ตั้งวันที่ "เงินนี้ใช้ถึงวันไหน" ในการ์ดเงินคงเหลือ */
+.fin-until { margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
+.fin-until-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  font-size: 11px; color: var(--text-muted);
+}
+.fin-until-row input {
+  background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px;
+  padding: 4px 7px; font: inherit; font-size: 11.5px; color-scheme: dark;
+}
+.fin-until-presets { display: flex; gap: 5px; margin-top: 6px; }
+.fin-until-presets button {
+  flex: 1; font: inherit; font-size: 10.5px; padding: 4px 6px; cursor: pointer;
+  background: none; border: 1px solid var(--border); border-radius: 5px; color: var(--text-muted);
+}
+.fin-until-presets button:hover { color: var(--text); border-color: #3a4856; }
 
 .fin-form {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);

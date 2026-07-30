@@ -4,9 +4,27 @@ import React, { useState, useMemo } from 'react';
 const money = (n) => '฿' + (n || 0).toLocaleString('th-TH', { maximumFractionDigits: 2 });
 const TH_MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 const monthKeyOf = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-const todayISO = () => {
-  const d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const isoOf = (d) =>
+  d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const todayISO = () => isoOf(new Date());
+// วันสุดท้ายของเดือนที่ ISO นั้นอยู่ (ใช้เป็นค่าตั้งต้น/ปุ่มลัด "สิ้นเดือน")
+const endOfMonthISO = (iso) => {
+  const [y, m] = (iso || todayISO()).split('-').map(Number);
+  return isoOf(new Date(y, m, 0));
+};
+const addDaysISO = (iso, n) => {
+  const [y, m, d] = iso.split('-').map(Number);
+  return isoOf(new Date(y, m - 1, d + n));
+};
+// จำนวนวันจากวันนี้ถึงวันเป้าหมาย แบบนับวันนี้ด้วย (วันนี้ = 1) — 0 = วันเป้าหมายผ่านไปแล้ว
+const daysThrough = (iso) => {
+  const t = new Date(); t.setHours(0, 0, 0, 0);
+  const target = new Date(iso + 'T00:00:00');
+  return Math.max(0, Math.round((target - t) / 86400000) + 1);
+};
+const fmtThaiDate = (iso) => {
+  const [y, m, d] = iso.split('-').map(Number);
+  return d + ' ' + TH_MONTHS[m - 1] + ' ' + String((y + 543) % 100);
 };
 
 // หมวดตั้งต้น (พิมพ์หมวดใหม่เองได้ผ่าน datalist)
@@ -15,7 +33,7 @@ const CATS = {
   income: ['เงินจากบ้าน/ค่าขนม', 'TA / งานพิเศษ', 'ทุน/รางวัล', 'อื่น ๆ'],
 };
 
-export default function FinanceTracker({ finance, onAddTx, onDeleteTx }) {
+export default function FinanceTracker({ finance, onAddTx, onDeleteTx, onSetBudgetUntil }) {
   const txns = finance?.transactions || [];
   const [month, setMonth] = useState(() => monthKeyOf(new Date())); // 'YYYY-MM' ที่กำลังดู
   const [form, setForm] = useState(() => ({
@@ -33,13 +51,14 @@ export default function FinanceTracker({ finance, onAddTx, onDeleteTx }) {
   const expense = monthTx.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
   const balance = income - expense; // เงินที่ใช้ได้ของเดือนนี้ (รับ − จ่าย)
 
-  // เงินใช้ได้ต่อวัน — คิดเฉพาะเมื่อดูเดือนปัจจุบัน (หารด้วยจำนวนวันที่เหลือรวมวันนี้)
+  // เงินใช้ได้ต่อวัน — หารด้วยจำนวนวันถึง "วันที่ต้องใช้เงินก้อนนี้ถึง" (ปรับได้เอง)
+  // ค่าตั้งต้น = สิ้นเดือนนี้ · เก็บที่ doc.finance.budgetUntil
   const now = new Date();
   const [y, m] = month.split('-').map(Number);
   const isCurrentMonth = month === monthKeyOf(now);
-  const daysInMonth = new Date(y, m, 0).getDate();
-  const daysLeft = isCurrentMonth ? daysInMonth - now.getDate() + 1 : daysInMonth;
-  const perDay = balance > 0 ? balance / daysLeft : 0;
+  const budgetUntil = finance?.budgetUntil || endOfMonthISO(todayISO());
+  const daysLeft = daysThrough(budgetUntil); // นับวันนี้ด้วย · 0 = วันเป้าหมายผ่านไปแล้ว
+  const perDay = balance > 0 && daysLeft > 0 ? balance / daysLeft : 0;
 
   // รายจ่ายแยกหมวด (มาก→น้อย) ไว้ดูว่าเงินหมดไปกับอะไร
   const byCat = useMemo(() => {
@@ -92,8 +111,34 @@ export default function FinanceTracker({ finance, onAddTx, onDeleteTx }) {
         <div className={'fin-tile balance' + (balance < 0 ? ' neg' : '')}>
           <div className="fin-tile-label">เงินที่ใช้ได้ (คงเหลือ)</div>
           <div className="fin-tile-val big">{money(balance)}</div>
-          {isCurrentMonth && balance > 0 && (
-            <div className="fin-tile-sub">ใช้ได้อีก ~{money(perDay)}/วัน · เหลือ {daysLeft} วัน</div>
+
+          {/* ตั้งเองว่าเงินก้อนนี้ต้องใช้ถึงวันไหน → คำนวณเงินต่อวันจากวันนั้น */}
+          {isCurrentMonth && (
+            <div className="fin-until">
+              <label className="fin-until-row">
+                <span>ใช้ถึงวันที่</span>
+                <input
+                  type="date"
+                  value={budgetUntil}
+                  min={todayISO()}
+                  onChange={(e) => e.target.value && onSetBudgetUntil(e.target.value)}
+                />
+              </label>
+              <div className="fin-until-presets">
+                <button type="button" onClick={() => onSetBudgetUntil(endOfMonthISO(todayISO()))}>สิ้นเดือน</button>
+                <button type="button" onClick={() => onSetBudgetUntil(addDaysISO(todayISO(), 6))}>+7 วัน</button>
+                <button type="button" onClick={() => onSetBudgetUntil(addDaysISO(todayISO(), 13))}>+14 วัน</button>
+              </div>
+            </div>
+          )}
+
+          {isCurrentMonth && balance > 0 && daysLeft > 0 && (
+            <div className="fin-tile-sub">
+              ใช้ได้ <b>~{money(perDay)}/วัน</b> · ถึง {fmtThaiDate(budgetUntil)} (อีก {daysLeft} วัน)
+            </div>
+          )}
+          {isCurrentMonth && balance > 0 && daysLeft === 0 && (
+            <div className="fin-tile-sub warn">วันที่กำหนดผ่านไปแล้ว — ตั้งวันใหม่</div>
           )}
           {balance < 0 && <div className="fin-tile-sub warn">ใช้เกินรายรับเดือนนี้แล้ว</div>}
         </div>
