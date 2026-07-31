@@ -62,6 +62,8 @@ export function saveDoc(doc) {
  * v12 → v13: เพิ่มแท็บ "เงิน" (finance) รายรับรายจ่าย + doc.finance.transactions
  * v13 → v14: weekly → โหมดอ่านสอบไฟนอล (แทนรูทีน ICPC/research เดิมด้วยรอบทบทวน 7 วิชา)
  *            คงการ์ดถาด (pool) พร้อมวันที่จองไว้ + รายการที่ผู้ใช้เพิ่มเอง (id 'u…')
+ * v14 → v15: เพิ่มแท็บ "เตรียมสอบ" (แผน 4 ช่วง + วิธีติวรายวิชา + เช็กพอยต์)
+ *            + weekly จัดใหม่ตามเพดานเวลาช่วงสอบ (ICPC 0 · research 5 ชม. · VHDL 1.5 ชม.)
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -312,6 +314,27 @@ export function upgradeDoc(doc) {
       weekly.note = seedWeekly.note;
     }
     doc.schemaVersion = 14;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 15) {
+    // 1) เพิ่มแท็บ "เตรียมสอบ" ต่อจาก weekly
+    if (!doc.sections.some((s) => s.id === 'exam')) {
+      const examSeed = seed.sections.find((s) => s.id === 'exam');
+      const at = doc.sections.findIndex((s) => s.id === 'weekly');
+      doc.sections.splice(at >= 0 ? at + 1 : doc.sections.length, 0, examSeed);
+    }
+    // 2) weekly: แทนรายการเดิม (รวมรอบอ่านสอบ ex-* ของ v14) ด้วยตารางตามเพดานเวลาใหม่
+    //    คงการ์ดถาด (pool) พร้อมวันที่จองไว้ + รายการที่ผู้ใช้เพิ่มเอง ('u…')
+    const seedWeekly = seed.sections.find((s) => s.id === 'weekly');
+    const weekly = doc.sections.find((s) => s.id === 'weekly');
+    if (weekly) {
+      const pool = weekly.items.filter((i) => i.pool);
+      const custom = weekly.items.filter((i) => !i.pool && String(i.id).startsWith('u'));
+      weekly.items = [...seedWeekly.items.filter((i) => !i.pool).map((i) => ({ ...i })), ...pool, ...custom];
+      weekly.note = seedWeekly.note;
+    }
+    doc.schemaVersion = 15;
     changed = true;
   }
 

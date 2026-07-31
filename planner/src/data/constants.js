@@ -14,7 +14,7 @@ export const DAY_ORDER = [
 export const TAG_LABEL = {
   icpc: 'ICPC', ai: 'AI PROJECT', review: 'COURSE', skill: 'SKILL', plan: 'PLAN',
   fitness: 'FITNESS', road: 'ROADMAP', course: 'ELECTIVE', learn: 'FREE', class: 'CLASS',
-  eng: 'ENGLISH', res: 'RESEARCH', book: 'BOOK',
+  eng: 'ENGLISH', res: 'RESEARCH', book: 'BOOK', exam: 'MIDTERM',
 };
 
 // ตระกูลสีของป้าย — ยุบ 13 สีเหลือ 4 ตระกูล ให้ตาแยกง่ายและไม่ฉูดฉาด
@@ -22,14 +22,14 @@ export const TAG_LABEL = {
 export const TAG_FAMILY = {
   icpc: 'compete', eng: 'compete',
   class: 'study', course: 'study', review: 'study', learn: 'study',
-  skill: 'study', res: 'study', book: 'study',
+  skill: 'study', res: 'study', book: 'study', exam: 'study',
   ai: 'future', road: 'future',
   fitness: 'life', plan: 'life',
 };
 
 // จัดกลุ่มแท็บใน sidebar — section ที่ไม่อยู่ในลิสต์จะไปกลุ่ม "อื่น ๆ" ท้ายสุด
 export const TAB_GROUPS = [
-  { label: 'ประจำวัน', ids: ['weekly', 'classes', 'finance', 'fitness'] },
+  { label: 'ประจำวัน', ids: ['weekly', 'exam', 'classes', 'finance', 'fitness'] },
   { label: 'แข่งขัน', ids: ['icpc', 'english'] },
   { label: 'เรียน & วิจัย', ids: ['research', 'library', 'electives', 'skills', 'learn'] },
   { label: 'ระยะยาว', ids: ['projects', 'roadmap'] },

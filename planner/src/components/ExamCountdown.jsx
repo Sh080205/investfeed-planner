@@ -19,7 +19,7 @@ export default function ExamCountdown() {
   return (
     <div className="cd-card exam-cd">
       <div className="cd-head">
-        <div className="ml-eyebrow"><span className="dot dot-exam" />นับถอยหลังสอบไฟนอล</div>
+        <div className="ml-eyebrow"><span className="dot dot-exam" />นับถอยหลังสอบกลางภาค</div>
       </div>
 
       <div className="exam-next">
@@ -40,7 +40,10 @@ export default function ExamCountdown() {
         </div>
       )}
 
-      <div className="cd-note">ไฟนอล 17–23 ส.ค. · เหลือ {upcoming.length}/{FINALS.length} วิชา</div>
+      <div className="cd-note">
+        กลางภาค 17–23 ส.ค. · เหลือ {upcoming.length}/{FINALS.length} วิชา<br />
+        ⚠️ OS: ตารางกลางว่า ศ 21 · แผนว่า อ 18 — เช็กให้ชัด (ดูแท็บเตรียมสอบ)
+      </div>
     </div>
   );
 }
