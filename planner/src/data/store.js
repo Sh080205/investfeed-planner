@@ -64,6 +64,8 @@ export function saveDoc(doc) {
  *            คงการ์ดถาด (pool) พร้อมวันที่จองไว้ + รายการที่ผู้ใช้เพิ่มเอง (id 'u…')
  * v14 → v15: เพิ่มแท็บ "เตรียมสอบ" (แผน 4 ช่วง + วิธีติวรายวิชา + เช็กพอยต์)
  *            + weekly จัดใหม่ตามเพดานเวลาช่วงสอบ (ICPC 0 · research 5 ชม. · VHDL 1.5 ชม.)
+ * v15 → v16: ยืนยันวันสอบ OS = ศ 21 ส.ค. (ไม่ใช่ 18) → รื้อ ช่วง 2–3 ตามลำดับสอบจริง
+ *            ช่วง 3 กลายเป็นสัปดาห์สอบ 7 วัน (เย็นแต่ละวัน = ติวของพรุ่งนี้)
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -335,6 +337,26 @@ export function upgradeDoc(doc) {
       weekly.note = seedWeekly.note;
     }
     doc.schemaVersion = 15;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 16) {
+    // แผนสอบปรับตามวันสอบ OS ที่ยืนยันแล้ว (ศ 21) — แทน section exam ทั้งชุด
+    // สถานะที่ติ๊กไว้อยู่ใน doc.statuses.exam (id เดิมคงอยู่) จึงไม่หาย
+    // รายการที่ผู้ใช้เพิ่มเอง (id นอก seed) เก็บต่อท้ายไว้
+    const seedExam = seed.sections.find((s) => s.id === 'exam');
+    const idx = doc.sections.findIndex((s) => s.id === 'exam');
+    if (idx >= 0) {
+      const seedIds = new Set(seedExam.items.map((i) => i.id));
+      // การ์ดแผนเก่าที่อิงวันสอบผิด (18 ส.ค.) ต้องถอดทิ้ง ไม่ใช่เก็บไว้เป็น custom
+      const retired = new Set(['xp3-mon', 'xp3-tue']);
+      const custom = doc.sections[idx].items.filter((i) => !seedIds.has(i.id) && !retired.has(i.id));
+      doc.sections[idx] = { ...seedExam, items: [...seedExam.items, ...custom] };
+    } else {
+      const at = doc.sections.findIndex((s) => s.id === 'weekly');
+      doc.sections.splice(at >= 0 ? at + 1 : doc.sections.length, 0, seedExam);
+    }
+    doc.schemaVersion = 16;
     changed = true;
   }
 

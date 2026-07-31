@@ -40,10 +40,7 @@ export default function ExamCountdown() {
         </div>
       )}
 
-      <div className="cd-note">
-        กลางภาค 17–23 ส.ค. · เหลือ {upcoming.length}/{FINALS.length} วิชา<br />
-        ⚠️ OS: ตารางกลางว่า ศ 21 · แผนว่า อ 18 — เช็กให้ชัด (ดูแท็บเตรียมสอบ)
-      </div>
+      <div className="cd-note">กลางภาค 17–23 ส.ค. · เหลือ {upcoming.length}/{FINALS.length} วิชา · สอบทุกวัน</div>
     </div>
   );
 }
