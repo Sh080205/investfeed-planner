@@ -1,21 +1,23 @@
 /* ธีมเดิมจาก planner_v2 (dark) + ส่วนควบคุมใหม่สำหรับ CRUD */
 :root {
-  --bg: #0b0f14;
-  --surface: #121922;
-  --surface-2: #1a232e;
-  --border: #26313d;
-  --text: #e6edf3;
-  --text-muted: #8b98a5;
-  --ac: #2ecc71;
-  --running: #4fa3ff;
-  --pending: #ffb454;
-  --icpc: #ffb454;
-  --review: #b98eff;
-  --ai: #4fa3ff;
-  --skill: #3dd6c4;
-  --plan: #9aa7b4;
-  --fitness: #ff7a6b;
-  --road: #f2779b;
+  /* พาเลตต์นุ่มตา: ลด saturation ของสีเน้น + คอนทราสต์พื้นหลังต่ำลง */
+  --bg: #0f1216;
+  --surface: #171b21;
+  --surface-2: #1e242c;
+  --border: #272d36;
+  --border-soft: #21262e;
+  --text: #dce3ea;
+  --text-muted: #868f9c;
+  --ac: #7cb894;        /* done — เขียวหม่น */
+  --running: #7ba3cc;   /* กำลังทำ / ข้อมูล — ฟ้าหม่น */
+  --pending: #c9a26d;   /* รอทำ — เหลืองอำพันหม่น */
+  --icpc: #c9a26d;
+  --review: #a294c4;    /* ม่วงหม่น */
+  --ai: #7ba3cc;
+  --skill: #74b2ab;     /* เขียวน้ำทะเลหม่น */
+  --plan: #949dab;
+  --fitness: #c98d86;   /* ส้มอิฐหม่น */
+  --road: #c08fa0;      /* ชมพูหม่น */
   --radius: 10px;
 }
 * { box-sizing: border-box; }
@@ -46,8 +48,8 @@ body {
   font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em;
   color: var(--text-muted); text-transform: uppercase; display: flex; align-items: center; gap: 8px;
 }
-.ml-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ac); box-shadow: 0 0 8px var(--ac); }
-.ml-eyebrow .dot-icpc { background: var(--icpc); box-shadow: 0 0 8px var(--icpc); }
+.ml-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ac); }
+.ml-eyebrow .dot-icpc { background: var(--icpc); }
 .ml-title { font-size: 23px; font-weight: 700; margin: 6px 0 2px; letter-spacing: -0.01em; line-height: 1.25; }
 .ml-sub { color: var(--text-muted); font-size: 12.5px; line-height: 1.5; }
 
@@ -77,7 +79,7 @@ body {
   font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted);
   background: none; border: 1px solid var(--border); border-radius: 5px; padding: 2px 6px; cursor: pointer;
 }
-.cd-edit:hover { color: var(--text); border-color: #3a4856; }
+.cd-edit:hover { color: var(--text); border-color: #333b46; }
 .cd-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-top: 6px; }
 .cd-row:first-child { margin-top: 0; }
 .cd-name { font-size: 11.5px; color: var(--text-muted); }
@@ -91,7 +93,7 @@ body {
 }
 /* การ์ดนับถอยหลังสอบไฟนอล */
 .exam-cd { border-color: rgba(255, 122, 107, 0.35); }
-.dot-exam { background: var(--fitness); box-shadow: 0 0 8px var(--fitness); }
+.dot-exam { background: var(--fitness); }
 .exam-next { text-align: center; padding: 2px 0 6px; }
 .exam-next-label { font-size: 10px; color: var(--text-muted); }
 .exam-next-days { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 800; color: var(--fitness); line-height: 1.2; }
@@ -111,17 +113,26 @@ body {
 }
 .cd-note { font-size: 10px; color: var(--text-muted); line-height: 1.5; }
 
-.ml-tabs { display: flex; flex-direction: column; gap: 6px; }
+/* แท็บจัดกลุ่ม — ไม่มีกรอบรายปุ่ม ใช้ระยะห่าง + หัวข้อกลุ่มแทน ให้ดูโล่งตา */
+.ml-tabs { display: flex; flex-direction: column; gap: 14px; }
+.tab-group { display: flex; flex-direction: column; gap: 1px; }
+.tab-group-label {
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-muted); opacity: 0.7; padding: 0 10px 5px;
+}
 .ml-tab {
-  font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 500; text-align: left;
-  background: var(--surface); border: 1px solid var(--border); color: var(--text-muted);
-  padding: 10px 13px; border-radius: 8px; cursor: pointer; transition: all 0.15s ease;
+  font-family: inherit; font-size: 13px; font-weight: 500; text-align: left;
+  background: none; border: none; border-left: 2px solid transparent; color: var(--text-muted);
+  padding: 8px 11px; border-radius: 0 7px 7px 0; cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
   display: flex; justify-content: space-between; align-items: center; gap: 8px;
 }
-.ml-tab:hover { color: var(--text); border-color: #3a4856; }
-.ml-tab.active { background: var(--surface-2); color: var(--text); border-color: var(--ac); box-shadow: 0 0 0 1px var(--ac) inset; }
-.ml-tab .pct { font-size: 10.5px; color: var(--text-muted); }
-.ml-tab.active .pct { color: var(--ac); }
+.ml-tab:hover { color: var(--text); background: var(--surface); }
+.ml-tab.active {
+  background: var(--surface-2); color: var(--text); border-left-color: var(--ac); font-weight: 600;
+}
+.ml-tab .pct { font-size: 10px; color: var(--text-muted); opacity: 0.75; }
+.ml-tab.active .pct { color: var(--ac); opacity: 1; }
 .ml-tab:focus-visible, .ml-card:focus-visible, .ml-reset:focus-visible, .icon-btn:focus-visible {
   outline: 2px solid var(--running); outline-offset: 2px;
 }
@@ -146,7 +157,7 @@ a.ml-reset.back-link {
   font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
   background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; cursor: pointer;
 }
-.ml-reset:hover { color: var(--text); border-color: #3a4856; }
+.ml-reset:hover { color: var(--text); border-color: #333b46; }
 .ml-reset.add { color: var(--ac); border-color: rgba(46, 204, 113, 0.4); }
 .ml-reset.add:hover { background: rgba(46, 204, 113, 0.1); }
 .view-select {
@@ -193,7 +204,7 @@ a.ml-reset.back-link {
   padding: 11px 12px; cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease;
   display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;
 }
-.ml-card:hover { border-color: #3a4856; background: var(--surface-2); }
+.ml-card:hover { border-color: #333b46; background: var(--surface-2); }
 .ml-card.done { opacity: 0.5; }
 .ml-card.static { cursor: default; }
 
@@ -209,7 +220,7 @@ a.ml-reset.back-link {
   background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px;
   padding: 4px 6px; cursor: pointer;
 }
-.icon-btn:hover { color: var(--text); border-color: #3a4856; }
+.icon-btn:hover { color: var(--text); border-color: #333b46; }
 .icon-btn.danger:hover { color: var(--fitness); border-color: rgba(255, 122, 107, 0.5); }
 
 .verdict {
@@ -217,9 +228,9 @@ a.ml-reset.back-link {
   padding: 3px 7px; border-radius: 6px; white-space: nowrap; letter-spacing: 0.03em;
   border: 1px solid transparent; width: fit-content;
 }
-.verdict.pending { color: var(--pending); border-color: rgba(255, 180, 84, 0.35); background: rgba(255, 180, 84, 0.08); }
-.verdict.running { color: var(--running); border-color: rgba(79, 163, 255, 0.35); background: rgba(79, 163, 255, 0.08); }
-.verdict.done { color: var(--ac); border-color: rgba(46, 204, 113, 0.35); background: rgba(46, 204, 113, 0.08); }
+.verdict.pending { color: var(--pending); border-color: rgba(201, 162, 109, 0.28); background: rgba(201, 162, 109, 0.07); }
+.verdict.running { color: var(--running); border-color: rgba(123, 163, 204, 0.28); background: rgba(123, 163, 204, 0.07); }
+.verdict.done { color: var(--ac); border-color: rgba(124, 184, 148, 0.28); background: rgba(124, 184, 148, 0.07); }
 
 .ml-meta { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--text-muted); }
 .ml-activity { font-size: 12.5px; line-height: 1.45; }
@@ -229,19 +240,11 @@ a.ml-reset.back-link {
   font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 600;
   padding: 3px 7px; border-radius: 5px; white-space: nowrap; width: fit-content;
 }
-.tag.icpc { background: rgba(255, 180, 84, 0.1); color: var(--icpc); }
-.tag.ai { background: rgba(79, 163, 255, 0.1); color: var(--ai); }
-.tag.review { background: rgba(185, 142, 255, 0.1); color: var(--review); }
-.tag.skill { background: rgba(61, 214, 196, 0.1); color: var(--skill); }
-.tag.plan { background: rgba(154, 167, 180, 0.12); color: var(--plan); }
-.tag.fitness { background: rgba(255, 122, 107, 0.1); color: var(--fitness); }
-.tag.road { background: rgba(242, 119, 155, 0.1); color: var(--road); }
-.tag.course { background: rgba(185, 142, 255, 0.12); color: var(--review); }
-.tag.learn { background: rgba(61, 214, 196, 0.12); color: var(--skill); }
-.tag.class { background: rgba(79, 163, 255, 0.12); color: var(--running); }
-.tag.eng { background: rgba(195, 232, 141, 0.12); color: #c3e88d; }
-.tag.res { background: rgba(255, 212, 59, 0.1); color: #ffd43b; }
-.tag.book { background: rgba(242, 119, 155, 0.1); color: var(--road); }
+/* 4 ตระกูลสี (แทน 13 สีเดิม): แข่งขัน · เรียน · ระยะยาว · ชีวิต */
+.tag.fam-compete { background: rgba(201, 162, 109, 0.12); color: var(--icpc); }
+.tag.fam-study { background: rgba(123, 163, 204, 0.12); color: var(--running); }
+.tag.fam-future { background: rgba(162, 148, 196, 0.12); color: var(--review); }
+.tag.fam-life { background: rgba(201, 141, 134, 0.12); color: var(--fitness); }
 
 /* ---------- ชั้นหนังสือ (แท็บ "หนังสือ") ---------- */
 .book-search {
@@ -325,7 +328,7 @@ a.book-card:hover .ml-activity { color: var(--running); }
   font-family: inherit; font-size: 12.5px; padding: 7px 14px; border-radius: 7px; cursor: pointer;
   background: none; border: 1px solid var(--border); color: var(--text-muted);
 }
-.btn:hover { color: var(--text); border-color: #3a4856; }
+.btn:hover { color: var(--text); border-color: #333b46; }
 .btn.primary { background: var(--ac); border-color: var(--ac); color: var(--bg); font-weight: 600; }
 .btn.primary:hover { filter: brightness(1.1); color: var(--bg); }
 
@@ -344,9 +347,9 @@ a.book-card:hover .ml-activity { color: var(--running); }
 .fin-tile-val.big { font-size: 24px; }
 .fin-tile.income .fin-tile-val { color: var(--ac); }
 .fin-tile.expense .fin-tile-val { color: var(--fitness); }
-.fin-tile.balance { border-color: var(--running); box-shadow: 0 0 0 1px var(--running) inset; }
+.fin-tile.balance { border-color: rgba(123, 163, 204, 0.4); }
 .fin-tile.balance .fin-tile-val { color: var(--running); }
-.fin-tile.balance.neg { border-color: var(--fitness); box-shadow: 0 0 0 1px var(--fitness) inset; }
+.fin-tile.balance.neg { border-color: rgba(201, 141, 134, 0.45); }
 .fin-tile.balance.neg .fin-tile-val { color: var(--fitness); }
 .fin-tile-sub { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
 .fin-tile-sub.warn { color: var(--fitness); }
@@ -367,7 +370,7 @@ a.book-card:hover .ml-activity { color: var(--running); }
   flex: 1; font: inherit; font-size: 10.5px; padding: 4px 6px; cursor: pointer;
   background: none; border: 1px solid var(--border); border-radius: 5px; color: var(--text-muted);
 }
-.fin-until-presets button:hover { color: var(--text); border-color: #3a4856; }
+.fin-until-presets button:hover { color: var(--text); border-color: #333b46; }
 
 .fin-form {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);

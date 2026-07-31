@@ -17,6 +17,24 @@ export const TAG_LABEL = {
   eng: 'ENGLISH', res: 'RESEARCH', book: 'BOOK',
 };
 
+// ตระกูลสีของป้าย — ยุบ 13 สีเหลือ 4 ตระกูล ให้ตาแยกง่ายและไม่ฉูดฉาด
+// ป้ายยังบอกหมวดละเอียดเหมือนเดิม แต่สีบอก "กลุ่มใหญ่" ที่มันสังกัด
+export const TAG_FAMILY = {
+  icpc: 'compete', eng: 'compete',
+  class: 'study', course: 'study', review: 'study', learn: 'study',
+  skill: 'study', res: 'study', book: 'study',
+  ai: 'future', road: 'future',
+  fitness: 'life', plan: 'life',
+};
+
+// จัดกลุ่มแท็บใน sidebar — section ที่ไม่อยู่ในลิสต์จะไปกลุ่ม "อื่น ๆ" ท้ายสุด
+export const TAB_GROUPS = [
+  { label: 'ประจำวัน', ids: ['weekly', 'classes', 'finance', 'fitness'] },
+  { label: 'แข่งขัน', ids: ['icpc', 'english'] },
+  { label: 'เรียน & วิจัย', ids: ['research', 'library', 'electives', 'skills', 'learn'] },
+  { label: 'ระยะยาว', ids: ['projects', 'roadmap'] },
+];
+
 // แผนหลัง National ของ section ICPC — รายการที่ไม่มี track จะแสดงเสมอ
 export const TRACK_LABEL = {
   '': 'แผนหลัก (แสดงเสมอ)',

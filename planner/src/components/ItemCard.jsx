@@ -1,5 +1,5 @@
 import React from 'react';
-import { STATE_LABEL, TAG_LABEL } from '../data/constants.js';
+import { STATE_LABEL, TAG_LABEL, TAG_FAMILY } from '../data/constants.js';
 
 export default function ItemCard({
   section, item, state,
@@ -65,7 +65,10 @@ export default function ItemCard({
       </div>
 
       <div className="card-foot">
-        <div className={'tag ' + item.cat}>{TAG_LABEL[item.cat] || String(item.cat).toUpperCase()}</div>
+        {/* สีป้ายมาจาก "ตระกูล" (4 สี) ส่วนข้อความยังบอกหมวดละเอียดเหมือนเดิม */}
+        <div className={'tag fam-' + (TAG_FAMILY[item.cat] || 'study')}>
+          {TAG_LABEL[item.cat] || String(item.cat).toUpperCase()}
+        </div>
         {item.url && (
           <a className="card-link" href={item.url} target="_blank" rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}>

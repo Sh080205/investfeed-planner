@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { statusKey } from '../data/store.js';
+import { TAB_GROUPS } from '../data/constants.js';
 import ProgressRing from './ProgressRing.jsx';
 import CountdownCard from './CountdownCard.jsx';
 import ExamCountdown from './ExamCountdown.jsx';
@@ -41,23 +42,41 @@ export default function Sidebar({ doc, weekKey, activeId, onSelect, onSaveDates,
 
       <CountdownCard dates={doc.settings.dates} onSave={onSaveDates} />
 
-      <div className="ml-tabs" role="tablist">
-        {doc.sections.map((s) => {
-          const p = sectionProgress(doc, s, weekKey);
-          return (
-            <button
-              key={s.id}
-              role="tab"
-              aria-selected={s.id === activeId}
-              className={'ml-tab mono' + (s.id === activeId ? ' active' : '')}
-              onClick={() => onSelect(s.id)}
-            >
-              <span>$ {s.tab}</span>
-              {p && <span className="pct">{p.pct}%</span>}
-            </button>
-          );
-        })}
-      </div>
+      {/* แท็บจัดเป็นกลุ่ม — section ที่ไม่อยู่ในกลุ่มไหนไปรวมที่ "อื่น ๆ" ท้ายสุด */}
+      <nav className="ml-tabs" role="tablist">
+        {(() => {
+          const grouped = new Set(TAB_GROUPS.flatMap((g) => g.ids));
+          const leftovers = doc.sections.filter((s) => !grouped.has(s.id)).map((s) => s.id);
+          const groups = leftovers.length
+            ? [...TAB_GROUPS, { label: 'อื่น ๆ', ids: leftovers }]
+            : TAB_GROUPS;
+
+          return groups.map((g) => {
+            const secs = g.ids.map((id) => doc.sections.find((s) => s.id === id)).filter(Boolean);
+            if (!secs.length) return null;
+            return (
+              <div className="tab-group" key={g.label}>
+                <div className="tab-group-label">{g.label}</div>
+                {secs.map((s) => {
+                  const p = sectionProgress(doc, s, weekKey);
+                  return (
+                    <button
+                      key={s.id}
+                      role="tab"
+                      aria-selected={s.id === activeId}
+                      className={'ml-tab' + (s.id === activeId ? ' active' : '')}
+                      onClick={() => onSelect(s.id)}
+                    >
+                      <span className="tab-name">{s.tab}</span>
+                      {p && <span className="pct mono">{p.pct}%</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            );
+          });
+        })()}
+      </nav>
 
       {/* backup / ย้ายเครื่อง / ดึงข้อมูลจาก planner เดิม */}
       <div className="data-actions">
