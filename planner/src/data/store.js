@@ -391,6 +391,21 @@ export function upgradeDoc(doc) {
     changed = true;
   }
 
+  if (doc.schemaVersion < 18) {
+    // ได้ข้อมูลช่วงพลังงานจริง (ตื่น 7 · นอน 24 · พีค 8–12) → จัด weekly ใหม่
+    // งานคิดหนัก (FPGA/OS ครึ่งแรก/โจทย์ Prob&Stat) ย้ายขึ้นช่วงพีคที่ว่าง
+    const seedWeekly = seed.sections.find((s) => s.id === 'weekly');
+    const weekly = doc.sections.find((s) => s.id === 'weekly');
+    if (weekly) {
+      const pool = weekly.items.filter((i) => i.pool);
+      const custom = weekly.items.filter((i) => !i.pool && String(i.id).startsWith('u'));
+      weekly.items = [...seedWeekly.items.filter((i) => !i.pool).map((i) => ({ ...i })), ...pool, ...custom];
+      weekly.note = seedWeekly.note;
+    }
+    doc.schemaVersion = 18;
+    changed = true;
+  }
+
   // กันเหนียว: doc เก่าที่อัปเกรดครบแล้วแต่ยังไม่มี finance (เช่น import ไฟล์เก่า)
   if (!doc.finance) { doc.finance = { transactions: [] }; changed = true; }
 
