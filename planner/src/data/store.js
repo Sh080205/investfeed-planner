@@ -66,6 +66,9 @@ export function saveDoc(doc) {
  *            + weekly จัดใหม่ตามเพดานเวลาช่วงสอบ (ICPC 0 · research 5 ชม. · VHDL 1.5 ชม.)
  * v15 → v16: ยืนยันวันสอบ OS = ศ 21 ส.ค. (ไม่ใช่ 18) → รื้อ ช่วง 2–3 ตามลำดับสอบจริง
  *            ช่วง 3 กลายเป็นสัปดาห์สอบ 7 วัน (เย็นแต่ละวัน = ติวของพรุ่งนี้)
+ * v16 → v17: มิดเทอมสอบจบแล้ว → weekly กลับสู่โหมดปกติ (จัดตาม baseline รายวิชา
+ *            + ล็อกการบ้าน Prob&Stat/DS + protected block งานวิจัย)
+ *            และแท็บสอบเปลี่ยนจากแผนมิดเทอมเป็นแผนไฟนอล (ยังรอวันสอบ+scope)
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -357,6 +360,34 @@ export function upgradeDoc(doc) {
       doc.sections.splice(at >= 0 ? at + 1 : doc.sections.length, 0, seedExam);
     }
     doc.schemaVersion = 16;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 17) {
+    // มิดเทอมจบแล้ว → weekly กลับสู่โหมดปกติ + แท็บสอบเปลี่ยนเป็นแผนไฟนอล
+    // การ์ดของแผนมิดเทอมทั้งชุด (mx-* ใน weekly · xp/xw/xh/xc-* ใน exam) ถอดทิ้ง
+    // คงไว้: การ์ดถาด (pool) พร้อมวันที่จอง + รายการที่ผู้ใช้เพิ่มเอง (id 'u…')
+    const isUserAdded = (i) => String(i.id).startsWith('u');
+
+    const seedWeekly = seed.sections.find((s) => s.id === 'weekly');
+    const weekly = doc.sections.find((s) => s.id === 'weekly');
+    if (weekly) {
+      const pool = weekly.items.filter((i) => i.pool);
+      const custom = weekly.items.filter((i) => !i.pool && isUserAdded(i));
+      weekly.items = [...seedWeekly.items.filter((i) => !i.pool).map((i) => ({ ...i })), ...pool, ...custom];
+      weekly.note = seedWeekly.note;
+    }
+
+    const seedExam = seed.sections.find((s) => s.id === 'exam');
+    const exIdx = doc.sections.findIndex((s) => s.id === 'exam');
+    if (exIdx >= 0) {
+      const custom = doc.sections[exIdx].items.filter(isUserAdded);
+      doc.sections[exIdx] = { ...seedExam, items: [...seedExam.items.map((i) => ({ ...i })), ...custom] };
+    } else {
+      const at = doc.sections.findIndex((s) => s.id === 'weekly');
+      doc.sections.splice(at >= 0 ? at + 1 : doc.sections.length, 0, seedExam);
+    }
+    doc.schemaVersion = 17;
     changed = true;
   }
 
