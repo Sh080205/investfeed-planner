@@ -427,6 +427,36 @@ function pruneOldWeeks(doc) {
   }
 }
 
+/**
+ * คืนค่า section หนึ่งกลับเป็นค่าตั้งต้นจาก seed (คืน true ถ้าทำได้)
+ * ใช้ตอนเผลอลบการ์ดหรือแก้จนเละ — กู้เฉพาะแท็บนั้น ไม่แตะแท็บอื่น
+ * เก็บไว้ไม่ลบ: การ์ดในถาด (pool) พร้อมวันที่จองไว้ + รายการที่ผู้ใช้เพิ่มเอง (id 'u…')
+ */
+export function restoreSectionFromSeed(doc, sectionId) {
+  const seedSec = buildSeedDoc().sections.find((s) => s.id === sectionId);
+  const idx = doc.sections.findIndex((s) => s.id === sectionId);
+  if (!seedSec || idx < 0) return false;
+
+  const cur = doc.sections[idx];
+  const curPool = cur.items.filter((i) => i.pool);
+  const custom = cur.items.filter((i) => !i.pool && String(i.id).startsWith('u'));
+
+  // ถาด: เก็บใบที่ยังอยู่ไว้ทั้งวันที่จอง แล้วเติมเฉพาะใบที่หายไปกลับจาก seed
+  const have = new Set(curPool.map((i) => i.id));
+  const missingPool = seedSec.items.filter((i) => i.pool && !have.has(i.id)).map((i) => ({ ...i }));
+
+  doc.sections[idx] = {
+    ...seedSec,
+    items: [
+      ...seedSec.items.filter((i) => !i.pool).map((i) => ({ ...i })),
+      ...curPool,
+      ...missingPool,
+      ...custom,
+    ],
+  };
+  return true;
+}
+
 /** ดาวน์โหลดข้อมูลทั้งหมดเป็นไฟล์ JSON (ใช้เป็น backup / ย้ายเครื่อง) */
 export function downloadJSON(doc) {
   const blob = new Blob([JSON.stringify(doc, null, 2)], { type: 'application/json' });

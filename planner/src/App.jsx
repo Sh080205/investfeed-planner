@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { STATES, isoWeekKey } from './data/constants.js';
-import { loadDoc, saveDoc, statusKey, downloadJSON, upgradeDoc } from './data/store.js';
+import { loadDoc, saveDoc, statusKey, downloadJSON, upgradeDoc, restoreSectionFromSeed } from './data/store.js';
 import { applyLegacy } from './data/migrate.js';
 import Sidebar from './components/Sidebar.jsx';
 import SectionPanel from './components/SectionPanel.jsx';
@@ -60,6 +60,16 @@ export default function App() {
 
   function resetWeek(section) {
     update((d) => { delete d.statuses[statusKey(section, weekKey)]; });
+  }
+
+  /** คืนการ์ดของแท็บนี้กลับค่าตั้งต้น — ใช้ตอนเผลอลบหรือแก้จนเละ */
+  function resetSection(section) {
+    const msg =
+      'คืนค่าเริ่มต้นของแท็บ "' + section.tab + '" ?\n\n' +
+      '✓ ไม่หาย: การ์ดในถาด (พร้อมวันที่จองไว้) และรายการที่คุณเพิ่มเอง\n' +
+      '✗ จะกลับเป็นค่าตั้งต้น: การ์ดที่ลบไป (กลับมา) และการแก้ข้อความ/เวลาในการ์ดเดิม';
+    if (!window.confirm(msg)) return;
+    update((d) => { restoreSectionFromSeed(d, section.id); });
   }
 
   /* ---------- Finance (รายรับรายจ่าย) ---------- */
@@ -151,6 +161,7 @@ export default function App() {
           onEdit={(item) => setEditor({ sectionId: active.id, itemId: item.id })}
           onDelete={deleteItem}
           onResetWeek={resetWeek}
+          onResetSection={resetSection}
           onMoveItem={moveItem}
           icpcView={doc.settings.icpcView || 'all'}
           onIcpcView={(v) => update((d) => { d.settings.icpcView = v; })}

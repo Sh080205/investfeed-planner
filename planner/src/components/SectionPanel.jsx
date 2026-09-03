@@ -16,7 +16,7 @@ function readDragPayload(e) {
 
 export default function SectionPanel({
   section, doc, weekKey,
-  onCycle, onAdd, onEdit, onDelete, onResetWeek, onMoveItem,
+  onCycle, onAdd, onEdit, onDelete, onResetWeek, onResetSection, onMoveItem,
   icpcView, onIcpcView,
   finance, onAddTx, onDeleteTx, onSetBudgetUntil,
 }) {
@@ -208,9 +208,18 @@ export default function SectionPanel({
               ✥ กล่องข้อความ
             </span>
           )}
-          {/* books/money มีฟอร์ม/รายการของตัวเอง ไม่ใช้ปุ่มเพิ่มการ์ดทั่วไป */}
+          {/* books/money มีฟอร์ม/รายการของตัวเอง ไม่ใช้ปุ่มเพิ่ม/คืนค่าการ์ดทั่วไป */}
           {section.layout !== 'books' && section.layout !== 'money' && (
-            <button className="ml-reset add" onClick={() => onAdd({})}>+ เพิ่มรายการ</button>
+            <>
+              <button
+                className="ml-reset"
+                title="คืนการ์ดที่เผลอลบ/แก้ผิด กลับเป็นค่าตั้งต้น (ของที่เพิ่มเองไม่หาย)"
+                onClick={() => onResetSection(section)}
+              >
+                ↺ คืนค่าเริ่มต้น
+              </button>
+              <button className="ml-reset add" onClick={() => onAdd({})}>+ เพิ่มรายการ</button>
+            </>
           )}
         </span>
       </div>
