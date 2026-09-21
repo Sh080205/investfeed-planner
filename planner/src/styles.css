@@ -417,6 +417,99 @@ a.book-card:hover .ml-activity { color: var(--running); }
 .tag.income-tag { background: rgba(46, 204, 113, 0.1); color: var(--ac); }
 .tag.expense-tag { background: rgba(255, 122, 107, 0.1); color: var(--fitness); }
 
+/* ================= Final Sprint ================= */
+/* สีโปรเจค (ใช้ทั้งป้ายการ์ดและแถบโปรเจค) — อยู่ในพาเลตต์หม่นชุดเดิม */
+.proj-dsml { --proj: var(--running); }
+.proj-embedded { --proj: var(--skill); }
+.proj-os { --proj: var(--review); }
+.proj-final { --proj: var(--icpc); }
+.proj-research { --proj: var(--road); }
+.tag[class*='proj-'] { color: var(--proj); background: color-mix(in srgb, var(--proj) 13%, transparent); }
+
+/* แถบโปรเจคเหนือบอร์ด */
+.project-bar {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 8px; margin-bottom: 14px;
+}
+.proj-chip {
+  background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--proj);
+  border-radius: 9px; padding: 9px 10px; display: flex; flex-direction: column; gap: 4px; min-width: 0;
+}
+.proj-chip.warn { border-color: rgba(201, 141, 134, 0.6); background: rgba(201, 141, 134, 0.07); }
+.proj-head { display: flex; justify-content: space-between; align-items: baseline; }
+.proj-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: var(--proj); letter-spacing: 0.05em; }
+.proj-pct { font-size: 13px; font-weight: 700; }
+.proj-pct small { font-size: 9.5px; color: var(--text-muted); font-weight: 500; }
+.proj-name { font-size: 11.5px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.proj-track { height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
+.proj-fill { height: 100%; background: var(--proj); border-radius: 2px; transition: width 0.3s ease; }
+.proj-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 10.5px; color: var(--text-muted); }
+.proj-meta input { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 5px; font: inherit; font-size: 11px; padding: 2px 5px; color-scheme: dark; }
+.proj-chip.warn .proj-meta { color: var(--fitness); }
+.linklike { background: none; border: none; padding: 0; color: inherit; font-size: 10.5px; cursor: pointer; text-decoration: underline dotted; }
+.unconfirmed { color: var(--pending); font-size: 10px; }
+.proj-next { font-size: 10.5px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.proj-confirm { font-size: 10.5px; color: var(--text-muted); display: flex; gap: 5px; align-items: center; cursor: pointer; }
+
+/* เลื่อนสัปดาห์ + หัวคอลัมน์มีวันที่ */
+.week-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.week-label { font-size: 12px; font-weight: 600; }
+.day-date { color: var(--text); font-weight: 600; }
+.day-col.is-today .day-col-header { color: var(--ac); border-bottom-color: var(--ac); }
+
+/* ป้ายพลังงาน + รายละเอียด */
+.card-tags { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.energy {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.04em;
+  padding: 2px 6px; border-radius: 5px; border: 1px solid var(--border); color: var(--text-muted);
+}
+.energy.e-deep { color: var(--ac); border-color: rgba(124, 184, 148, 0.4); }
+.energy.e-locked { color: var(--road); border-color: rgba(192, 143, 160, 0.45); }
+.energy.e-locked.unlocked { color: var(--pending); border-style: dashed; }
+.energy.e-buffer { color: var(--pending); border-color: rgba(201, 162, 109, 0.45); }
+.ml-detail { font-size: 11px; line-height: 1.45; color: var(--text-muted); margin-top: 3px; }
+.ml-card.is-locked { border-left: 2px solid rgba(192, 143, 160, 0.6); }
+.ml-card.is-buffer { border-style: dashed; }
+
+/* แท็บที่พักไว้ */
+.paused-panel {
+  background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius);
+  padding: 22px; text-align: center; color: var(--text-muted); font-size: 12.5px; line-height: 1.7;
+}
+.paused-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.paused-badge { font-size: 10.5px; color: var(--pending); margin-top: -4px; }
+.cd-card.is-paused .cd-body { opacity: 0.45; }
+
+/* แถบเตือน / สถานะว่าง */
+.banner.warn { background: rgba(201, 162, 109, 0.08); border-color: rgba(201, 162, 109, 0.4); color: var(--pending); }
+.banner.issues { display: block; }
+.banner.issues ul { margin: 6px 0 0; padding-left: 18px; font-size: 11.5px; line-height: 1.6; }
+.banner code { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.empty-state {
+  color: var(--text-muted); font-size: 12px; padding: 16px; text-align: center;
+  border: 1px dashed var(--border); border-radius: var(--radius);
+}
+.exam-row-days.late { color: var(--fitness); }
+
+/* ฟอร์ม: checkbox + modal สรุปสัปดาห์ */
+.field-check { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-muted); cursor: pointer; }
+.field-check.lock-toggle { color: var(--road); }
+.modal.review { max-width: 620px; }
+.review-score { font-size: 13px; color: var(--text-muted); }
+.review-score b { color: var(--text); }
+.review-head { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-top: 6px; }
+.review-list { display: flex; flex-direction: column; gap: 5px; }
+.review-row {
+  display: flex; align-items: center; gap: 10px; background: var(--bg); border: 1px solid var(--border-soft);
+  border-radius: 7px; padding: 7px 9px; font-size: 12px;
+}
+.review-row.overdue { border-color: rgba(201, 141, 134, 0.45); }
+.review-when { font-size: 10.5px; color: var(--text-muted); flex: 0 0 auto; min-width: 118px; }
+.review-title { flex: 1; min-width: 0; }
+.review-tag { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--text-muted); margin-right: 6px; }
+.review-late { font-size: 10px; color: var(--fitness); margin-left: 6px; }
+.review-locked { font-size: 12px; opacity: 0.6; }
+
 /* ---------- Responsive (มือถือ/แท็บเล็ต) ---------- */
 @media (max-width: 980px) {
   .app { flex-direction: column; padding: 20px 14px 50px; }

@@ -2,15 +2,29 @@
 // ข้อมูลทั้งหมด (sections + items + statuses + settings) เก็บเป็น JSON ก้อนเดียว
 // ใต้ key 'planner-v3:doc' — ทำให้ export/import ง่ายและไม่มี state กระจัดกระจาย
 
-import { STORAGE_KEY, isoWeekKey } from './constants.js';
-import { buildSeedDoc } from './seed.js';
+import { STORAGE_KEY, isoWeekKey, statusKey } from './constants.js';
+import { buildSeedDoc, buildBaseSeed } from './seed.js';
+import { applyFinalSprint } from './sprint.js';
 import { collectLegacyFromLocalStorage, applyLegacy } from './migrate.js';
+
+export { statusKey }; // ย้ายไปอยู่ constants.js แล้ว — re-export ให้ import เดิมยังใช้ได้
+
+// สำเนาข้อมูลก่อนอัปเกรดเป็น Final Sprint (v19) — เก็บครั้งเดียว ไม่เขียนทับ
+// App จะส่งก้อนนี้ไปให้ server เขียนเป็นไฟล์ backup/…json อีกชั้น
+export const BACKUP_KEY = 'planner-v3:backup:pre-v19';
 
 export function loadDoc() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const doc = JSON.parse(raw);
+      if ((doc.schemaVersion || 1) < 19) {
+        try {
+          if (!localStorage.getItem(BACKUP_KEY)) localStorage.setItem(BACKUP_KEY, raw);
+        } catch (e) {
+          console.error('เก็บสำเนาก่อนอัปเกรดไม่สำเร็จ (localStorage เต็ม?)', e);
+        }
+      }
       if (upgradeDoc(doc)) saveDoc(doc); // ยกระดับ schema เก่า → ใหม่ อัตโนมัติ
       pruneOldWeeks(doc);
       return doc;
@@ -69,10 +83,13 @@ export function saveDoc(doc) {
  * v16 → v17: มิดเทอมสอบจบแล้ว → weekly กลับสู่โหมดปกติ (จัดตาม baseline รายวิชา
  *            + ล็อกการบ้าน Prob&Stat/DS + protected block งานวิจัย)
  *            และแท็บสอบเปลี่ยนจากแผนมิดเทอมเป็นแผนไฟนอล (ยังรอวันสอบ+scope)
+ * v17 → v18: จัด weekly ตามช่วงพลังงานจริง (พีค 8–12 น.)
+ * v18 → v19: Final Sprint 2569/1 — ล้างการ์ดเก่าทุกแท็บยกเว้น เงิน/ตารางเรียน/fitness/icpc
+ *            · icpc paused · weekly เป็นบอร์ดผูกวันที่ + projects/milestones/40 task จาก JSON
  */
 export function upgradeDoc(doc) {
   let changed = false;
-  const seed = buildSeedDoc();
+  const seed = buildBaseSeed(); // เทมเพลตชุดเดิม (v18) — ขั้น v1→v18 อ้างอิงจากตัวนี้
 
   if ((doc.schemaVersion || 1) < 2) {
     // 1) ICPC: แทนที่ด้วยแผนใหม่ทั้ง section — เก็บสถานะเดิมไว้เฉพาะ id ที่ยังอยู่ (พวก resources rs-*)
@@ -406,6 +423,15 @@ export function upgradeDoc(doc) {
     changed = true;
   }
 
+  if (doc.schemaVersion < 19) {
+    // Final Sprint 2569/1: ล้างเนื้อหาเก่า (ยกเว้นเงิน/ตารางเรียน/fitness/icpc) + เติมแผนผูกวันที่
+    // สำเนาก่อนล้างถูกเก็บไว้แล้วใน loadDoc (BACKUP_KEY) และ App ส่งต่อให้ server เขียนไฟล์
+    const removed = applyFinalSprint(doc);
+    doc.sprintMigration = { at: new Date().toISOString(), removed, backupFile: null };
+    doc.schemaVersion = 19;
+    changed = true;
+  }
+
   // กันเหนียว: doc เก่าที่อัปเกรดครบแล้วแต่ยังไม่มี finance (เช่น import ไฟล์เก่า)
   if (!doc.finance) { doc.finance = { transactions: [] }; changed = true; }
 
@@ -413,17 +439,18 @@ export function upgradeDoc(doc) {
 }
 
 /** section รายสัปดาห์เก็บสถานะแยกตามสัปดาห์: 'weekly:2026-W27' — เปลี่ยน key = รีเซ็ต */
-export function statusKey(section, weekKey) {
-  return section.resettable ? section.id + ':' + weekKey : section.id;
-}
-
-/** ลบสถานะของสัปดาห์เก่า ๆ ทิ้ง กัน doc บวมไปเรื่อย ๆ */
+/**
+ * ลบสถานะรายสัปดาห์ของสัปดาห์ที่ผ่านไปแล้ว กัน doc บวม
+ * ไม่แตะ ':dated' (สถานะถาวรของการ์ดผูกวันที่ — % โปรเจคคิดจากตรงนี้)
+ * และไม่แตะสัปดาห์อนาคต (ติ๊กล่วงหน้าไว้ได้)
+ */
 function pruneOldWeeks(doc) {
   const wk = isoWeekKey();
   const weeklyIds = doc.sections.filter((s) => s.resettable).map((s) => s.id);
   for (const key of Object.keys(doc.statuses)) {
     const [secId, week] = key.split(':');
-    if (week && weeklyIds.includes(secId) && week !== wk) delete doc.statuses[key];
+    if (!week || week === 'dated' || !weeklyIds.includes(secId)) continue;
+    if (week < wk) delete doc.statuses[key]; // 'YYYY-Www' เทียบแบบ string ได้ตรงลำดับเวลา
   }
 }
 

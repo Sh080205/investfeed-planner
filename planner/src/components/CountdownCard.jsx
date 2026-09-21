@@ -9,7 +9,8 @@ function fmtDays(n) {
 }
 
 // การ์ดนับถอยหลังวันแข่ง — กด "แก้วัน" เพื่อแก้ทั้ง 3 วัน (บันทึกตอนกด "เสร็จ")
-export default function CountdownCard({ dates, onSave }) {
+// paused = ข้อความป้ายพัก (เช่น "พักถึงหลัง final") → แสดงป้าย + หรี่ตัวเลข
+export default function CountdownCard({ dates, onSave, paused = null }) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(dates);
 
@@ -29,16 +30,17 @@ export default function CountdownCard({ dates, onSave }) {
   ];
 
   return (
-    <div className="cd-card">
+    <div className={'cd-card' + (paused ? ' is-paused' : '')}>
       <div className="cd-head">
         <div className="ml-eyebrow">
-          <span className="dot dot-icpc" />นับถอยหลังแข่ง
+          <span className="dot dot-icpc" />นับถอยหลังแข่ง ICPC
         </div>
         <button className="cd-edit" onClick={toggle}>{open ? 'เสร็จ' : 'แก้วัน'}</button>
       </div>
+      {paused && !open && <div className="paused-badge">⏸ {paused}</div>}
 
       {!open ? (
-        <div>
+        <div className="cd-body">
           {rows.map((r) => {
             const d = daysUntil(dates[r.key]);
             return (

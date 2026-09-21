@@ -14,7 +14,7 @@ export const DAY_ORDER = [
 export const TAG_LABEL = {
   icpc: 'ICPC', ai: 'AI PROJECT', review: 'COURSE', skill: 'SKILL', plan: 'PLAN',
   fitness: 'FITNESS', road: 'ROADMAP', course: 'ELECTIVE', learn: 'FREE', class: 'CLASS',
-  eng: 'ENGLISH', res: 'RESEARCH', book: 'BOOK', exam: 'MIDTERM',
+  eng: 'ENGLISH', res: 'RESEARCH', book: 'BOOK', exam: 'EXAM',
 };
 
 // ตระกูลสีของป้าย — ยุบ 13 สีเหลือ 4 ตระกูล ให้ตาแยกง่ายและไม่ฉูดฉาด
@@ -54,16 +54,16 @@ export function isoWeekKey(dateInput = new Date()) {
   return d.getUTCFullYear() + '-W' + String(week).padStart(2, '0');
 }
 
-// ตารางสอบไฟนอล 17–23 ส.ค. 2026 (จากตารางสอบจริง) — ใช้กับการ์ดนับถอยหลังใน sidebar
-export const FINALS = [
-  { date: '2026-08-17', label: 'จ 17 ส.ค.', time: '12:00–15:00', room: '13D', subject: 'Prob & Stat' },
-  { date: '2026-08-18', label: 'อ 18 ส.ค.', time: '12:00–14:00', room: '1404A', subject: 'IT Integration Lab' },
-  { date: '2026-08-19', label: 'พ 19 ส.ค.', time: '15:30–18:30', room: '17305A', subject: 'Intro to Data Science' },
-  { date: '2026-08-20', label: 'พฤ 20 ส.ค.', time: '12:00–14:00', room: '17307A', subject: 'English for Job' },
-  { date: '2026-08-21', label: 'ศ 21 ส.ค.', time: '08:30–11:30', room: '13J', subject: 'Operating Systems' },
-  { date: '2026-08-22', label: 'ส 22 ส.ค.', time: '15:30–18:30', room: '17301A', subject: 'Machine Learning' },
-  { date: '2026-08-23', label: 'อา 23 ส.ค.', time: '12:00–15:00', room: '17403A', subject: 'Embedded Systems' },
-];
+/* ---------- key ของสถานะการ์ดใน doc.statuses ----------
+   section ปกติ: 'icpc' · section รายสัปดาห์: 'weekly:2026-W39' (รีเซ็ตทุกสัปดาห์)
+   การ์ดที่ผูกวันที่ (มี item.date) ใน section รายสัปดาห์: 'weekly:dated' — เก็บถาวร
+   เพราะเป็นงานเฉพาะวัน ไม่ใช่รูทีน ถ้ารีเซ็ตทิ้งรายสัปดาห์ % ของโปรเจคจะตกกลับเป็น 0 */
+export function statusKey(section, weekKey) {
+  return section.resettable ? section.id + ':' + weekKey : section.id;
+}
+export function itemStatusKey(section, item, weekKey) {
+  return section.resettable && item.date ? section.id + ':dated' : statusKey(section, weekKey);
+}
 
 export function daysUntil(iso) {
   const today = new Date();

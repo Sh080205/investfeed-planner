@@ -1,18 +1,24 @@
 import React, { useRef } from 'react';
-import { statusKey } from '../data/store.js';
-import { TAB_GROUPS } from '../data/constants.js';
+import { TAB_GROUPS, itemStatusKey } from '../data/constants.js';
+import { SPRINT, isPaused, datesOfWeek } from '../data/sprint.js';
 import ProgressRing from './ProgressRing.jsx';
 import CountdownCard from './CountdownCard.jsx';
-import ExamCountdown from './ExamCountdown.jsx';
+import SprintCountdown from './SprintCountdown.jsx';
 
-/** ความคืบหน้าของ section (null = section ที่ไม่ติ๊กสถานะ เช่น ตารางเรียน) */
+/**
+ * ความคืบหน้าของ section (null = ไม่นับ: แท็บไม่ติ๊กสถานะ เช่น ตารางเรียน หรือแท็บที่พักไว้)
+ * - การ์ดถาดที่ยังไม่จองวัน ไม่นับเป็นงาน
+ * - บอร์ดผูกวันที่ (weekly ช่วง Final Sprint): นับเฉพาะการ์ดของ "สัปดาห์นี้" + การ์ดรูทีน
+ */
 function sectionProgress(doc, section, weekKey) {
-  if (section.checkable === false) return null;
-  const map = doc.statuses[statusKey(section, weekKey)] || {};
-  // การ์ดวิชาที่ยังพักอยู่ในถาด (pool && ยังไม่จองวัน) ไม่นับเป็นงานของสัปดาห์นี้
-  const counted = section.items.filter((i) => !(i.pool && !i.day));
+  if (section.checkable === false || isPaused(doc, section.id)) return null;
+  let counted = section.items.filter((i) => !(i.pool && !i.day && !i.date));
+  if (section.dated) {
+    const days = new Set(datesOfWeek(weekKey));
+    counted = counted.filter((i) => !i.date || days.has(i.date));
+  }
+  const done = counted.filter((i) => (doc.statuses[itemStatusKey(section, i, weekKey)] || {})[i.id] === 'done').length;
   const total = counted.length;
-  const done = counted.filter((i) => map[i.id] === 'done').length;
   return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
 }
 
@@ -31,16 +37,17 @@ export default function Sidebar({ doc, weekKey, activeId, onSelect, onSaveDates,
     <aside className="sidebar">
       <div>
         <div className="ml-eyebrow"><span className="dot" />MISSION LOG · v3</div>
-        <div className="ml-title">แผนพิชิต ICPC + สาย AI</div>
-        <div className="ml-sub">ซ้อมแข่ง ICPC 2027 · English · อัพสกิล DS/ML · โปรเจกต์ · ฟิต — แก้ทุกตารางได้ใน UI</div>
+        {/* ชื่อแอปมาจาก seed ของ sprint (ไม่ hardcode ใน component) */}
+        <div className="ml-title">{doc.sprint ? SPRINT.app.title : 'แผนพิชิต ICPC + สาย AI'}</div>
+        <div className="ml-sub">{doc.sprint ? SPRINT.app.subtitle : 'ซ้อมแข่ง ICPC · English · อัพสกิล DS/ML · โปรเจกต์ · ฟิต'}</div>
       </div>
 
       <ProgressRing pct={pct} done={done} total={total} />
 
-      {/* สอบไฟนอลใกล้กว่า contest → วางไว้บน · ซ่อนเองเมื่อสอบครบ */}
-      <ExamCountdown />
+      {/* countdown หลัก: วันเริ่ม final (อยู่บน contest ICPC ที่พักไว้) */}
+      <SprintCountdown doc={doc} />
 
-      <CountdownCard dates={doc.settings.dates} onSave={onSaveDates} />
+      <CountdownCard dates={doc.settings.dates} onSave={onSaveDates} paused={isPaused(doc, 'icpc') ? SPRINT.app.pauseNote : null} />
 
       {/* แท็บจัดเป็นกลุ่ม — section ที่ไม่อยู่ในกลุ่มไหนไปรวมที่ "อื่น ๆ" ท้ายสุด */}
       <nav className="ml-tabs" role="tablist">
@@ -68,7 +75,9 @@ export default function Sidebar({ doc, weekKey, activeId, onSelect, onSaveDates,
                       onClick={() => onSelect(s.id)}
                     >
                       <span className="tab-name">{s.tab}</span>
-                      {p && <span className="pct mono">{p.pct}%</span>}
+                      {isPaused(doc, s.id)
+                        ? <span className="pct" title={SPRINT.app.pauseNote}>⏸</span>
+                        : p && <span className="pct mono">{p.pct}%</span>}
                     </button>
                   );
                 })}

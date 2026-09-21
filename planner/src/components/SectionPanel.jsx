@@ -1,9 +1,10 @@
 import React from 'react';
-import { DAY_ORDER } from '../data/constants.js';
-import { statusKey } from '../data/store.js';
+import { DAY_ORDER, itemStatusKey } from '../data/constants.js';
+import { SPRINT, datesOfWeek, shiftWeek, fmtDateShort, spanOf, isPaused, todayISO } from '../data/sprint.js';
 import ItemCard from './ItemCard.jsx';
 import BookShelf from './BookShelf.jsx';
 import FinanceTracker from './FinanceTracker.jsx';
+import ProjectBar from './ProjectBar.jsx';
 
 // อ่าน payload ของการลาก — { type: 'move', id } = ย้ายการ์ดเดิม · { type: 'new' } = กล่องข้อความใหม่
 function readDragPayload(e) {
@@ -14,15 +15,43 @@ function readDragPayload(e) {
   }
 }
 
+const isLocked = (it) => it.energy === 'locked' && !it.unlocked;
+// เรียงการ์ดในคอลัมน์ตามเวลาเริ่ม (การ์ดไม่ระบุเวลาอยู่ท้าย คงลำดับเดิม)
+const byStart = (a, b) => ((spanOf(a) || [9999])[0] - (spanOf(b) || [9999])[0]);
+
 export default function SectionPanel({
-  section, doc, weekKey,
-  onCycle, onAdd, onEdit, onDelete, onResetWeek, onResetSection, onMoveItem,
+  section, doc, weekKey, viewWeek, onViewWeek, issues = [],
+  onCycle, onAdd, onEdit, onDelete, onResetWeek, onResetSection, onMoveItem, onMoveNext,
+  onUpdateProject, onOpenReview, onTogglePause,
   icpcView, onIcpcView,
   finance, onAddTx, onDeleteTx, onSetBudgetUntil,
 }) {
-  const stMap = doc.statuses[statusKey(section, weekKey)] || {};
-  const stateOf = (item) => stMap[item.id] || 'pending';
+  const dated = !!section.dated;              // บอร์ด weekly แบบผูกวันที่ (Final Sprint)
+  const wk = dated ? viewWeek : weekKey;      // สัปดาห์ที่ใช้เก็บสถานะของการ์ดรูทีน
+  const weekDates = dated ? datesOfWeek(viewWeek) : null;
+  const today = todayISO();
+  const stateOf = (item) => (doc.statuses[itemStatusKey(section, item, wk)] || {})[item.id] || 'pending';
   const isDays = section.layout === 'days'; // layout รายวัน = ลากการ์ดได้
+  const projectOf = (item) => doc.sprint?.projects.find((p) => p.id === item.project) || null;
+  const milestoneOf = (item) => doc.sprint?.milestones.find((m) => m.id === item.milestone) || null;
+
+  /* ---------- แท็บที่พักไว้ (icpc ช่วง Final Sprint) — ซ่อนการ์ด ไม่นับ progress ---------- */
+  if (isPaused(doc, section.id)) {
+    return (
+      <>
+        <div className="ml-panel-note">
+          <span>{section.note}</span>
+          <span className="note-actions">
+            <button className="ml-reset" onClick={() => onTogglePause(section.id)}>▶ เปิดใช้ต่อ</button>
+          </span>
+        </div>
+        <div className="paused-panel">
+          <div className="paused-title">⏸ {section.tab} — {SPRINT.app.pauseNote}</div>
+          <div>ซ่อนการ์ดไว้ {section.items.length} ใบ และไม่นับเข้า progress · ข้อมูลกับสถานะที่ติ๊กไว้ยังอยู่ครบ</div>
+        </div>
+      </>
+    );
+  }
 
   // ICPC: กรองตามแผนหลัง National ที่เลือก — รายการที่ไม่มี track แสดงเสมอ
   let items = section.items;
@@ -30,18 +59,18 @@ export default function SectionPanel({
     items = items.filter((i) => !i.track || i.track === icpcView);
   }
 
-  /* ---------- drag & drop (เฉพาะ layout รายวัน) ---------- */
-  function dropOnDay(e, day) {
+  /* ---------- drag & drop (เฉพาะ layout รายวัน) — iso = วันที่ของคอลัมน์บนบอร์ดผูกวันที่ ---------- */
+  function dropOnDay(e, day, iso) {
     e.preventDefault();
     const p = readDragPayload(e);
     if (!p) return;
-    if (p.type === 'move') onMoveItem(section, p.id, day, null); // วางบนพื้นคอลัมน์ = ต่อท้ายวันนั้น
-    else if (p.type === 'new') onAdd({ day }); // กล่องข้อความใหม่ → เปิดฟอร์มโดยเลือกวันให้แล้ว
+    if (p.type === 'move') onMoveItem(section, p.id, day, null, iso); // วางบนพื้นคอลัมน์ = ต่อท้ายวันนั้น
+    else if (p.type === 'new') onAdd({ day, date: iso }); // กล่องข้อความใหม่ → เปิดฟอร์มโดยเลือกวันให้แล้ว
   }
   // ชนิดถาดของการ์ด pool: null = ไม่ใช่ pool · 'book' = ถาดหนังสือ · 'subject' = ถาดวิชา
   const poolKind = (it) => (it && it.pool ? (it.kind === 'book' ? 'book' : 'subject') : null);
 
-  function dropOnCard(e, day, targetItem) {
+  function dropOnCard(e, day, targetItem, iso) {
     const p = readDragPayload(e);
     if (!p) return;
     // ปลายทางเป็นการ์ดในถาด (day==='') → อนุญาตเฉพาะจัดลำดับ pool "ชนิดเดียวกัน"
@@ -55,8 +84,8 @@ export default function SectionPanel({
       }
       return;
     }
-    if (p.type === 'move' && p.id !== targetItem.id) onMoveItem(section, p.id, day, targetItem.id); // แทรกหน้าการ์ดเป้า
-    else if (p.type === 'new') onAdd({ day });
+    if (p.type === 'move' && p.id !== targetItem.id) onMoveItem(section, p.id, day, targetItem.id, iso);
+    else if (p.type === 'new') onAdd({ day, date: iso });
   }
   // วางลงถาด = พักการ์ด (day='') — รับเฉพาะการ์ด pool "ชนิดตรงกับถาด" กันปนกันและกันการ์ดปกติหาย
   function dropOnTray(e, kind) {
@@ -67,17 +96,20 @@ export default function SectionPanel({
     if (it && poolKind(it) === kind) onMoveItem(section, p.id, '', null);
   }
 
-  const card = (item, day) => (
+  const card = (item, day, iso) => (
     <ItemCard
       key={item.id}
       section={section}
       item={item}
       state={stateOf(item)}
-      draggable={isDays}
-      onCycle={() => onCycle(section, item)}
+      project={projectOf(item)}
+      milestone={milestoneOf(item)}
+      draggable={isDays && !isLocked(item)}
+      onCycle={() => onCycle(section, item, wk)}
       onEdit={() => onEdit(item)}
       onDelete={() => onDelete(section, item)}
-      onDropOnCard={isDays ? (e) => dropOnCard(e, day, item) : undefined}
+      onMoveNext={dated && item.date && !isLocked(item) ? () => onMoveNext(section, item) : undefined}
+      onDropOnCard={isDays ? (e) => dropOnCard(e, day, item, iso) : undefined}
     />
   );
 
@@ -101,29 +133,43 @@ export default function SectionPanel({
     );
   }
 
-  /* ---------- layout 'days': คอลัมน์ จ–อา (โชว์ครบทุกวันเพื่อเป็นเป้าวาง) + ถาด ---------- */
+  /* ---------- layout 'days': คอลัมน์ จ–อา (+ วันที่จริงถ้าเป็นบอร์ดผูกวันที่) + ถาด ---------- */
   function renderDays() {
-    // การ์ด pool ที่ยังไม่จองวัน = อยู่ในถาด · ที่จองวันแล้วจะไปโผล่ในคอลัมน์วันตามปกติ
     const hasSubjectPool = items.some((i) => poolKind(i) === 'subject');
     const hasBookPool = items.some((i) => poolKind(i) === 'book');
     return (
       <>
+        {dated && (
+          <div className="week-nav">
+            <button className="icon-btn" onClick={() => onViewWeek(shiftWeek(viewWeek, -1))} aria-label="สัปดาห์ก่อน">‹</button>
+            <span className="week-label mono">
+              {viewWeek.replace('-W', ' · W')} · {fmtDateShort(weekDates[0])} – {fmtDateShort(weekDates[6])}
+            </span>
+            <button className="icon-btn" onClick={() => onViewWeek(shiftWeek(viewWeek, 1))} aria-label="สัปดาห์ถัดไป">›</button>
+            {viewWeek !== weekKey && (
+              <button className="ml-reset" onClick={() => onViewWeek(weekKey)}>กลับสัปดาห์นี้</button>
+            )}
+          </div>
+        )}
+
         <div className="day-grid">
-          {DAY_ORDER.map((day) => {
-            const dayItems = items.filter((i) => i.day === day);
+          {DAY_ORDER.map((day, idx) => {
+            const iso = dated ? weekDates[idx] : undefined;
+            let dayItems = items.filter((i) => (dated && i.date ? i.date === iso : i.day === day));
+            if (dated) dayItems = [...dayItems].sort(byStart);
             return (
               <div
-                className="day-col"
+                className={'day-col' + (iso === today ? ' is-today' : '')}
                 key={day}
                 onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }}
                 onDragLeave={(e) => e.currentTarget.classList.remove('drag-over')}
-                onDrop={(e) => { e.currentTarget.classList.remove('drag-over'); dropOnDay(e, day); }}
+                onDrop={(e) => { e.currentTarget.classList.remove('drag-over'); dropOnDay(e, day, iso); }}
               >
                 <div className="day-col-header mono">
-                  <span>{day}</span>
-                  <button className="icon-btn" title={'เพิ่มรายการวัน' + day} onClick={() => onAdd({ day })}>+</button>
+                  <span>{day}{iso && <span className="day-date"> · {fmtDateShort(iso)}</span>}</span>
+                  <button className="icon-btn" title={'เพิ่มรายการวัน' + day} onClick={() => onAdd({ day, date: iso })}>+</button>
                 </div>
-                {dayItems.map((item) => card(item, day))}
+                {dayItems.map((item) => card(item, day, iso))}
                 {!dayItems.length && <div className="day-empty">ลากการ์ดมาวางที่นี่</div>}
               </div>
             );
@@ -148,6 +194,7 @@ export default function SectionPanel({
 
   /* ---------- layout 'group': จัดกลุ่มตามหัวข้อ (เรียงตามลำดับที่พบ) ---------- */
   function renderGroups() {
+    if (!items.length) return <div className="empty-state">ยังไม่มีรายการ — กด "+ เพิ่มรายการ" เพื่อเริ่ม</div>;
     const groups = [];
     for (const i of items) {
       const g = i.group || '';
@@ -172,7 +219,8 @@ export default function SectionPanel({
     });
   }
 
-  const note = section.note + (section.resettable ? ' · WEEK ' + weekKey : '');
+  const note = section.note + (section.resettable && !dated ? ' · WEEK ' + weekKey : '');
+  const canPause = SPRINT.pause.includes(section.id);
 
   return (
     <>
@@ -191,8 +239,17 @@ export default function SectionPanel({
               <option value="notq">หลัง National: 🔁 ไม่ผ่าน</option>
             </select>
           )}
+          {canPause && (
+            <button className="ml-reset" onClick={() => onTogglePause(section.id)}>⏸ พักไว้</button>
+          )}
+          {dated && (
+            <button className="ml-reset" onClick={onOpenReview}>📋 สรุปสัปดาห์</button>
+          )}
           {section.resettable && (
-            <button className="ml-reset" onClick={() => onResetWeek(section)}>รีเซ็ตสัปดาห์นี้</button>
+            <button className="ml-reset" onClick={() => onResetWeek(section, wk)}
+              title="ล้างสถานะของการ์ดรูทีน (ไม่ผูกวันที่) ในสัปดาห์นี้ — การ์ดผูกวันที่ไม่ถูกแตะ">
+              รีเซ็ตสัปดาห์นี้
+            </button>
           )}
           {/* ชิปลากสร้างกล่องข้อความใหม่ — ลากไปวางบนคอลัมน์วัน */}
           {isDays && (
@@ -223,6 +280,16 @@ export default function SectionPanel({
           )}
         </span>
       </div>
+
+      {dated && issues.length > 0 && (
+        <div className="banner warn issues">
+          <b>⚠ แผนมีปัญหา {issues.length} จุด</b>
+          <ul>{issues.slice(0, 8).map((m, i) => <li key={i}>{m}</li>)}</ul>
+          {issues.length > 8 && <div>…และอีก {issues.length - 8} จุด (ดูใน console)</div>}
+        </div>
+      )}
+
+      {dated && doc.sprint && <ProjectBar doc={doc} onUpdateProject={onUpdateProject} />}
 
       <div id="mlList">
         {section.layout === 'money'

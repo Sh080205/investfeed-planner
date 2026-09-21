@@ -1,7 +1,42 @@
-# Mission Log v3 — แผนพิชิต ICPC + สาย AI
+# Mission Log — Final Sprint 2569/1
 
 Web app จัดการแผนส่วนตัว (ยกระดับจาก `planner_v2.html`) — **ทุกตารางแก้ไข/เพิ่ม/ลบได้ผ่าน UI**
 สร้างด้วย React + Vite, เก็บข้อมูลใน localStorage, มี Export/Import JSON และ migration จากของเดิม
+
+## Final Sprint (21 ก.ย. – 18 ต.ค. 2026) — schema v19
+
+- แผนทั้งหมดอยู่ใน [`src/data/final_sprint_2569_1.json`](src/data/final_sprint_2569_1.json)
+  (6 projects · 11 milestones · 40 task · ช่องพลังงานสำหรับปุ่มเลื่อน) — แก้ไฟล์นี้แล้ว build ใหม่
+- logic อยู่ที่ [`src/data/sprint.js`](src/data/sprint.js): seed แบบ idempotent (id = วันที่+เวลา+โปรเจค),
+  หา slot ว่าง, % โปรเจค, สรุปสัปดาห์, validation
+- บอร์ด weekly ผูกวันที่: ปุ่ม ‹ › เลื่อนสัปดาห์ · แถบ Project ด้านบน (%, วันเหลือ, milestone ถัดไป,
+  แก้ deadline + ติ๊กยืนยัน, เตือนเมื่อเหลือ ≤3 วันและ % < 70) · 📋 สรุปสัปดาห์ · ⏭ เลื่อนไปช่องว่างถัดไป
+- การ์ด `locked` ลาก/เลื่อน/แก้เวลาไม่ได้จนกว่าจะติ๊กปลดล็อกในหน้าแก้ไข · การ์ด BUFFER ไม่มีทางถูกทับ
+- icpc พักไว้ (ซ่อน + ไม่นับ progress) — กด "▶ เปิดใช้ต่อ" ในแท็บ icpc
+
+ตรวจ acceptance ฝั่งข้อมูล (40 task, ไม่มีเวลาทับ, migration, ปุ่มเลื่อน):
+
+```bash
+npm run test:sprint
+```
+
+### Backup + วิธี restore
+
+ข้อมูลจริงอยู่ใน localStorage ของเบราว์เซอร์ที่ใช้เปิดแอป ตอนเปิดแอปเวอร์ชันนี้ครั้งแรก
+(อัปเกรดจาก v18 → v19) แอปจะเก็บสำเนาข้อมูลเดิม **ก่อนล้าง** ไว้ 2 ที่:
+
+1. ไฟล์ `backup/mission_log_backup_YYYY-MM-DD.json` (server เขียนให้ — โฟลเดอร์นี้ gitignore เพราะมีรายการเงิน)
+2. localStorage key `planner-v3:backup:pre-v19` — กดปุ่ม "⬇ สำเนาก่อนอัปเกรด" บนแถบแจ้งเตือนเพื่อดาวน์โหลด
+
+**restore ทั้งหมดกลับเป็นแอปเดิม** (การ import ไฟล์ v18 เข้าแอปเวอร์ชันนี้จะถูกอัปเกรดเป็น Final Sprint ซ้ำ):
+
+```bash
+git checkout pre-final-sprint-2026-09-21 -- planner
+npm run build:planner
+```
+
+แล้วเปิด planner → ⬆ Import JSON → เลือกไฟล์ backup · กลับมาเวอร์ชันปัจจุบันด้วย
+`git checkout main -- planner` แล้ว build อีกครั้ง
 
 ## วิธีรันแบบง่ายสุด (รวมกับแอปข่าว InvestFeed)
 

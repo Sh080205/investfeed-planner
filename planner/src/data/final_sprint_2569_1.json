@@ -1,0 +1,94 @@
+{
+  "id": "final-sprint-2569-1",
+  "app": {
+    "title": "Mission Log — Final Sprint 2569/1",
+    "subtitle": "4 โปรเจค + เตรียม final · ส่งครบก่อน 19 ต.ค.",
+    "boardHeader": "ตื่น 7 · นอน 24 · พีค 8–12 · งานคิดหนักลงพีคที่ว่าง: พุธ 10:15, เสาร์–อาทิตย์เช้า · คืนวันธรรมดา = งานท่อง/ดริล/งานเบา · 🔒 บล็อกวิจัยล็อกไว้",
+    "pauseNote": "พักถึงหลัง final"
+  },
+  "pause": ["icpc"],
+  "clearSections": ["weekly", "exam", "research", "english", "skills", "projects", "roadmap", "electives", "learn"],
+  "projects": [
+    { "id": "dsml", "name": "DS + ML End-to-end (dataset เดียวกัน)", "deadline": "2026-10-18", "confirmed": false, "tag": "DSML" },
+    { "id": "emb", "name": "Embedded: PM2.5 Multivariate", "deadline": "2026-10-16", "confirmed": false, "tag": "EMBEDDED" },
+    { "id": "os-s", "name": "OS พรีเซนต์เล็ก", "deadline": "2026-10-02", "confirmed": false, "tag": "OS" },
+    { "id": "os-l", "name": "OS พรีเซนต์ใหญ่", "deadline": "2026-10-16", "confirmed": false, "tag": "OS" },
+    { "id": "final", "name": "เตรียมสอบ final (เริ่ม 19 ต.ค.)", "deadline": "2026-10-19", "confirmed": false, "tag": "FINAL" },
+    { "id": "research", "name": "FPGA TCN (maintenance mode)", "deadline": null, "confirmed": false, "tag": "RESEARCH" }
+  ],
+  "milestones": [
+    { "id": "M0", "project": "all", "name": "เช็ค requirement + deadline จริงทั้ง 4 งาน", "due": "2026-09-27" },
+    { "id": "M1", "project": "os-s", "name": "พรีเซนต์เล็กพร้อมพูด", "due": "2026-10-02" },
+    { "id": "M2", "project": "dsml", "name": "Clean dataset + EDA notebook", "due": "2026-10-03" },
+    { "id": "M3", "project": "emb", "name": "อ่านทุก sensor + log CSV ได้", "due": "2026-10-04" },
+    { "id": "M4", "project": "dsml", "name": "Baseline + โมเดลหลัก + ผล evaluation", "due": "2026-10-10" },
+    { "id": "M5", "project": "emb", "name": "Prototype ทำงานครบ (อ่าน→ประมวลผล→แสดง/เตือน)", "due": "2026-10-09" },
+    { "id": "M6", "project": "os-l", "name": "Slides พรีเซนต์ใหญ่ draft เสร็จ", "due": "2026-10-11" },
+    { "id": "M7", "project": "dsml", "name": "Final model + report/สรุป ส่งได้", "due": "2026-10-14" },
+    { "id": "M8", "project": "emb", "name": "Report + demo ส่งได้", "due": "2026-10-16" },
+    { "id": "M9", "project": "os-l", "name": "ซ้อม 2 รอบ พร้อมพรีเซนต์", "due": "2026-10-15" },
+    { "id": "M10", "project": "all", "name": "Buffer — ส่งครบทุกงาน", "due": "2026-10-18" }
+  ],
+  "energyWindows": {
+    "_note": "ช่องเวลาที่ปุ่ม 'เลื่อนไปช่องว่างถัดไป' ใช้หา slot — แยกตามพลังงาน (deep = ช่วงพีค, light = คืน/บ่าย) · ไม่ทับคาบเรียน",
+    "deep": {
+      "WED": [["10:15", "12:00"]],
+      "SAT": [["08:00", "12:00"], ["13:30", "15:00"]],
+      "SUN": [["08:00", "12:00"]]
+    },
+    "light": {
+      "MON": [["20:00", "22:00"]],
+      "TUE": [["20:00", "22:00"]],
+      "WED": [["15:15", "17:00"], ["19:30", "22:00"]],
+      "THU": [["13:00", "17:00"], ["20:00", "22:00"]],
+      "FRI": [["16:30", "18:00"], ["19:30", "22:00"]],
+      "SAT": [["15:15", "17:00"], ["19:00", "22:00"]],
+      "SUN": [["13:00", "17:00"], ["19:00", "22:00"]]
+    }
+  },
+  "tasks": [
+    {"date":"2026-09-27","start":"10:00","end":"11:00","project":"final","milestone":"M0","energy":"light","title":"เช็ค requirement 4 งาน","detail":"ถามอาจารย์: deadline จริง OS เล็ก/ใหญ่, Embedded, DS, ML · DS กับ ML ใช้ dataset เดียวกันได้ไหม · ใช้ dataset ซ้ำกับวิชาอื่นได้ไหม · อัปเดต deadline ในแอป"},
+    {"date":"2026-09-27","start":"11:00","end":"11:30","project":"dsml","milestone":"M0","energy":"light","title":"ล็อก dataset + นิยามโจทย์","detail":"เขียน 1 ย่อหน้า: target คืออะไร (regression/classification), metric หลัก, วิธี split"},
+
+    {"date":"2026-09-28","start":"20:00","end":"21:00","project":"dsml","milestone":"M2","energy":"light","title":"DS/ML: โหลดข้อมูล + data dictionary","detail":"โหลด, dtypes, shape, missing report ต่อคอลัมน์, ช่วงเวลา"},
+    {"date":"2026-09-29","start":"20:00","end":"21:00","project":"os-s","milestone":"M1","energy":"light","title":"OS เล็ก: หัวข้อ + outline","detail":"outline 5–7 สไลด์ + เวลาพูดต่อสไลด์"},
+    {"date":"2026-09-30","start":"10:15","end":"12:00","project":"dsml","milestone":"M2","energy":"deep","title":"DS/ML: cleaning","detail":"time index, จัดการ missing (อธิบายเหตุผลที่เลือกวิธี), encode categorical, outlier, บันทึก clean.parquet"},
+    {"date":"2026-09-30","start":"13:00","end":"15:00","project":"research","milestone":null,"energy":"locked","title":"Research FPGA (protected)","detail":"งานเดียวที่ทำ: ตั้ง CPU baseline สำหรับเทียบ latency"},
+    {"date":"2026-09-30","start":"19:30","end":"21:00","project":"emb","milestone":"M3","energy":"light","title":"Embedded: sensor bring-up","detail":"อ่านค่า PM + sensor ตัวอื่นทีละตัว เช็คกับ datasheet"},
+    {"date":"2026-10-01","start":"20:00","end":"21:00","project":"os-s","milestone":"M1","energy":"light","title":"OS เล็ก: ทำสไลด์","detail":"ทำให้เสร็จทั้งชุด ไม่ต้องสวย"},
+    {"date":"2026-10-02","start":"16:30","end":"18:00","project":"emb","milestone":"M3","energy":"light","title":"Embedded: multi-sensor sampling + log","detail":"timer/task แยกอัตราสุ่ม, log CSV พร้อม timestamp"},
+    {"date":"2026-10-02","start":"19:30","end":"20:30","project":"os-s","milestone":"M1","energy":"light","title":"OS เล็ก: ซ้อมจับเวลา","detail":"ซ้อม 1 รอบเต็ม จดคำถามที่อาจโดนถาม"},
+    {"date":"2026-10-03","start":"08:00","end":"10:00","project":"research","milestone":null,"energy":"locked","title":"Research FPGA (protected)","detail":"รัน baseline + บันทึกตัวเลข"},
+    {"date":"2026-10-03","start":"10:15","end":"12:00","project":"dsml","milestone":"M2","energy":"deep","title":"DS/ML: EDA","detail":"distribution, trend/seasonality, correlation, lag plot — เขียน insight 3–5 ข้อ"},
+    {"date":"2026-10-04","start":"09:00","end":"11:00","project":"emb","milestone":"M3","energy":"deep","title":"Embedded: รัน log ยาว + ตรวจข้อมูล","detail":"รัน ≥ หลายชั่วโมง, เช็ค drop/noise, พล็อตดู"},
+    {"date":"2026-10-04","start":"20:00","end":"21:00","project":"final","milestone":null,"energy":"light","title":"Weekly review W40","detail":"ติ๊ก milestone, ย้าย task ค้าง, ปรับ W41"},
+
+    {"date":"2026-10-05","start":"20:00","end":"21:00","project":"dsml","milestone":"M4","energy":"light","title":"DS/ML: feature engineering + split","detail":"lag/rolling/time features · split ตามเวลา (ห้าม random split) · เช็ค leakage"},
+    {"date":"2026-10-06","start":"20:00","end":"21:00","project":"final","milestone":null,"energy":"light","title":"Final Prob&Stat: retrieval set 1","detail":"ทำโจทย์โดยไม่เปิดชีท ไม่ใช้เครื่องคิดเลข"},
+    {"date":"2026-10-07","start":"10:15","end":"12:00","project":"dsml","milestone":"M4","energy":"deep","title":"DS/ML: baseline + โมเดลหลัก","detail":"naive/persistence baseline → linear → tree ensemble · ตาราง metric เทียบกัน"},
+    {"date":"2026-10-07","start":"13:00","end":"15:00","project":"research","milestone":null,"energy":"locked","title":"Research FPGA (protected)","detail":"maintenance: บันทึกผล + ขั้นถัดไป"},
+    {"date":"2026-10-07","start":"19:30","end":"21:00","project":"os-l","milestone":"M6","energy":"light","title":"OS ใหญ่: หาข้อมูล + outline","detail":"แหล่งอ้างอิง ≥3, outline + แบ่งเวลา"},
+    {"date":"2026-10-08","start":"20:00","end":"21:00","project":"emb","milestone":"M5","energy":"light","title":"Embedded: ประมวลผล + แสดงผล/เตือน","detail":"คำนวณ AQI/threshold, display หรือ alert"},
+    {"date":"2026-10-09","start":"16:30","end":"18:00","project":"emb","milestone":"M5","energy":"light","title":"Embedded: integrate ทั้งระบบ","detail":"ทดสอบ end-to-end · (optional) ถ้าเวลาเหลือ ลองใส่โมเดลเล็กจาก DS/ML"},
+    {"date":"2026-10-09","start":"19:30","end":"21:00","project":"os-l","milestone":"M6","energy":"light","title":"OS ใหญ่: ร่างสไลด์","detail":"ครบทุกหัวข้อตาม outline"},
+    {"date":"2026-10-10","start":"08:00","end":"10:00","project":"research","milestone":null,"energy":"locked","title":"Research FPGA (protected)","detail":"maintenance"},
+    {"date":"2026-10-10","start":"10:15","end":"12:00","project":"dsml","milestone":"M4","energy":"deep","title":"DS/ML: evaluation + error analysis","detail":"residual ตามช่วงเวลา, feature importance, ช่วงที่โมเดลพลาดหนัก"},
+    {"date":"2026-10-10","start":"13:30","end":"15:00","project":"final","milestone":null,"energy":"deep","title":"Final OS: หัวข้อต้นเทอม (ส่วนที่ออกยาก)","detail":"active recall: เขียนจากความจำก่อนเปิดชีท"},
+    {"date":"2026-10-11","start":"09:00","end":"11:00","project":"os-l","milestone":"M6","energy":"deep","title":"OS ใหญ่: เก็บสไลด์ให้เสร็จ","detail":"ภาพประกอบ + สคริปต์พูด"},
+    {"date":"2026-10-11","start":"20:00","end":"21:00","project":"final","milestone":null,"energy":"light","title":"Prob&Stat set 2 + Weekly review W41","detail":""},
+
+    {"date":"2026-10-12","start":"20:00","end":"21:00","project":"dsml","milestone":"M7","energy":"light","title":"DS/ML: tuning + final model","detail":"TimeSeriesSplit CV, เลือกโมเดลสุดท้าย, บันทึก config"},
+    {"date":"2026-10-13","start":"20:00","end":"21:00","project":"os-l","milestone":"M9","energy":"light","title":"OS ใหญ่: ซ้อมรอบ 1","detail":"จับเวลา ตัดส่วนที่เกิน"},
+    {"date":"2026-10-14","start":"10:15","end":"12:00","project":"dsml","milestone":"M7","energy":"deep","title":"DS/ML: report + สรุป","detail":"problem → data → cleaning → EDA → model → result → limitation"},
+    {"date":"2026-10-14","start":"13:00","end":"15:00","project":"research","milestone":null,"energy":"locked","title":"Research FPGA (protected)","detail":"maintenance"},
+    {"date":"2026-10-14","start":"19:30","end":"21:00","project":"emb","milestone":"M8","energy":"light","title":"Embedded: report + demo video","detail":""},
+    {"date":"2026-10-15","start":"20:00","end":"21:00","project":"os-l","milestone":"M9","energy":"light","title":"OS ใหญ่: ซ้อมรอบ 2 + Q&A","detail":""},
+    {"date":"2026-10-16","start":"16:30","end":"18:00","project":"emb","milestone":"M8","energy":"light","title":"Embedded: final test + ส่ง","detail":""},
+    {"date":"2026-10-16","start":"19:30","end":"21:00","project":"final","milestone":null,"energy":"light","title":"Final Prob&Stat: set 3 (จับเวลา ไม่ใช้เครื่องคิดเลข)","detail":""},
+    {"date":"2026-10-17","start":"08:00","end":"10:00","project":"research","milestone":null,"energy":"locked","title":"Research FPGA (protected)","detail":"maintenance"},
+    {"date":"2026-10-17","start":"10:15","end":"12:00","project":"final","milestone":null,"energy":"deep","title":"Final OS: ทบทวนรอบ 2","detail":""},
+    {"date":"2026-10-17","start":"13:30","end":"15:00","project":"final","milestone":null,"energy":"deep","title":"Final DS: ทบทวน","detail":""},
+    {"date":"2026-10-18","start":"09:00","end":"12:00","project":"final","milestone":"M10","energy":"deep","title":"BUFFER — เก็บงานค้าง + ส่งให้ครบ","detail":"ห้ามวางงานใหม่ในช่องนี้"},
+    {"date":"2026-10-18","start":"20:00","end":"21:00","project":"final","milestone":null,"energy":"light","title":"Final ML: practice set อาจารย์","detail":""}
+  ]
+}

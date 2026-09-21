@@ -1,18 +1,32 @@
-import React, { useState } from 'react';
-import { STATES, isoWeekKey } from './data/constants.js';
-import { loadDoc, saveDoc, statusKey, downloadJSON, upgradeDoc, restoreSectionFromSeed } from './data/store.js';
+import React, { useState, useEffect, useMemo } from 'react';
+import { STATES, isoWeekKey, itemStatusKey } from './data/constants.js';
+import { loadDoc, saveDoc, downloadJSON, upgradeDoc, restoreSectionFromSeed, BACKUP_KEY } from './data/store.js';
 import { applyLegacy } from './data/migrate.js';
+import { findNextSlot, validateSprint, dayLabelOf, fmtDateShort } from './data/sprint.js';
 import Sidebar from './components/Sidebar.jsx';
 import SectionPanel from './components/SectionPanel.jsx';
 import ItemEditor from './components/ItemEditor.jsx';
+import WeekReview from './components/WeekReview.jsx';
+
+/** ดาวน์โหลด string JSON เป็นไฟล์ */
+function downloadText(text, filename) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
 
 export default function App() {
-  // doc = ข้อมูลทั้งหมดของแอป (sections/items/statuses/settings) — โหลดครั้งเดียวตอน mount
+  // doc = ข้อมูลทั้งหมดของแอป (sections/items/statuses/settings/sprint) — โหลดครั้งเดียวตอน mount
   const [doc, setDoc] = useState(() => loadDoc());
-  const [activeId, setActiveId] = useState('icpc');
+  const [activeId, setActiveId] = useState('weekly');
   // editor: null = ปิด | {sectionId, itemId:null=เพิ่มใหม่, defaults} = เปิดฟอร์ม
   const [editor, setEditor] = useState(null);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [backupError, setBackupError] = useState(null);
   const weekKey = isoWeekKey();
+  const [viewWeek, setViewWeek] = useState(weekKey); // สัปดาห์ที่บอร์ด weekly กำลังแสดง
 
   // ทุกการแก้ไข doc ต้องวิ่งผ่าน update() เพื่อให้บันทึกลง localStorage เสมอ
   const update = (fn) =>
@@ -24,12 +38,48 @@ export default function App() {
     });
 
   const active = doc.sections.find((s) => s.id === activeId) || doc.sections[0];
+  const findItem = (d, sectionId, itemId) =>
+    d.sections.find((s) => s.id === sectionId)?.items.find((i) => i.id === itemId);
 
-  /* ---------- สถานะการ์ด: คลิกวน ⏳ → 🔄 → ✅ ---------- */
-  function cycleStatus(section, item) {
+  /* ---------- validation ของแผน — เตือนใน console + แถบบนบอร์ด ไม่ทำให้แอปพัง ---------- */
+  const issues = useMemo(() => {
+    try { return validateSprint(doc); } catch (e) { return ['ตรวจแผนไม่สำเร็จ: ' + e.message]; }
+  }, [doc]);
+  useEffect(() => { if (issues.length) console.warn('[Final Sprint] พบปัญหาในแผน:\n' + issues.join('\n')); }, [issues]);
+
+  /* ---------- backup ก่อนอัปเกรด → ให้ server เขียนเป็นไฟล์ backup/…json (ลองทุกครั้งที่เปิดจนสำเร็จ) ---------- */
+  useEffect(() => {
+    const mig = doc.sprintMigration;
+    if (!mig || mig.backupFile) return;
+    let raw = null;
+    try { raw = localStorage.getItem(BACKUP_KEY); } catch { /* ignore */ }
+    if (!raw) return;
+    fetch('/api/backup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: JSON.parse(raw) }),
+    })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status))))
+      .then((res) => update((d) => { d.sprintMigration.backupFile = res.file; }))
+      .catch((err) => {
+        console.warn('ส่ง backup ให้ server ไม่สำเร็จ', err);
+        setBackupError(String(err.message || err));
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function downloadPreUpgradeBackup() {
+    let raw = null;
+    try { raw = localStorage.getItem(BACKUP_KEY); } catch { /* ignore */ }
+    if (!raw) { alert('ไม่พบสำเนาก่อนอัปเกรดในเบราว์เซอร์นี้'); return; }
+    downloadText(raw, 'mission_log_backup_' + new Date().toISOString().slice(0, 10) + '.json');
+  }
+
+  /* ---------- สถานะการ์ด: คลิกวน ⏳ → 🔄 → ✅ (การ์ดผูกวันที่เก็บสถานะถาวร) ---------- */
+  function cycleStatus(section, item, wk = weekKey) {
     if (section.checkable === false) return;
     update((d) => {
-      const key = statusKey(section, weekKey);
+      const key = itemStatusKey(section, item, wk);
       const map = d.statuses[key] || (d.statuses[key] = {});
       const cur = map[item.id] || 'pending';
       map[item.id] = STATES[(STATES.indexOf(cur) + 1) % STATES.length];
@@ -41,10 +91,14 @@ export default function App() {
     update((d) => {
       const sec = d.sections.find((s) => s.id === sectionId);
       if (itemId) {
-        Object.assign(sec.items.find((i) => i.id === itemId), values);
+        const it = sec.items.find((i) => i.id === itemId);
+        Object.assign(it, values);
+        if (values.date === '') delete it.date; // ติ๊ก "ทุกสัปดาห์" = เลิกผูกวันที่
       } else {
         // id ใหม่สร้างจาก timestamp — ไม่ชนกับ id เดิมใน seed แน่นอน
-        sec.items.push({ id: 'u' + Date.now().toString(36), ...values });
+        const it = { id: 'u' + Date.now().toString(36), ...values };
+        if (!it.date) delete it.date;
+        sec.items.push(it);
       }
     });
     setEditor(null);
@@ -58,8 +112,8 @@ export default function App() {
     });
   }
 
-  function resetWeek(section) {
-    update((d) => { delete d.statuses[statusKey(section, weekKey)]; });
+  function resetWeek(section, wk) {
+    update((d) => { delete d.statuses[section.id + ':' + wk]; });
   }
 
   /** คืนการ์ดของแท็บนี้กลับค่าตั้งต้น — ใช้ตอนเผลอลบหรือแก้จนเละ */
@@ -92,18 +146,57 @@ export default function App() {
     });
   }
 
-  /* ---------- ลากการ์ดย้ายวัน/จัดลำดับ (layout รายวัน) ----------
-     beforeId = วางแทรกหน้าการ์ดไหน (null = ต่อท้ายวันนั้น) */
-  function moveItem(section, itemId, day, beforeId) {
+  /* ---------- ลากการ์ดย้ายวัน/จัดลำดับ ----------
+     beforeId = วางแทรกหน้าการ์ดไหน (null = ต่อท้ายวันนั้น)
+     date = วันที่ของคอลัมน์บนบอร์ดผูกวันที่ ('' / undefined = บอร์ดรายวันแบบเดิม) */
+  function moveItem(section, itemId, day, beforeId, date) {
     update((d) => {
       const sec = d.sections.find((s) => s.id === section.id);
       const from = sec.items.findIndex((i) => i.id === itemId);
       if (from < 0) return;
-      const [it] = sec.items.splice(from, 1);
+      const it = sec.items[from];
+      if (it.energy === 'locked' && !it.unlocked) return; // การ์ด locked ห้ามย้ายจนกว่าจะปลดล็อก
+      sec.items.splice(from, 1);
       it.day = day;
+      if (date) it.date = date;
+      else if (day === '') delete it.date; // กลับเข้าถาด = ไม่ผูกวันที่
       const at = beforeId ? sec.items.findIndex((i) => i.id === beforeId) : -1;
       if (at < 0) sec.items.push(it);
       else sec.items.splice(at, 0, it);
+    });
+  }
+
+  /* ---------- เลื่อนการ์ดไปช่องว่างถัดไป (พลังงานตรงกัน ไม่ทับ locked/BUFFER) ---------- */
+  function moveToNextSlot(section, item) {
+    const slot = findNextSlot(doc, item);
+    if (!slot) {
+      alert('ไม่เจอช่องว่างที่พลังงานตรงกัน (' + (item.energy || 'light') + ') ภายใน 21 วันข้างหน้า\n→ ลากย้ายเอง หรือแก้เวลาในการ์ดแทน');
+      return;
+    }
+    const proj = doc.sprint?.projects.find((p) => p.id === item.project);
+    const late = proj?.deadline && slot.date > proj.deadline;
+    const msg =
+      'เลื่อน "' + item.activity + '"\n' +
+      (item.date ? fmtDateShort(item.date) + ' ' : '') + (item.time || '') +
+      '  →  ' + dayLabelOf(slot.date) + ' ' + fmtDateShort(slot.date) + ' ' + slot.start + '–' + slot.end +
+      (late ? '\n\n⚠ เลย deadline ของ ' + proj.tag + ' (' + fmtDateShort(proj.deadline) + ')' : '');
+    if (!window.confirm(msg)) return;
+    update((d) => {
+      Object.assign(findItem(d, section.id, item.id), {
+        date: slot.date, day: dayLabelOf(slot.date),
+        start: slot.start, end: slot.end, time: slot.start + '–' + slot.end,
+      });
+    });
+  }
+
+  /* ---------- Project / pause ---------- */
+  function updateProject(pid, patch) {
+    update((d) => { Object.assign(d.sprint.projects.find((p) => p.id === pid), patch); });
+  }
+  function togglePause(sectionId) {
+    update((d) => {
+      const cur = d.settings.paused || [];
+      d.settings.paused = cur.includes(sectionId) ? cur.filter((x) => x !== sectionId) : [...cur, sectionId];
     });
   }
 
@@ -130,6 +223,9 @@ export default function App() {
     });
   }
 
+  const mig = doc.sprintMigration;
+  const editSection = editor && doc.sections.find((s) => s.id === editor.sectionId);
+
   return (
     <div className="app">
       <Sidebar
@@ -152,10 +248,30 @@ export default function App() {
           </div>
         )}
 
+        {mig && !mig.dismissed && (
+          <div className={'banner' + (backupError && !mig.backupFile ? ' warn' : '')}>
+            <span>
+              ✓ อัปเกรดเป็น Final Sprint แล้ว · ล้างการ์ดเก่า {mig.removed} ใบ ·{' '}
+              {mig.backupFile
+                ? <>backup อยู่ที่ <code>backup/{mig.backupFile}</code></>
+                : backupError
+                  ? <>ส่ง backup ให้ server ไม่ได้ ({backupError}) — กดดาวน์โหลดสำเนาเก็บไว้เอง</>
+                  : <>กำลังเขียน backup…</>}
+            </span>
+            <span className="note-actions">
+              <button className="ml-reset" onClick={downloadPreUpgradeBackup}>⬇ สำเนาก่อนอัปเกรด</button>
+              <button className="ml-reset" onClick={() => update((d) => { d.sprintMigration.dismissed = true; })}>ปิด</button>
+            </span>
+          </div>
+        )}
+
         <SectionPanel
           section={active}
           doc={doc}
           weekKey={weekKey}
+          viewWeek={viewWeek}
+          onViewWeek={setViewWeek}
+          issues={issues}
           onCycle={cycleStatus}
           onAdd={(defaults) => setEditor({ sectionId: active.id, itemId: null, defaults })}
           onEdit={(item) => setEditor({ sectionId: active.id, itemId: item.id })}
@@ -163,6 +279,10 @@ export default function App() {
           onResetWeek={resetWeek}
           onResetSection={resetSection}
           onMoveItem={moveItem}
+          onMoveNext={moveToNextSlot}
+          onUpdateProject={updateProject}
+          onOpenReview={() => setReviewOpen(true)}
+          onTogglePause={togglePause}
           icpcView={doc.settings.icpcView || 'all'}
           onIcpcView={(v) => update((d) => { d.settings.icpcView = v; })}
           finance={doc.finance || { transactions: [] }}
@@ -172,17 +292,23 @@ export default function App() {
         />
       </main>
 
-      {editor && (
+      {editor && editSection && (
         <ItemEditor
-          section={doc.sections.find((s) => s.id === editor.sectionId)}
-          item={
-            editor.itemId
-              ? doc.sections.find((s) => s.id === editor.sectionId).items.find((i) => i.id === editor.itemId)
-              : null
-          }
+          section={editSection}
+          sprint={doc.sprint}
+          item={editor.itemId ? editSection.items.find((i) => i.id === editor.itemId) : null}
           defaults={editor.defaults}
           onSave={(values) => saveItem(editor.sectionId, editor.itemId, values)}
           onClose={() => setEditor(null)}
+        />
+      )}
+
+      {reviewOpen && (
+        <WeekReview
+          doc={doc}
+          weekKey={viewWeek}
+          onMoveNext={(item) => moveToNextSlot(doc.sections.find((s) => s.id === 'weekly'), item)}
+          onClose={() => setReviewOpen(false)}
         />
       )}
     </div>

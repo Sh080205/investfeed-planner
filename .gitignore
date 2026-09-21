@@ -12,6 +12,9 @@ planner/node_modules/
 # ---------- runtime data (server สร้างใหม่เองตอนรัน) ----------
 /data/
 
+# ---------- backup ข้อมูล planner (มีข้อมูลส่วนตัว + รายการเงิน) ----------
+/backup/
+
 # ---------- build output (สร้างด้วย `npm run build:planner`) ----------
 planner/dist/
 

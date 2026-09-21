@@ -179,7 +179,7 @@ async function refreshFeeds() {
   console.log(`[Feeds] Done: ${allItems.length} items · ${ok}/${FEEDS.length} feeds OK`);
 }
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // backup ของ planner ทั้งก้อนใหญ่กว่า default 100kb
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ---------- Planner (Mission Log v3) ----------
@@ -196,6 +196,30 @@ app.get('/planner', (req, res) => {
 });
 app.get('/planner/migrate-helper.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'planner', 'migrate-helper.html'));
+});
+
+// ---------- Backup ข้อมูล planner (เรียกจากแอปตอนอัปเกรด schema) ----------
+// ข้อมูลจริงอยู่ใน localStorage ของเบราว์เซอร์ — แอปส่งสำเนาก่อนอัปเกรดมาให้เขียนลงดิสก์
+// ชื่อไฟล์ server เป็นคนตั้ง (ไม่รับชื่อจาก client) และไม่เขียนทับไฟล์เดิม
+const BACKUP_DIR = path.join(__dirname, 'backup');
+app.post('/api/backup', async (req, res) => {
+  const data = req.body && req.body.data;
+  if (!data || typeof data !== 'object' || !Array.isArray(data.sections)) {
+    return res.status(400).json({ error: 'ไม่ใช่ข้อมูล planner' });
+  }
+  try {
+    await fs.mkdir(BACKUP_DIR, { recursive: true });
+    const day = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
+    let name = `mission_log_backup_${day}.json`;
+    for (let n = 2; fsSync.existsSync(path.join(BACKUP_DIR, name)); n++) {
+      name = `mission_log_backup_${day}-${n}.json`;
+    }
+    await fs.writeFile(path.join(BACKUP_DIR, name), JSON.stringify(data, null, 2));
+    console.log('[Backup] planner →', name);
+    res.json({ file: name });
+  } catch (err) {
+    res.status(500).json({ error: 'เขียน backup ไม่สำเร็จ: ' + err.message });
+  }
 });
 
 // ---------- Book Library (ชั้นหนังสือ) ----------

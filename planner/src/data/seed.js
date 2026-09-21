@@ -1,5 +1,9 @@
 // ---------- Seed data (ค่าเริ่มต้นตอนเปิดแอปครั้งแรก) ----------
 //
+// ตั้งแต่ v19: แผน Final Sprint (task ผูกวันที่) อยู่แยกใน final_sprint_2569_1.json
+// ไฟล์นี้เก็บเทมเพลตเนื้อหาชุดเดิมไว้ให้ migration รุ่นก่อน ๆ อ้างอิง
+import { applyFinalSprint } from './sprint.js';
+//
 // สำคัญ: นี่คือ "ค่าเริ่มต้น" เท่านั้น — หลังเปิดครั้งแรกข้อมูลจริงอยู่ใน localStorage
 // และแก้ไขทุกรายการได้ผ่าน UI (ปุ่ม ✎ / 🗑 / + เพิ่มรายการ)
 //
@@ -474,8 +478,11 @@ const SECTIONS = [
   },
 ];
 
-/** สร้าง doc เริ่มต้น (ก้อนข้อมูลทั้งหมดของแอป) */
-export function buildSeedDoc() {
+/**
+ * เทมเพลตเนื้อหาชุดเดิม (schema v18) — ใช้เป็นต้นแบบให้ migration ขั้น v1→v18
+ * ไม่ใช่ค่าเริ่มต้นของแอปแล้ว (ดู buildSeedDoc)
+ */
+export function buildBaseSeed() {
   return {
     schemaVersion: 18, // ...v17=มิดเทอมจบ · v18=จัด weekly ตามช่วงพลังงาน (พีค 8–12 น.)
     settings: {
@@ -489,4 +496,16 @@ export function buildSeedDoc() {
     statuses: {}, // { [sectionId หรือ 'sectionId:week']: { [itemId]: 'pending'|'running'|'done' } }
     finance: { transactions: [] }, // รายรับรายจ่าย: { id, type:'income'|'expense', amount, category, note, date }
   };
+}
+
+/**
+ * ค่าเริ่มต้นของแอปตอนนี้ (schema v19 — Final Sprint 2569/1)
+ * = เทมเพลตเดิม แล้วผ่าน applyFinalSprint แบบเดียวกับที่ migration ทำกับข้อมูลผู้ใช้
+ * → เครื่องใหม่กับเครื่องที่อัปเกรดมาได้หน้าตาเดียวกัน
+ */
+export function buildSeedDoc() {
+  const doc = buildBaseSeed();
+  applyFinalSprint(doc);
+  doc.schemaVersion = 19;
+  return doc;
 }
