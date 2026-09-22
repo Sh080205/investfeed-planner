@@ -125,7 +125,8 @@ Digital Systems Design, Computer Architecture, Databases, Linux/Git/CI-CD
   สามช่องนี้คือทรัพยากรที่หายากที่สุดในสัปดาห์ — สงวนให้ FPGA / OS ครึ่งแรก / โจทย์ Prob&Stat เท่านั้น
   ห้ามเอางานท่อง งานส่ง หรือการบ้านที่รู้วิธีแล้วไปกินช่องพีค
   คืนวันธรรมดา (หลัง 19:30 ที่เพิ่งเลิกเรียน/TA) = หัวล้า → ลงงานท่อง ดริลสั้น การบ้านที่รู้วิธีแล้ว
-- **ยังไม่รู้: ชั่วโมงว่างจริงต่อสัปดาห์** → ตารางปัจจุบันตั้งไว้ ~24 ชม./สัปดาห์
+- **ยังไม่รู้: ชั่วโมงว่างจริงต่อสัปดาห์** → แผน sprint ตอนนี้ลงไว้ W40 17.5 · W41 19.5 · W42 20.5 ชม.
+  (นอกนั้นเป็นเวลาทำงานส่งที่ไม่ได้ลงบอร์ด) · ตารางก่อน sprint เคยตั้ง ~24 ชม. แต่ยังไม่เคยได้รีวิวจริง
 - ตารางเรียนที่ใช้อยู่: จ 9–12 Embedded · จ 13–16 English · จ 16:30–19:30 TA ·
   อ 9–12 IT Lab · อ 13–16 Prob&Stat · อ 16:30–19:30 OS · พ 8–10 ว่ายน้ำ ·
   พฤ 9–12 DS · ศ 9–12 ML · ศ 13–16 Embedded Lab
@@ -182,3 +183,69 @@ CLAUDE.md มีผลกับ **ทุก session ใน repo นี้** ร�
 
 **งานเขียนโค้ด/แก้บั๊ก/ดูแลแอป planner ให้ทำตามปกติ** — ข้อ "ไม่ใช่ผู้ช่วยทั่วไป" ด้านบน
 ไม่ครอบคลุมงาน dev ใน repo นี้
+
+---
+
+## 🔁 Handoff สำหรับแชตถัดไป (สรุปถึง 22 ก.ย. 2026 · commit 6525b5c)
+
+### แอปคืออะไร รันยังไง
+- repo: `github.com/Sh080205/investfeed-planner` (private) · branch `main` · commit + push หลังจบแต่ละงาน
+  ผู้ใช้โอเคกับ flow นี้มาตลอด · commit message ภาษาไทย
+- server เดียว `server.js` (Express, port 3000): `/` = InvestFeed (ข่าว, `public/`) ·
+  `/planner` = Planner (React+Vite, build เป็นไฟล์เดียว `planner/dist/index.html`) ·
+  `/api/books` + `/books/*` = ชั้นหนังสือ PDF จาก `C:\Users\Public\Documents\Reseach skill` ·
+  `POST /api/backup` = เขียน backup ลง `backup/` (gitignore)
+- รัน: ดับเบิลคลิก `start-app.cmd` (มี shortcut บน Desktop) หรือ `npm start`
+- แก้โค้ด planner แล้วต้อง `npm run build:planner` (server เสิร์ฟ dist) · แก้ `server.js` ต้อง restart server
+- ทดสอบข้อมูล: `npm --prefix planner run test:sprint` (ต้องผ่านทั้งหมดก่อน commit)
+
+### โครงข้อมูล planner (อ่านก่อนแก้)
+- ข้อมูลอยู่ใน **localStorage ของเบราว์เซอร์ผู้ใช้** key `planner-v3:doc` — Claude มองไม่เห็นข้อมูลจริง
+  (Browser pane ของ Claude เป็นคนละ storage — ใช้ทดสอบได้ ล้างได้ ไม่กระทบผู้ใช้)
+- `doc = { schemaVersion (ตอนนี้ 19), sections[], statuses{}, settings{}, finance{}, sprint{}, sprintMigration }`
+- item: `{ id, activity, meta, time, day, cat, url?, group?, pool?, kind?, date?, start?, end?,
+  project?, milestone?, energy?(deep|light|locked), unlocked?, buffer?, detail? }`
+- สถานะ: `statuses['icpc']` · รายสัปดาห์ `statuses['weekly:2026-W39']` (ถูก prune เมื่อสัปดาห์ผ่านไป) ·
+  การ์ดผูกวันที่ `statuses['weekly:dated']` (ถาวร — % โปรเจคคิดจากตรงนี้) → ใช้ `itemStatusKey()` เสมอ
+- ไฟล์หลัก: `planner/src/data/` → `store.js` (load/save + `upgradeDoc` ไล่ v1→v19 + backup) ·
+  `seed.js` (`buildBaseSeed` = เทมเพลตเก่า v18 ให้ migration อ้างอิง · `buildSeedDoc` = ค่าเริ่มต้น v19) ·
+  `sprint.js` (logic Final Sprint, ฟังก์ชันล้วน ทดสอบใน Node ได้) · `final_sprint_2569_1.json` (แผน 40 task)
+  · `constants.js` · components: `SectionPanel` (layout days/group/books/money + บอร์ดผูกวันที่) ·
+  `ItemCard` · `ItemEditor` · `ProjectBar` · `WeekReview` · `SprintCountdown` · `FinanceTracker` · `BookShelf`
+
+### กติกาที่ต้องทำตามเวลาเปลี่ยนเนื้อหา/โครงข้อมูล
+- เปลี่ยนค่าเริ่มต้น = **bump schemaVersion + เพิ่มขั้นใน `upgradeDoc`** เสมอ (ข้อมูลผู้ใช้จะไม่อัปเดตเอง)
+- migration ต้องเก็บไว้: การ์ดถาด (`pool`) + วันที่จอง · การ์ดที่ผู้ใช้เพิ่มเอง (id ขึ้นต้น `u`) · statuses
+- การ์ด seed ที่เลิกใช้ต้อง **ระบุ id ให้ถอดทิ้งชัด ๆ** — เคยพลาดที่มันรอดมาในฐานะ "การ์ดผู้ใช้"
+- ทดสอบ migration ด้วยการจำลอง doc เวอร์ชันเก่าใน Browser pane แล้ว reload (ทำแบบนี้มาทุกรอบ)
+- ปุ่ม "↺ คืนค่าเริ่มต้น" รายแท็บใช้ `buildSeedDoc` (v19) — แท็บที่ถูกล้างจะคืนเป็นว่าง
+
+### ปัญหาสภาพแวดล้อมที่เจอบ่อย
+- `git push` บางครั้งพังด้วย `SSL ... revocation` (เน็ต/proxy) → รอแล้วลองใหม่ ห้ามปิด SSL check เอง
+- server port 3000 ตายเองเป็นพัก ๆ → `Start-Process node -ArgumentList 'server.js'` ในโฟลเดอร์ repo
+- screenshot ใน Browser pane มัก timeout (pane ไม่แสดง) → ยืนยันผลด้วย DOM/JS แทน
+
+### สถานะงาน ณ ตอนส่งต่อ
+- **Final Sprint (schema v19) เสร็จและ push แล้ว** แต่ migration จะรันจริงก็ต่อเมื่อผู้ใช้เปิด
+  `localhost:3000/planner` ในเบราว์เซอร์ตัวเอง → ตอนนั้น backup จะถูกเขียนที่
+  `backup/mission_log_backup_2026-09-2x.json` · ถ้าผู้ใช้ถามว่า backup อยู่ไหน ให้เช็กโฟลเดอร์นี้
+- restore แอปเดิม: `git checkout pre-final-sprint-2026-09-21 -- planner` → build → Import JSON backup
+  (import ไฟล์ v18 เข้าแอป v19 จะถูกอัปเกรดซ้ำ ไม่ใช่การ restore)
+- ถูกล้างตอน v19 (ตามที่ผู้ใช้เลือก "ทุกแท็บยกเว้นเงิน"): weekly รูทีนเก่า, เตรียมสอบ, research
+  (แผนอ่าน FPGA 18 สัปดาห์), english (แผนแก้อ่านโจทย์), skills, projects, roadmap, electives, learn
+  → อยู่ใน backup + git tag · **ไม่ได้ลบ**: ตารางเรียน, fitness (ตีความว่าไม่อยู่ในสิ่งที่ยืนยัน), icpc (paused)
+- ถ้าผู้ใช้ขอให้ลบตารางเรียน/fitness ด้วย ทำได้ — แต่ตารางเรียนใช้เป็นข้อมูลอ้างอิงช่องว่าง
+
+### ค้างอยู่ / สิ่งที่ควรทำต่อ
+1. **ยืนยัน deadline 4 โปรเจค** — task M0 วันอาทิตย์ 27 ก.ย. คือไปถามอาจารย์ แล้วติ๊ก confirmed ในแถบโปรเจค
+2. **ช่อง deep เต็มทั้ง sprint** — ยังไม่ได้แก้ แนะนำผู้ใช้เว้นช่อง deep ว่าง 1 ช่อง/สัปดาห์ไว้รับงานที่หลุด
+3. **scope ไฟนอลทุกวิชายังไม่รู้** — ต้องได้ก่อนจัดตารางช่วงสอบ (ไฟนอลเริ่ม 19 ต.ค.)
+4. **ยังไม่เคยได้รีวิว % จริง** — ผู้ใช้เคยรับปากจะรายงานผลรายสัปดาห์ ให้ถามก่อนจัดตารางสัปดาห์ถัดไป
+5. **หลังไฟนอล** — ปลด pause icpc, สร้าง weekly รูทีนใหม่, ถามว่าจะเอาแผน research/english กลับไหม
+
+### บริบทผู้ใช้ที่ควรรู้ (นอกจากโปรไฟล์ด้านบน)
+- ICPC: ตกรอบ regional ก.ค. 2026 (ทำได้ 2/5 — อ่านโจทย์ภาษาอังกฤษไม่ทัน เดาจาก I/O) → เป้าใหม่แข่งตอนปี 4
+- มีโครงงานวิจัยทีม 4 คน: FPGA-Accelerated Air Quality Anomaly Detection (TCN · PM2.5/NO2/CO)
+- ชอบ UI โทนมืดสบายตา minimal: แท็บจัด 4 กลุ่ม, สีป้าย 4 ตระกูล, ไม่มี glow — อย่าเพิ่มสีป้ายใหม่เรื่อย ๆ
+- ภาษาไทย ตอบสั้น ตรง ไม่ต้องให้กำลังใจ · ถามเป็นชุดเดียวได้ (ผู้ใช้ตอบ AskUserQuestion)
+- บางคำสั่งกำกวม (เช่น "เพิ่มเนื้อหาในส่วนเนื้อ") — ถามก่อนดีกว่าเดาแล้ว build รอบใหญ่ผิด
