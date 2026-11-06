@@ -424,6 +424,11 @@ a.book-card:hover .ml-activity { color: var(--running); }
 .proj-os { --proj: var(--review); }
 .proj-final { --proj: var(--icpc); }
 .proj-research { --proj: var(--road); }
+/* MLSys Roadmap (v20) — ใช้ตัวแปรสีเดิม ไม่เพิ่มตระกูลสีใหม่ */
+.proj-l1 { --proj: var(--running); }
+.proj-p1 { --proj: var(--skill); }
+.proj-coop { --proj: var(--review); }
+.proj-hack { --proj: var(--icpc); }
 .tag[class*='proj-'] { color: var(--proj); background: color-mix(in srgb, var(--proj) 13%, transparent); }
 
 /* แถบโปรเจคเหนือบอร์ด */

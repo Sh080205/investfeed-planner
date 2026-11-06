@@ -46,7 +46,10 @@
 Java, SQL, Bash, Assembly, OOP, Data Structures & Algorithms, Discrete Math,
 Digital Systems Design, Computer Architecture, Databases, Linux/Git/CI-CD
 
-### โปรไฟล์ 6 วิชาเทอมนี้ — ใช้ตารางนี้เป็นฐานจัดเวลา ห้ามเกลี่ยเท่ากัน
+> ✅ **เทอม 3/1 จบแล้ว (ปิดเทอมตั้งแต่ 7 พ.ย. 2569)** — โปรไฟล์ 6 วิชา + วิธีตัดเกรดด้านล่างเป็นของเทอม 1
+> เก็บไว้เป็นต้นแบบวิธีคิดเท่านั้น **ห้ามใช้จัดตารางช่วงปิดเทอม/เทอม 2** จนกว่าจะได้วิชาเทอม 3/2 มาทำโปรไฟล์ใหม่
+
+### โปรไฟล์ 6 วิชาเทอม 3/1 (จบแล้ว) — ใช้ตารางนี้เป็นฐานจัดเวลา ห้ามเกลี่ยเท่ากัน
 
 | วิชา | ประเภทโหลด | เหตุผล | โหมดที่ได้ผล | baseline ชม./สัปดาห์ |
 |---|---|---|---|---|
@@ -114,22 +117,26 @@ Digital Systems Design, Computer Architecture, Databases, Linux/Git/CI-CD
 
 ## สถานะปัจจุบัน (อัปเดตเมื่อมีข้อมูลใหม่)
 
-- **Final Sprint 21 ก.ย. – 18 ต.ค. 2026** (4 โปรเจค: DS+ML, Embedded PM2.5, OS เล็ก/ใหญ่ + เตรียม final
-  ที่เริ่ม 19 ต.ค.) — แผน 40 task อยู่ในแอป (`planner/src/data/final_sprint_2569_1.json`)
-  deadline ทุกตัวยังเป็น **[สมมติ — ต้องยืนยัน]** จนกว่าจะติ๊ก confirmed ในแถบโปรเจค · ICPC พักถึงหลัง final
-- ⚠ ช่อง deep ถูกแผนจองเต็มทุกช่องจนจบ sprint — task deep ที่หลุดจะไม่มีที่ลงก่อน deadline
-  ถ้าจะเพิ่มงานคิดหนัก ต้องบอกว่าตัดอะไรออก
-- **ยังไม่รู้: scope ไฟนอล** ของแต่ละวิชา → ห้ามเดา
+- **ช่วงปัจจุบัน: ปิดเทอม 3/1 · 7–22 พ.ย. 2569 = MLSys Roadmap ระดับ L1 (รากฐาน Deep Learning)**
+  แผนอยู่ในแอป (`planner/src/data/mlsys_break_2569_1.json` — **ห้ามแก้เนื้อหาไฟล์นี้**):
+  27 task ผูกวันที่ · 5 โปรเจค (L1, P1, COOP, RESEARCH, HACK) · milestone M0–M4
+  - L1 เรียน: UDL บท 2–7, 10–11 · ISLP บท 3–5 · PyTorch (d2l อ้างอิง) · งบเรียน DL 2–3 ชม./วัน
+  - ข้อสอบตัวเอง: ส.1 (13 พ.ย.) MLP loop จากไฟล์เปล่า + gradient logistic ·
+    ส.2 (16 พ.ย.) backprop ด้วยมือผ่าน `torch.allclose` · ส.3 (20 พ.ย.) P1 TCN + receptive field + push repo
+  - M0 (10 พ.ย.): ถามฝ่ายวิชาการ deadline ยื่นบริษัทสหกิจ → ยังเป็น **[สมมติ — ต้องยืนยัน]**
+  - Codex Hackathon 21 พ.ย. (locked ทั้งวัน) **รอผลทีม** — ถ้าไม่ได้ไป ใช้วันนั้นซ่อมข้อสอบที่ไม่ผ่าน
+  - งานวิจัย FPGA = **maintenance mode** (ทำเฉพาะที่อาจารย์สั่ง ส. 13:30–15:00) · ICPC ยัง paused
+- **Skill tree (ติ๊กตอนรีวิวปิดเทอม M4):** https://claude.ai/artifact/1opTm4yXZEZCbbiRjPmBCn
+- **Roadmap ระยะยาว (แท็บ roadmap/projects/learn ในแอป):** L1 ปิดเทอม 3/1 → L2 เทอม 3/2 (+ยื่นสหกิจ, P2) →
+  L3 ปิดเทอมใหญ่ systems core (P3 quantize/kernel/serve) → L4 เทอม 4/1 LLM inference + ส่ง paper FPGA →
+  L5 สหกิจ 4/2 → L6 งานแรก/ป.โท · ชิ้นงานยื่นสหกิจ = P1 + P2
 - **ช่วงพลังงาน (ยืนยันแล้ว):** ตื่น 07:00 · นอน 24:00 · **หัวแล่นสุด 08:00–12:00** (ดื่มกาแฟก่อน)
-  → ช่วงพีคติดคาบเรียนเกือบหมด **ว่างจริงแค่ พุธ 10:15–12:00 (หลังว่ายน้ำ) + เสาร์/อาทิตย์เช้า**
-  สามช่องนี้คือทรัพยากรที่หายากที่สุดในสัปดาห์ — สงวนให้ FPGA / OS ครึ่งแรก / โจทย์ Prob&Stat เท่านั้น
-  ห้ามเอางานท่อง งานส่ง หรือการบ้านที่รู้วิธีแล้วไปกินช่องพีค
-  คืนวันธรรมดา (หลัง 19:30 ที่เพิ่งเลิกเรียน/TA) = หัวล้า → ลงงานท่อง ดริลสั้น การบ้านที่รู้วิธีแล้ว
-- **ยังไม่รู้: ชั่วโมงว่างจริงต่อสัปดาห์** → แผน sprint ตอนนี้ลงไว้ W40 17.5 · W41 19.5 · W42 20.5 ชม.
-  (นอกนั้นเป็นเวลาทำงานส่งที่ไม่ได้ลงบอร์ด) · ตารางก่อน sprint เคยตั้ง ~24 ชม. แต่ยังไม่เคยได้รีวิวจริง
-- ตารางเรียนที่ใช้อยู่: จ 9–12 Embedded · จ 13–16 English · จ 16:30–19:30 TA ·
-  อ 9–12 IT Lab · อ 13–16 Prob&Stat · อ 16:30–19:30 OS · พ 8–10 ว่ายน้ำ ·
-  พฤ 9–12 DS · ศ 9–12 ML · ศ 13–16 Embedded Lab
+  ปิดเทอมไม่มีคาบ → พีค 8–12 ว่างทุกวัน = อ่าน/derive/เขียนโค้ดจากไฟล์เปล่า ·
+  บ่าย 13–17 / คืน 19–22 = quiz กับ Claude, lab ISLP, งานเบา
+- **เทอม 3/2 เริ่ม ~23 พ.ย. 2569 — ยังไม่รู้ตารางเรียนจริง** → ห้ามเดา · ได้มาเมื่อไรต้อง
+  (1) ใส่คาบในแท็บตารางเรียน (2) ตั้ง energyWindows ใหม่ (3) ทำโปรไฟล์วิชาเทอม 2 แทนตาราง 6 วิชาด้านบน
+  (4) เทอม 2 งบ self-study ~4–6 ชม./สัปดาห์ (ตาม L2 note)
+- ⚠ ยังไม่เคยได้รีวิว % จริงเลยตั้งแต่ Final Sprint — รีวิวแรกของแผนนี้คือ อา. 15 พ.ย. 19:00
 
 ## ต้องถามก่อนสร้างตารางครั้งแรก (รวบถามครั้งเดียวเป็นชุด อย่าถามทีละข้อ)
 
@@ -186,15 +193,15 @@ CLAUDE.md มีผลกับ **ทุก session ใน repo นี้** ร�
 
 ---
 
-## 🔁 Handoff สำหรับแชตถัดไป (สรุปถึง 22 ก.ย. 2026 · commit 6525b5c)
+## 🔁 Handoff สำหรับแชตถัดไป (สรุปถึง 6 พ.ย. 2026 · schema v20 MLSys Roadmap)
 
 ### แอปคืออะไร รันยังไง
 - repo: `github.com/Sh080205/investfeed-planner` (private) · branch `main` · commit + push หลังจบแต่ละงาน
   ผู้ใช้โอเคกับ flow นี้มาตลอด · commit message ภาษาไทย
 - server เดียว `server.js` (Express, port 3000): `/` = InvestFeed (ข่าว, `public/`) ·
-  `/planner` = Planner (React+Vite, build เป็นไฟล์เดียว `planner/dist/index.html`) ·
+  `/planner` = Planner (React+Vite, build เป็นไฟล์เดียว `planner/dist/index.html` — gitignore) ·
   `/api/books` + `/books/*` = ชั้นหนังสือ PDF จาก `C:\Users\Public\Documents\Reseach skill` ·
-  `POST /api/backup` = เขียน backup ลง `backup/` (gitignore)
+  `POST /api/backup` = เขียน backup ลง `backup/` (gitignore · ชื่อซ้ำวันเดียวกันจะต่อท้าย -2, -3)
 - รัน: ดับเบิลคลิก `start-app.cmd` (มี shortcut บน Desktop) หรือ `npm start`
 - แก้โค้ด planner แล้วต้อง `npm run build:planner` (server เสิร์ฟ dist) · แก้ `server.js` ต้อง restart server
 - ทดสอบข้อมูล: `npm --prefix planner run test:sprint` (ต้องผ่านทั้งหมดก่อน commit)
@@ -202,50 +209,68 @@ CLAUDE.md มีผลกับ **ทุก session ใน repo นี้** ร�
 ### โครงข้อมูล planner (อ่านก่อนแก้)
 - ข้อมูลอยู่ใน **localStorage ของเบราว์เซอร์ผู้ใช้** key `planner-v3:doc` — Claude มองไม่เห็นข้อมูลจริง
   (Browser pane ของ Claude เป็นคนละ storage — ใช้ทดสอบได้ ล้างได้ ไม่กระทบผู้ใช้)
-- `doc = { schemaVersion (ตอนนี้ 19), sections[], statuses{}, settings{}, finance{}, sprint{}, sprintMigration }`
+- `doc = { schemaVersion (ตอนนี้ 20), sections[], statuses{}, settings{}, finance{}, sprint{}, sprintMigration }`
 - item: `{ id, activity, meta, time, day, cat, url?, group?, pool?, kind?, date?, start?, end?,
   project?, milestone?, energy?(deep|light|locked), unlocked?, buffer?, detail? }`
-- สถานะ: `statuses['icpc']` · รายสัปดาห์ `statuses['weekly:2026-W39']` (ถูก prune เมื่อสัปดาห์ผ่านไป) ·
+- สถานะ: `statuses['icpc']` · รายสัปดาห์ `statuses['weekly:2026-W45']` (ถูก prune เมื่อสัปดาห์ผ่านไป) ·
   การ์ดผูกวันที่ `statuses['weekly:dated']` (ถาวร — % โปรเจคคิดจากตรงนี้) → ใช้ `itemStatusKey()` เสมอ
-- ไฟล์หลัก: `planner/src/data/` → `store.js` (load/save + `upgradeDoc` ไล่ v1→v19 + backup) ·
-  `seed.js` (`buildBaseSeed` = เทมเพลตเก่า v18 ให้ migration อ้างอิง · `buildSeedDoc` = ค่าเริ่มต้น v19) ·
-  `sprint.js` (logic Final Sprint, ฟังก์ชันล้วน ทดสอบใน Node ได้) · `final_sprint_2569_1.json` (แผน 40 task)
-  · `constants.js` · components: `SectionPanel` (layout days/group/books/money + บอร์ดผูกวันที่) ·
-  `ItemCard` · `ItemEditor` · `ProjectBar` · `WeekReview` · `SprintCountdown` · `FinanceTracker` · `BookShelf`
+- แผนผูกวันที่แยกเป็นไฟล์ JSON ต่อช่วง: `final_sprint_2569_1.json` (v19 — จบแล้ว **ห้ามลบ** ขั้น v18→v19 อ้างอยู่)
+  · `mlsys_break_2569_1.json` (v20 — active, **ห้ามแก้เนื้อหา**) · `sprint.js`: `SPRINT` = แผน active,
+  ฟังก์ชันรับ `plan` เป็นพารามิเตอร์ · id task = prefix ตามแผน (`fs-` / `mls-`) + วันที่ + เวลาเริ่ม + project
+- การ์ดแท็บ roadmap/projects/learn สร้างจาก JSON (`planSectionCards`): id `mlr-L1…L6` + `mlr-tree` ·
+  `mlp-P1…P5` · `mlres-<slug ชื่อ>` · สีโปรเจคใหม่ (`.proj-l1/p1/coop/hack`) ใช้ตัวแปรสีเดิมใน styles.css
+- ไฟล์หลัก: `planner/src/data/` → `store.js` (load/save + `upgradeDoc` ไล่ v1→v20 + backup key ต่อเวอร์ชัน) ·
+  `seed.js` (`buildBaseSeed` = เทมเพลตเก่า v18 · `buildSeedDoc` = base → applyFinalSprint → applyMlsysRoadmap = v20) ·
+  `sprint.js` · `constants.js` · components: `SectionPanel` · `ItemCard` · `ItemEditor` · `ProjectBar` ·
+  `WeekReview` · `SprintCountdown` (มี project `final` → นับถึง final · ไม่มี → นับถึงวันสุดท้ายของแผน) ·
+  `FinanceTracker` · `BookShelf`
 
 ### กติกาที่ต้องทำตามเวลาเปลี่ยนเนื้อหา/โครงข้อมูล
 - เปลี่ยนค่าเริ่มต้น = **bump schemaVersion + เพิ่มขั้นใน `upgradeDoc`** เสมอ (ข้อมูลผู้ใช้จะไม่อัปเดตเอง)
 - migration ต้องเก็บไว้: การ์ดถาด (`pool`) + วันที่จอง · การ์ดที่ผู้ใช้เพิ่มเอง (id ขึ้นต้น `u`) · statuses
-- การ์ด seed ที่เลิกใช้ต้อง **ระบุ id ให้ถอดทิ้งชัด ๆ** — เคยพลาดที่มันรอดมาในฐานะ "การ์ดผู้ใช้"
+- การ์ด seed ที่เลิกใช้ต้อง **ระบุ id ให้ถอดทิ้งชัด ๆ** (ดู `RETIRED_V20` ใน sprint.js) — เคยพลาดที่มันรอดมาในฐานะ "การ์ดผู้ใช้"
+- id milestone/project **ซ้ำข้ามแผนได้** (M0–M4, research) → `mergeSprintMeta` ไม่ merge ข้าม `sprint.id`
+  และ v20 ตัด `milestone` ออกจากการ์ดผู้ใช้ (+ ตัด `project` ถ้าไม่มีในแผนใหม่)
+- backup ก่อนอัปเกรดใหญ่: localStorage `planner-v3:backup:pre-v19` / `pre-v20` (เก็บครั้งเดียว) →
+  App POST ไป `/api/backup` · ชื่อไฟล์อยู่ใน `doc.sprintMigration.backupFile` (และ `.prev` ถ้าของ v19 ยังส่งไม่สำเร็จ)
 - ทดสอบ migration ด้วยการจำลอง doc เวอร์ชันเก่าใน Browser pane แล้ว reload (ทำแบบนี้มาทุกรอบ)
-- ปุ่ม "↺ คืนค่าเริ่มต้น" รายแท็บใช้ `buildSeedDoc` (v19) — แท็บที่ถูกล้างจะคืนเป็นว่าง
+  วิธีที่ใช้รอบ v20: สร้าง fixture ด้วย Node (buildBaseSeed → applyFinalSprint → v19) → วางชั่วคราวใน `public/`
+  → fetch ใส่ localStorage → reload → **ลบไฟล์ fixture และ backup ที่เทสต์เขียนออกทุกครั้ง**
+- ปุ่ม "↺ คืนค่าเริ่มต้น" รายแท็บใช้ `buildSeedDoc` (v20)
 
 ### ปัญหาสภาพแวดล้อมที่เจอบ่อย
 - `git push` บางครั้งพังด้วย `SSL ... revocation` (เน็ต/proxy) → รอแล้วลองใหม่ ห้ามปิด SSL check เอง
 - server port 3000 ตายเองเป็นพัก ๆ → `Start-Process node -ArgumentList 'server.js'` ในโฟลเดอร์ repo
 - screenshot ใน Browser pane มัก timeout (pane ไม่แสดง) → ยืนยันผลด้วย DOM/JS แทน
+- เครื่องนี้ไม่มี Python (`python` เปิด Microsoft Store) → ใช้ Node เขียนสคริปต์
 
 ### สถานะงาน ณ ตอนส่งต่อ
-- **Final Sprint (schema v19) เสร็จและ push แล้ว** แต่ migration จะรันจริงก็ต่อเมื่อผู้ใช้เปิด
-  `localhost:3000/planner` ในเบราว์เซอร์ตัวเอง → ตอนนั้น backup จะถูกเขียนที่
-  `backup/mission_log_backup_2026-09-2x.json` · ถ้าผู้ใช้ถามว่า backup อยู่ไหน ให้เช็กโฟลเดอร์นี้
-- restore แอปเดิม: `git checkout pre-final-sprint-2026-09-21 -- planner` → build → Import JSON backup
-  (import ไฟล์ v18 เข้าแอป v19 จะถูกอัปเกรดซ้ำ ไม่ใช่การ restore)
-- ถูกล้างตอน v19 (ตามที่ผู้ใช้เลือก "ทุกแท็บยกเว้นเงิน"): weekly รูทีนเก่า, เตรียมสอบ, research
-  (แผนอ่าน FPGA 18 สัปดาห์), english (แผนแก้อ่านโจทย์), skills, projects, roadmap, electives, learn
-  → อยู่ใน backup + git tag · **ไม่ได้ลบ**: ตารางเรียน, fitness (ตีความว่าไม่อยู่ในสิ่งที่ยืนยัน), icpc (paused)
-- ถ้าผู้ใช้ขอให้ลบตารางเรียน/fitness ด้วย ทำได้ — แต่ตารางเรียนใช้เป็นข้อมูลอ้างอิงช่องว่าง
+- **MLSys Roadmap (schema v20) เสร็จและ push แล้ว** · git tag ก่อนแก้: `pre-mlsys-roadmap-2026-11-06`
+  (tag เก่า `pre-final-sprint-2026-09-21` ยังอยู่)
+- ณ 6 พ.ย. **ยังไม่มีโฟลเดอร์ `backup/` บนเครื่องนี้เลย** = ผู้ใช้อาจยังไม่เคยเปิดแอป v19 (ข้อมูลยังเป็น v18)
+  หรือ backup v19 ส่งไม่สำเร็จ — ทั้งสองกรณี migration v20 รองรับ (v18 กระโดดตรง v20 ได้)
+  → เมื่อผู้ใช้เปิด `localhost:3000/planner` backup จะถูกเขียนที่ `backup/mission_log_backup_<วันที่>.json`
+- ถูกล้างตอน v20: task Final Sprint 40 ตัว (fs-*) + projects 6 + milestones 11 ของ Final Sprint ·
+  แท็บเตรียมสอบ (ลบทั้งแท็บ — การ์ดผู้ใช้ในนั้นย้ายเข้าถาด weekly) · คาบเรียนเทอม 1 ทั้ง 10 ใบ (cl-* รวม TA + ว่ายน้ำ;
+  แท็บตารางเรียนเก็บไว้ว่าง) · ถาดวิชา rd-* 6 ใบ → อยู่ใน backup + git tag
+- **ไม่ได้แตะ**: เงิน · fitness · icpc (paused) · ชั้นหนังสือ · ถาดหนังสือ bk-* 10 เล่ม ·
+  แท็บ research/english/skills/electives (ว่างมาตั้งแต่ v19 — ผู้ใช้เลือกปล่อยไว้)
+- restore แอปก่อน v20: `git checkout pre-mlsys-roadmap-2026-11-06 -- planner` → build → Import JSON backup
 
 ### ค้างอยู่ / สิ่งที่ควรทำต่อ
-1. **ยืนยัน deadline 4 โปรเจค** — task M0 วันอาทิตย์ 27 ก.ย. คือไปถามอาจารย์ แล้วติ๊ก confirmed ในแถบโปรเจค
-2. **ช่อง deep เต็มทั้ง sprint** — ยังไม่ได้แก้ แนะนำผู้ใช้เว้นช่อง deep ว่าง 1 ช่อง/สัปดาห์ไว้รับงานที่หลุด
-3. **scope ไฟนอลทุกวิชายังไม่รู้** — ต้องได้ก่อนจัดตารางช่วงสอบ (ไฟนอลเริ่ม 19 ต.ค.)
-4. **ยังไม่เคยได้รีวิว % จริง** — ผู้ใช้เคยรับปากจะรายงานผลรายสัปดาห์ ให้ถามก่อนจัดตารางสัปดาห์ถัดไป
-5. **หลังไฟนอล** — ปลด pause icpc, สร้าง weekly รูทีนใหม่, ถามว่าจะเอาแผน research/english กลับไหม
+1. **M0 (10 พ.ย.)** — deadline ยื่นบริษัทสหกิจจริง → อัปเดต deadline + ติ๊ก confirmed ของ COOP ในแถบโปรเจค
+2. **Hackathon 21 พ.ย.** — รอผลทีม · ถ้าไม่ได้ไป: ลบการ์ดเตรียม hackathon (คืน 20 พ.ย.) แล้วใช้ 21 พ.ย. เป็น buffer ซ่อมข้อสอบ
+3. **รีวิวรายสัปดาห์** (อา. 15 พ.ย.) — ยังไม่เคยได้ % จริงสักครั้ง ให้ถามก่อนจัดตารางสัปดาห์ถัดไป
+4. **เทอม 3/2 (~23 พ.ย.)** — รอตารางเรียนจริง → ใส่แท็บตารางเรียน + energyWindows ใหม่ + แผน L2 เป็นไฟล์ JSON
+   ใหม่ (schema v21, prefix id ใหม่ห้ามชน `fs-`/`mls-`) + โปรไฟล์วิชาเทอม 2 ใน CLAUDE.md
+5. **ICPC** ยัง paused — เป้าแข่งปี 4 · ถามผู้ใช้ก่อนปลด
 
 ### บริบทผู้ใช้ที่ควรรู้ (นอกจากโปรไฟล์ด้านบน)
 - ICPC: ตกรอบ regional ก.ค. 2026 (ทำได้ 2/5 — อ่านโจทย์ภาษาอังกฤษไม่ทัน เดาจาก I/O) → เป้าใหม่แข่งตอนปี 4
 - มีโครงงานวิจัยทีม 4 คน: FPGA-Accelerated Air Quality Anomaly Detection (TCN · PM2.5/NO2/CO)
+  ช่วงปิดเทอมอยู่ใน maintenance mode · P1 (TCN จากไฟล์เปล่า) ต้องให้ output ตรงกับโมเดลงานวิจัย
+- สายที่เลือก (MLSys Roadmap): DL foundations → systems core (CUDA/quantization) → LLM inference ·
+  เกณฑ์เลือกสหกิจ = "มีงาน inference/optimization จริงไหม"
 - ชอบ UI โทนมืดสบายตา minimal: แท็บจัด 4 กลุ่ม, สีป้าย 4 ตระกูล, ไม่มี glow — อย่าเพิ่มสีป้ายใหม่เรื่อย ๆ
 - ภาษาไทย ตอบสั้น ตรง ไม่ต้องให้กำลังใจ · ถามเป็นชุดเดียวได้ (ผู้ใช้ตอบ AskUserQuestion)
 - บางคำสั่งกำกวม (เช่น "เพิ่มเนื้อหาในส่วนเนื้อ") — ถามก่อนดีกว่าเดาแล้ว build รอบใหญ่ผิด

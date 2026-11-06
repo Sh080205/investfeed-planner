@@ -1,8 +1,8 @@
 // ---------- Seed data (ค่าเริ่มต้นตอนเปิดแอปครั้งแรก) ----------
 //
-// ตั้งแต่ v19: แผน Final Sprint (task ผูกวันที่) อยู่แยกใน final_sprint_2569_1.json
+// ตั้งแต่ v19: แผนผูกวันที่อยู่แยกในไฟล์ JSON (v19 final_sprint_2569_1 · v20 mlsys_break_2569_1)
 // ไฟล์นี้เก็บเทมเพลตเนื้อหาชุดเดิมไว้ให้ migration รุ่นก่อน ๆ อ้างอิง
-import { applyFinalSprint } from './sprint.js';
+import { applyFinalSprint, applyMlsysRoadmap } from './sprint.js';
 //
 // สำคัญ: นี่คือ "ค่าเริ่มต้น" เท่านั้น — หลังเปิดครั้งแรกข้อมูลจริงอยู่ใน localStorage
 // และแก้ไขทุกรายการได้ผ่าน UI (ปุ่ม ✎ / 🗑 / + เพิ่มรายการ)
@@ -499,13 +499,14 @@ export function buildBaseSeed() {
 }
 
 /**
- * ค่าเริ่มต้นของแอปตอนนี้ (schema v19 — Final Sprint 2569/1)
- * = เทมเพลตเดิม แล้วผ่าน applyFinalSprint แบบเดียวกับที่ migration ทำกับข้อมูลผู้ใช้
+ * ค่าเริ่มต้นของแอปตอนนี้ (schema v20 — MLSys Roadmap ปิดเทอม 3/1)
+ * = เทมเพลตเดิม แล้วผ่าน applyFinalSprint → applyMlsysRoadmap แบบเดียวกับที่ migration ทำกับข้อมูลผู้ใช้
  * → เครื่องใหม่กับเครื่องที่อัปเกรดมาได้หน้าตาเดียวกัน
  */
 export function buildSeedDoc() {
   const doc = buildBaseSeed();
   applyFinalSprint(doc);
-  doc.schemaVersion = 19;
+  applyMlsysRoadmap(doc);
+  doc.schemaVersion = 20;
   return doc;
 }

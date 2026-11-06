@@ -4,27 +4,31 @@
 
 import { STORAGE_KEY, isoWeekKey, statusKey } from './constants.js';
 import { buildSeedDoc, buildBaseSeed } from './seed.js';
-import { applyFinalSprint } from './sprint.js';
+import { applyFinalSprint, applyMlsysRoadmap } from './sprint.js';
 import { collectLegacyFromLocalStorage, applyLegacy } from './migrate.js';
 
 export { statusKey }; // ย้ายไปอยู่ constants.js แล้ว — re-export ให้ import เดิมยังใช้ได้
 
-// สำเนาข้อมูลก่อนอัปเกรดเป็น Final Sprint (v19) — เก็บครั้งเดียว ไม่เขียนทับ
-// App จะส่งก้อนนี้ไปให้ server เขียนเป็นไฟล์ backup/…json อีกชั้น
-export const BACKUP_KEY = 'planner-v3:backup:pre-v19';
+// สำเนาข้อมูลก่อนอัปเกรดครั้งใหญ่ — เก็บครั้งเดียวต่อเวอร์ชัน ไม่เขียนทับ
+// App จะส่งก้อนนี้ไปให้ server เขียนเป็นไฟล์ backup/…json อีกชั้น (key อยู่ใน doc.sprintMigration.backupKey)
+export const BACKUP_KEY = 'planner-v3:backup:pre-v19';     // ก่อน Final Sprint
+export const BACKUP_KEY_V20 = 'planner-v3:backup:pre-v20'; // ก่อน MLSys Roadmap
+
+function keepBackup(key, raw) {
+  try {
+    if (!localStorage.getItem(key)) localStorage.setItem(key, raw);
+  } catch (e) {
+    console.error('เก็บสำเนาก่อนอัปเกรดไม่สำเร็จ (localStorage เต็ม?)', e);
+  }
+}
 
 export function loadDoc() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const doc = JSON.parse(raw);
-      if ((doc.schemaVersion || 1) < 19) {
-        try {
-          if (!localStorage.getItem(BACKUP_KEY)) localStorage.setItem(BACKUP_KEY, raw);
-        } catch (e) {
-          console.error('เก็บสำเนาก่อนอัปเกรดไม่สำเร็จ (localStorage เต็ม?)', e);
-        }
-      }
+      if ((doc.schemaVersion || 1) < 19) keepBackup(BACKUP_KEY, raw);
+      if ((doc.schemaVersion || 1) < 20) keepBackup(BACKUP_KEY_V20, raw);
       if (upgradeDoc(doc)) saveDoc(doc); // ยกระดับ schema เก่า → ใหม่ อัตโนมัติ
       pruneOldWeeks(doc);
       return doc;
@@ -86,9 +90,14 @@ export function saveDoc(doc) {
  * v17 → v18: จัด weekly ตามช่วงพลังงานจริง (พีค 8–12 น.)
  * v18 → v19: Final Sprint 2569/1 — ล้างการ์ดเก่าทุกแท็บยกเว้น เงิน/ตารางเรียน/fitness/icpc
  *            · icpc paused · weekly เป็นบอร์ดผูกวันที่ + projects/milestones/40 task จาก JSON
+ * v19 → v20: MLSys Roadmap (ปิดเทอม 3/1) — ถอด task/projects/milestones ของ Final Sprint,
+ *            แท็บเตรียมสอบ (การ์ดผู้ใช้ย้ายเข้าถาด weekly), คาบเรียนเทอม 1, ถาดวิชา rd-*
+ *            · เติม 27 task + projects/milestones + การ์ด roadmap/projects/learn จาก mlsys_break_2569_1.json
+ *            · เก็บ เงิน/fitness/icpc(paused)/ชั้นหนังสือ/ถาดหนังสือ/การ์ดผู้ใช้
  */
 export function upgradeDoc(doc) {
   let changed = false;
+  const startVersion = doc.schemaVersion || 1;
   const seed = buildBaseSeed(); // เทมเพลตชุดเดิม (v18) — ขั้น v1→v18 อ้างอิงจากตัวนี้
 
   if ((doc.schemaVersion || 1) < 2) {
@@ -427,8 +436,24 @@ export function upgradeDoc(doc) {
     // Final Sprint 2569/1: ล้างเนื้อหาเก่า (ยกเว้นเงิน/ตารางเรียน/fitness/icpc) + เติมแผนผูกวันที่
     // สำเนาก่อนล้างถูกเก็บไว้แล้วใน loadDoc (BACKUP_KEY) และ App ส่งต่อให้ server เขียนไฟล์
     const removed = applyFinalSprint(doc);
-    doc.sprintMigration = { at: new Date().toISOString(), removed, backupFile: null };
+    doc.sprintMigration = { at: new Date().toISOString(), removed, backupFile: null, label: 'Final Sprint', backupKey: BACKUP_KEY };
     doc.schemaVersion = 19;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 20) {
+    // MLSys Roadmap: สำเนาก่อนล้างถูกเก็บไว้แล้วใน loadDoc (BACKUP_KEY_V20) และ App ส่งต่อให้ server
+    // บันทึกการอัปเกรดครั้งก่อนไว้ใน prev — ถ้า backup ของ v19 ยังส่งไม่สำเร็จ App จะลองส่งต่อ
+    // (doc ที่กระโดดจาก <19 มาทีเดียว: สำเนา pre-v19 กับ pre-v20 คือก้อนเดียวกัน → ไม่ต้องส่งซ้ำ)
+    const prev = startVersion === 19 && doc.sprintMigration && !doc.sprintMigration.backupFile
+      ? { ...doc.sprintMigration, backupKey: doc.sprintMigration.backupKey || BACKUP_KEY }
+      : null;
+    const { removed, detail } = applyMlsysRoadmap(doc);
+    doc.sprintMigration = {
+      at: new Date().toISOString(), removed, detail, backupFile: null,
+      label: 'MLSys Roadmap', backupKey: BACKUP_KEY_V20, ...(prev ? { prev } : {}),
+    };
+    doc.schemaVersion = 20;
     changed = true;
   }
 

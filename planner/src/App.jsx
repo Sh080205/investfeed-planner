@@ -45,32 +45,43 @@ export default function App() {
   const issues = useMemo(() => {
     try { return validateSprint(doc); } catch (e) { return ['ตรวจแผนไม่สำเร็จ: ' + e.message]; }
   }, [doc]);
-  useEffect(() => { if (issues.length) console.warn('[Final Sprint] พบปัญหาในแผน:\n' + issues.join('\n')); }, [issues]);
+  useEffect(() => { if (issues.length) console.warn('[แผนผูกวันที่] พบปัญหาในแผน:\n' + issues.join('\n')); }, [issues]);
 
   /* ---------- backup ก่อนอัปเกรด → ให้ server เขียนเป็นไฟล์ backup/…json (ลองทุกครั้งที่เปิดจนสำเร็จ) ---------- */
+  //    ส่งของอัปเกรดล่าสุด + ของครั้งก่อน (mig.prev) ถ้าครั้งก่อนยังส่งไม่สำเร็จ — ส่งทีละอัน กันชื่อไฟล์ชน
   useEffect(() => {
     const mig = doc.sprintMigration;
-    if (!mig || mig.backupFile) return;
-    let raw = null;
-    try { raw = localStorage.getItem(BACKUP_KEY); } catch { /* ignore */ }
-    if (!raw) return;
-    fetch('/api/backup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data: JSON.parse(raw) }),
-    })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status))))
-      .then((res) => update((d) => { d.sprintMigration.backupFile = res.file; }))
-      .catch((err) => {
-        console.warn('ส่ง backup ให้ server ไม่สำเร็จ', err);
-        setBackupError(String(err.message || err));
-      });
+    if (!mig) return;
+    const jobs = [
+      mig.prev && !mig.prev.backupFile && { key: mig.prev.backupKey || BACKUP_KEY, set: (d) => d.sprintMigration.prev },
+      !mig.backupFile && { key: mig.backupKey || BACKUP_KEY, set: (d) => d.sprintMigration },
+    ].filter(Boolean);
+    (async () => {
+      for (const job of jobs) {
+        let raw = null;
+        try { raw = localStorage.getItem(job.key); } catch { /* ignore */ }
+        if (!raw) continue;
+        try {
+          const r = await fetch('/api/backup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: JSON.parse(raw) }),
+          });
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          const res = await r.json();
+          update((d) => { job.set(d).backupFile = res.file; });
+        } catch (err) {
+          console.warn('ส่ง backup ให้ server ไม่สำเร็จ', err);
+          setBackupError(String(err.message || err));
+        }
+      }
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function downloadPreUpgradeBackup() {
     let raw = null;
-    try { raw = localStorage.getItem(BACKUP_KEY); } catch { /* ignore */ }
+    try { raw = localStorage.getItem(doc.sprintMigration?.backupKey || BACKUP_KEY); } catch { /* ignore */ }
     if (!raw) { alert('ไม่พบสำเนาก่อนอัปเกรดในเบราว์เซอร์นี้'); return; }
     downloadText(raw, 'mission_log_backup_' + new Date().toISOString().slice(0, 10) + '.json');
   }
@@ -251,7 +262,8 @@ export default function App() {
         {mig && !mig.dismissed && (
           <div className={'banner' + (backupError && !mig.backupFile ? ' warn' : '')}>
             <span>
-              ✓ อัปเกรดเป็น Final Sprint แล้ว · ล้างการ์ดเก่า {mig.removed} ใบ ·{' '}
+              ✓ อัปเกรดเป็น {mig.label || 'Final Sprint'} แล้ว · ล้างการ์ดเก่า {mig.removed} ใบ
+              {mig.detail?.movedToPool > 0 && <> (การ์ดที่เพิ่มเองในแท็บเตรียมสอบ {mig.detail.movedToPool} ใบ ย้ายไปถาด weekly)</>} ·{' '}
               {mig.backupFile
                 ? <>backup อยู่ที่ <code>backup/{mig.backupFile}</code></>
                 : backupError

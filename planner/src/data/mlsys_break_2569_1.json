@@ -1,0 +1,628 @@
+{
+  "id": "mlsys-break-2569-1",
+  "app": {
+    "title": "Mission Log — MLSys Roadmap",
+    "subtitle": "ปิดเทอม 3/1 · 7–22 พ.ย. 69 · รากฐาน Deep Learning (L1)",
+    "boardHeader": "ปิดเทอม: ไม่มีคาบเรียน · พีค 8–12 = อ่าน/derive · คืน = quiz/งานเบา · งบเรียน DL 2–3 ชม./วัน · ทุกบล็อกต้องมี output ไม่ใช่แค่อ่าน",
+    "pauseNote": "maintenance mode"
+  },
+  "pause": [
+    "icpc"
+  ],
+  "projects": [
+    {
+      "id": "l1",
+      "name": "L1 รากฐาน Deep Learning (UDL + ISLP)",
+      "deadline": "2026-11-22",
+      "confirmed": true,
+      "tag": "L1"
+    },
+    {
+      "id": "p1",
+      "name": "P1 TCN จากไฟล์เปล่า",
+      "deadline": "2026-11-20",
+      "confirmed": true,
+      "tag": "P1"
+    },
+    {
+      "id": "coop",
+      "name": "ยื่นสหกิจ (repo P1 + P2)",
+      "deadline": null,
+      "confirmed": false,
+      "tag": "COOP"
+    },
+    {
+      "id": "research",
+      "name": "FPGA TCN paper (ตามบรีฟอาจารย์)",
+      "deadline": null,
+      "confirmed": false,
+      "tag": "RESEARCH"
+    },
+    {
+      "id": "hack",
+      "name": "Codex Hackathon (รอผลทีม)",
+      "deadline": "2026-11-21",
+      "confirmed": false,
+      "tag": "HACK"
+    }
+  ],
+  "milestones": [
+    {
+      "id": "M0",
+      "project": "coop",
+      "name": "รู้ deadline ยื่นบริษัทสหกิจจริง",
+      "due": "2026-11-10"
+    },
+    {
+      "id": "M1",
+      "project": "l1",
+      "name": "ข้อสอบ ส.1: MLP loop จากไฟล์เปล่า + gradient logistic",
+      "due": "2026-11-13"
+    },
+    {
+      "id": "M2",
+      "project": "l1",
+      "name": "ข้อสอบ ส.2: backprop ด้วยมือผ่าน allclose",
+      "due": "2026-11-16"
+    },
+    {
+      "id": "M3",
+      "project": "p1",
+      "name": "ข้อสอบ ส.3: TCN + receptive field + push repo",
+      "due": "2026-11-20"
+    },
+    {
+      "id": "M4",
+      "project": "l1",
+      "name": "รีวิวปิดเทอม + ติ๊ก skill tree",
+      "due": "2026-11-22"
+    }
+  ],
+  "energyWindows": {
+    "_note": "ปิดเทอม 3/1 ไม่มีคาบเรียน · deep = พีค 8–12 ทุกวัน · light = บ่าย/คืน · ต้องตั้งใหม่เมื่อได้ตารางเรียนเทอม 2",
+    "deep": {
+      "MON": [
+        [
+          "08:00",
+          "12:00"
+        ]
+      ],
+      "TUE": [
+        [
+          "08:00",
+          "12:00"
+        ]
+      ],
+      "WED": [
+        [
+          "08:00",
+          "12:00"
+        ]
+      ],
+      "THU": [
+        [
+          "08:00",
+          "12:00"
+        ]
+      ],
+      "FRI": [
+        [
+          "08:00",
+          "12:00"
+        ]
+      ],
+      "SAT": [
+        [
+          "08:00",
+          "12:00"
+        ]
+      ],
+      "SUN": [
+        [
+          "08:00",
+          "12:00"
+        ]
+      ]
+    },
+    "light": {
+      "MON": [
+        [
+          "13:00",
+          "17:00"
+        ],
+        [
+          "19:00",
+          "22:00"
+        ]
+      ],
+      "TUE": [
+        [
+          "13:00",
+          "17:00"
+        ],
+        [
+          "19:00",
+          "22:00"
+        ]
+      ],
+      "WED": [
+        [
+          "13:00",
+          "17:00"
+        ],
+        [
+          "19:00",
+          "22:00"
+        ]
+      ],
+      "THU": [
+        [
+          "13:00",
+          "17:00"
+        ],
+        [
+          "19:00",
+          "22:00"
+        ]
+      ],
+      "FRI": [
+        [
+          "13:00",
+          "17:00"
+        ],
+        [
+          "19:00",
+          "22:00"
+        ]
+      ],
+      "SAT": [
+        [
+          "13:00",
+          "17:00"
+        ],
+        [
+          "19:00",
+          "22:00"
+        ]
+      ],
+      "SUN": [
+        [
+          "13:00",
+          "17:00"
+        ],
+        [
+          "19:00",
+          "22:00"
+        ]
+      ]
+    }
+  },
+  "tasks": [
+    {
+      "date": "2026-11-07",
+      "start": "09:00",
+      "end": "11:00",
+      "project": "l1",
+      "milestone": "M1",
+      "energy": "deep",
+      "title": "UDL บท 2: Supervised learning",
+      "detail": "อ่านจบบทแล้วเขียนอธิบายกลับ 5–10 บรรทัด ส่ง Claude ให้ชี้จุดผิด (ห้ามขอสรุป)"
+    },
+    {
+      "date": "2026-11-07",
+      "start": "13:30",
+      "end": "15:00",
+      "project": "research",
+      "milestone": null,
+      "energy": "light",
+      "title": "FPGA paper ตามบรีฟอาจารย์",
+      "detail": "maintenance: ทำเฉพาะสิ่งที่อาจารย์สั่ง · จดว่าติดอะไร"
+    },
+    {
+      "date": "2026-11-07",
+      "start": "20:00",
+      "end": "20:45",
+      "project": "l1",
+      "milestone": "M1",
+      "energy": "light",
+      "title": "ตั้ง repo dl-foundations + เทียบสารบัญ UDL/ISLP",
+      "detail": "สร้าง repo บน GitHub · เทียบเลขบทกับแผน แก้ในแอปถ้าไม่ตรง"
+    },
+    {
+      "date": "2026-11-08",
+      "start": "09:00",
+      "end": "11:00",
+      "project": "l1",
+      "milestone": "M1",
+      "energy": "deep",
+      "title": "UDL บท 3: Shallow neural networks",
+      "detail": "อธิบายกลับ + ให้ Claude ตั้งคำถามแบบ 'ถ้าเปลี่ยน X จะเกิดอะไร' 3 ข้อ"
+    },
+    {
+      "date": "2026-11-08",
+      "start": "20:00",
+      "end": "21:00",
+      "project": "l1",
+      "milestone": "M1",
+      "energy": "light",
+      "title": "ISLP บท 3: Linear regression + lab",
+      "detail": "ทำ lab ท้ายบทเอง ไม่ copy · จด assumption ของ OLS"
+    },
+    {
+      "date": "2026-11-09",
+      "start": "09:00",
+      "end": "11:00",
+      "project": "l1",
+      "milestone": "M1",
+      "energy": "deep",
+      "title": "UDL บท 4: Deep neural networks",
+      "detail": "อธิบายกลับ: ทำไมความลึกช่วย · นับจำนวน parameter ของ MLP ตัวอย่างเอง"
+    },
+    {
+      "date": "2026-11-09",
+      "start": "13:00",
+      "end": "13:30",
+      "project": "coop",
+      "milestone": "M0",
+      "energy": "light",
+      "title": "ถามฝ่ายวิชาการ: deadline ยื่นบริษัทสหกิจ",
+      "detail": "ถาม: ต้องยื่นบริษัทภายในเมื่อไร + มีรายชื่อบริษัทที่ทำ ML inference/self-host ไหม · อัปเดต deadline ในแถบโปรเจค"
+    },
+    {
+      "date": "2026-11-10",
+      "start": "09:00",
+      "end": "11:00",
+      "project": "l1",
+      "milestone": "M1",
+      "energy": "deep",
+      "title": "ISLP บท 4: Logistic regression + derive gradient",
+      "detail": "derive ∂L/∂w ของ logistic regression ด้วยมือก่อน แล้วค่อยเทียบหนังสือ"
+    },
+    {
+      "date": "2026-11-10",
+      "start": "20:00",
+      "end": "21:00",
+      "project": "l1",
+      "milestone": "M1",
+      "energy": "light",
+      "title": "Quiz กับ Claude: UDL บท 2–4",
+      "detail": "ขอคำถามแบบทำนายผล 5 ข้อ · ข้อที่ผิดจดไว้ทบทวน"
+    },
+    {
+      "date": "2026-11-11",
+      "start": "09:00",
+      "end": "11:00",
+      "project": "l1",
+      "milestone": "M1",
+      "energy": "deep",
+      "title": "PyTorch: training loop MLP จากไฟล์เปล่า (ซ้อม)",
+      "detail": "เปิด d2l ได้เฉพาะตอนติดเกิน 20 นาที · ส่งโค้ดให้ Claude review แบบไม่เขียนใหม่ให้"
+    },
+    {
+      "date": "2026-11-12",
+      "start": "09:00",
+      "end": "11:00",
+      "project": "l1",
+      "milestone": "M2",
+      "energy": "deep",
+      "title": "UDL บท 5: Loss functions",
+      "detail": "ต่อจุด: cross-entropy = negative log-likelihood · derive ให้ได้เอง"
+    },
+    {
+      "date": "2026-11-13",
+      "start": "09:00",
+      "end": "11:00",
+      "project": "l1",
+      "milestone": "M1",
+      "energy": "deep",
+      "title": "ข้อสอบสัปดาห์ 1",
+      "detail": "(1) training loop MLP จากไฟล์เปล่าโดยไม่ดูอะไร (2) derive gradient logistic regression · ผ่าน = ติ๊ก M1"
+    },
+    {
+      "date": "2026-11-13",
+      "start": "20:00",
+      "end": "20:45",
+      "project": "l1",
+      "milestone": "M1",
+      "energy": "light",
+      "title": "รีวิวผลข้อสอบ ส.1",
+      "detail": "ข้อไหนไม่ผ่าน → ย้ายไปซ่อมในช่อง buffer ของสัปดาห์หน้า ไม่ใช่ข้าม"
+    },
+    {
+      "date": "2026-11-14",
+      "start": "09:00",
+      "end": "11:00",
+      "project": "l1",
+      "milestone": "M2",
+      "energy": "deep",
+      "title": "UDL บท 6: Fitting models",
+      "detail": "SGD, momentum, Adam · เขียน update rule ของแต่ละตัวด้วย NumPy 10 บรรทัด"
+    },
+    {
+      "date": "2026-11-14",
+      "start": "13:30",
+      "end": "15:00",
+      "project": "research",
+      "milestone": null,
+      "energy": "light",
+      "title": "FPGA paper ตามบรีฟอาจารย์",
+      "detail": "maintenance"
+    },
+    {
+      "date": "2026-11-15",
+      "start": "09:00",
+      "end": "11:00",
+      "project": "l1",
+      "milestone": "M2",
+      "energy": "deep",
+      "title": "UDL บท 7: Gradients และ initialization",
+      "detail": "backprop แบบ matrix · ทำไม init ผิดแล้ว gradient หาย/ระเบิด"
+    },
+    {
+      "date": "2026-11-15",
+      "start": "19:00",
+      "end": "19:45",
+      "project": "l1",
+      "milestone": null,
+      "energy": "light",
+      "title": "รีวิวสัปดาห์",
+      "detail": "ทำได้กี่ % · บล็อกไหนหลุด (ย้าย/ตัด) · สถานะทีม hackathon"
+    },
+    {
+      "date": "2026-11-16",
+      "start": "09:00",
+      "end": "11:00",
+      "project": "l1",
+      "milestone": "M2",
+      "energy": "deep",
+      "title": "ข้อสอบสัปดาห์ 2: backprop ด้วยมือ",
+      "detail": "MLP 2 ชั้นใน NumPy · gradient ตรงกับ PyTorch autograd ผ่าน torch.allclose · ผ่าน = ติ๊ก M2"
+    },
+    {
+      "date": "2026-11-17",
+      "start": "09:00",
+      "end": "11:00",
+      "project": "p1",
+      "milestone": "M3",
+      "energy": "deep",
+      "title": "UDL บท 10: CNN (เน้น dilated conv)",
+      "detail": "คำนวณ output length และ receptive field ของ conv1d หลายชั้นด้วยมือ"
+    },
+    {
+      "date": "2026-11-17",
+      "start": "20:00",
+      "end": "21:00",
+      "project": "l1",
+      "milestone": null,
+      "energy": "light",
+      "title": "ISLP บท 5: Resampling / cross-validation",
+      "detail": "อ่านเฉพาะ k-fold + ทำไม time series ห้าม shuffle split"
+    },
+    {
+      "date": "2026-11-18",
+      "start": "09:00",
+      "end": "11:00",
+      "project": "p1",
+      "milestone": "M3",
+      "energy": "deep",
+      "title": "UDL บท 11 + เขียน dilated causal conv1d เอง",
+      "detail": "residual block · เทียบ output กับ nn.Conv1d(dilation, padding) ให้ตรง"
+    },
+    {
+      "date": "2026-11-19",
+      "start": "09:00",
+      "end": "11:00",
+      "project": "p1",
+      "milestone": "M3",
+      "energy": "deep",
+      "title": "P1: TCN จากไฟล์เปล่า",
+      "detail": "ประกอบ residual block เป็น TCN ให้ shape/output ตรงกับโมเดลในงานวิจัย"
+    },
+    {
+      "date": "2026-11-20",
+      "start": "09:00",
+      "end": "11:00",
+      "project": "p1",
+      "milestone": "M3",
+      "energy": "deep",
+      "title": "P1: receptive field + README",
+      "detail": "ข้อสอบ ส.3 · คำนวณ receptive field · README อธิบายสิ่งที่เขียนเอง + push · ผ่าน = ติ๊ก M3"
+    },
+    {
+      "date": "2026-11-20",
+      "start": "20:00",
+      "end": "21:00",
+      "project": "hack",
+      "milestone": null,
+      "energy": "light",
+      "title": "เตรียม Codex Hackathon (ถ้าทีมได้รับเลือก)",
+      "detail": "ถ้าไม่ได้ไป → ลบการ์ดนี้ แล้วใช้วันที่ 21 เป็น buffer"
+    },
+    {
+      "date": "2026-11-21",
+      "start": "08:00",
+      "end": "20:00",
+      "project": "hack",
+      "milestone": null,
+      "energy": "locked",
+      "title": "Codex Hackathon · Singha Complex",
+      "detail": "ทั้งวัน · ถ้าไม่ได้ไป ใช้วันนี้ซ่อมข้อสอบที่ไม่ผ่าน"
+    },
+    {
+      "date": "2026-11-22",
+      "start": "09:00",
+      "end": "10:30",
+      "project": "l1",
+      "milestone": null,
+      "energy": "light",
+      "title": "BUFFER: ปิดงานที่หลุดทั้งปิดเทอม",
+      "detail": "ห้ามเริ่มเนื้อหาใหม่"
+    },
+    {
+      "date": "2026-11-22",
+      "start": "19:00",
+      "end": "20:00",
+      "project": "l1",
+      "milestone": "M4",
+      "energy": "light",
+      "title": "รีวิวปิดเทอม + เตรียมเทอม 3/2",
+      "detail": "ติ๊ก node ใน skill tree · รอตารางเรียนจริงเทอม 2 เพื่อตั้งช่องพลังงานใหม่"
+    }
+  ],
+  "roadmap": [
+    {
+      "id": "L1",
+      "when": "ปิดเทอม 3/1 · 7–22 พ.ย. 69",
+      "name": "รากฐาน Deep Learning",
+      "learn": "UDL บท 2–7, 10–11 · ISLP บท 3–5 · PyTorch พื้นฐาน (d2l อ้างอิง)",
+      "project": "P1",
+      "check": "MLP loop จากไฟล์เปล่า · backprop ด้วยมือผ่าน allclose · TCN + receptive field"
+    },
+    {
+      "id": "L2",
+      "when": "เทอม 3/2 · 23 พ.ย. 69 – ~มี.ค. 70",
+      "name": "ต่อยอด + ยื่นสหกิจ",
+      "learn": "UDL บท 12 Transformers, บท 8–9 · ISLP บท 8 tree-based · FP32/FP16/BF16/INT8",
+      "project": "P2",
+      "check": "ไล่ shape ใน attention ได้ทุกขั้น · ตาราง baseline ใส่ paper",
+      "note": "เทอมหนัก: งบ self-study ~4–6 ชม./สัปดาห์"
+    },
+    {
+      "id": "L3",
+      "when": "ปิดเทอมใหญ่ · ~มี.ค.–พ.ค. 70 [เช็คปฏิทิน]",
+      "name": "Systems core",
+      "learn": "MiniTorch Module 0–3 · CUDA Programming Guide (tiled matmul) · roofline + torch.profiler · Nagel quantization white paper",
+      "project": "P3",
+      "check": "tiled matmul ชนะ naive และอธิบายได้ว่าทำไมแพ้ cuBLAS · INT8 PTQ เขียนเองชี้ layer ที่เสีย accuracy ได้"
+    },
+    {
+      "id": "L4",
+      "when": "เทอม 4/1 · ~มิ.ย.–ต.ค. 70",
+      "name": "LLM inference + งานวิจัย",
+      "learn": "KV cache, FlashAttention, PagedAttention · SmoothQuant/GPTQ/AWQ · Triton · (ทางเลือก) Boyd Convex Optimization",
+      "project": "P4 + ส่ง paper FPGA",
+      "check": "อธิบายได้ว่าทำไม decode ของ LLM เป็น memory-bound"
+    },
+    {
+      "id": "L5",
+      "when": "เทอม 4/2",
+      "name": "สหกิจ = production จริง",
+      "learn": "สิ่งที่งานสอน · ไม่ลงคอร์สใหม่",
+      "project": "P5",
+      "check": "เก็บตัวเลขผลงานทุกชิ้น (latency/cost ที่ลดได้)"
+    },
+    {
+      "id": "L6",
+      "when": "หลังจบ",
+      "name": "งานแรก / ป.โท",
+      "learn": "contribute open source ด้าน inference (llama.cpp, vLLM, ONNX Runtime)",
+      "project": "ชุดสมัคร: paper + สหกิจ + repo P3/P4",
+      "check": ""
+    }
+  ],
+  "portfolio": [
+    {
+      "id": "P1",
+      "when": "L1",
+      "name": "TCN จากไฟล์เปล่า",
+      "detail": "dilated causal conv + residual เขียนเอง ให้ output ตรงกับโมเดลงานวิจัย"
+    },
+    {
+      "id": "P2",
+      "when": "L2",
+      "name": "Boosting vs TCN",
+      "detail": "LightGBM/XGBoost เทียบ TCN บน PM2.5 ชุดเดียวกัน (accuracy + latency) → ตาราง baseline ของ paper"
+    },
+    {
+      "id": "P3",
+      "when": "L3",
+      "name": "Quantize · Kernel · Serve (ชิ้นงานหลัก)",
+      "detail": "INT8 PTQ เขียนเอง + CUDA kernel 1 ตัว (dequant+matmul) + ONNX Runtime + FastAPI วัด p50/p99 บน CPU/GPU Colab · 0 บาท"
+    },
+    {
+      "id": "P4",
+      "when": "L4",
+      "name": "Reproduce 1 paper",
+      "detail": "ทำซ้ำ SmoothQuant หรือ AWQ บนโมเดลเล็ก + write-up"
+    },
+    {
+      "id": "P5",
+      "when": "L5",
+      "name": "งานสหกิจ",
+      "detail": "เลือกบริษัทด้วยเกณฑ์ 'มีงาน inference/optimization จริงไหม'"
+    }
+  ],
+  "resources": [
+    {
+      "name": "Understanding Deep Learning (UDL)",
+      "url": "https://udlbook.github.io/udlbook/",
+      "phase": "L1–L2"
+    },
+    {
+      "name": "ISLP — Intro to Statistical Learning (Python)",
+      "url": "https://www.statlearning.com",
+      "phase": "L1–L2"
+    },
+    {
+      "name": "Dive into Deep Learning",
+      "url": "https://d2l.ai",
+      "phase": "L1–L3"
+    },
+    {
+      "name": "MiniTorch",
+      "url": "https://minitorch.github.io",
+      "phase": "L3"
+    },
+    {
+      "name": "CUDA C++ Programming Guide",
+      "url": "https://docs.nvidia.com/cuda/cuda-c-programming-guide/",
+      "phase": "L3"
+    },
+    {
+      "name": "A White Paper on Neural Network Quantization",
+      "url": "https://arxiv.org/abs/2106.08295",
+      "phase": "L3"
+    },
+    {
+      "name": "MIT 6.5940 Efficient ML",
+      "url": "https://hanlab.mit.edu/courses/2024-fall-65940",
+      "phase": "L3–L4"
+    },
+    {
+      "name": "Triton tutorials",
+      "url": "https://triton-lang.org/main/getting-started/tutorials/index.html",
+      "phase": "L4"
+    },
+    {
+      "name": "FlashAttention",
+      "url": "https://arxiv.org/abs/2205.14135",
+      "phase": "L4"
+    },
+    {
+      "name": "vLLM / PagedAttention",
+      "url": "https://arxiv.org/abs/2309.06180",
+      "phase": "L4"
+    },
+    {
+      "name": "SmoothQuant",
+      "url": "https://arxiv.org/abs/2211.10438",
+      "phase": "L4"
+    },
+    {
+      "name": "GPTQ",
+      "url": "https://arxiv.org/abs/2210.17323",
+      "phase": "L4"
+    },
+    {
+      "name": "AWQ",
+      "url": "https://arxiv.org/abs/2306.00978",
+      "phase": "L4"
+    },
+    {
+      "name": "Boyd · Convex Optimization",
+      "url": "https://web.stanford.edu/~boyd/cvxbook/",
+      "phase": "L4 (ทางเลือก)"
+    }
+  ],
+  "skillTreeArtifact": "https://claude.ai/artifact/1opTm4yXZEZCbbiRjPmBCn"
+}

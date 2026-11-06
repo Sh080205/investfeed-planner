@@ -1,4 +1,4 @@
-// ทดสอบ data layer ของ Final Sprint (รันด้วย node) — ตรวจ acceptance criteria ฝั่งข้อมูล
+// ทดสอบ data layer ของแผนผูกวันที่ (รันด้วย node) — schema v20 = MLSys Roadmap ปิดเทอม 3/1
 const base = new URL('../src/data/', import.meta.url).href;
 const seedM = await import(base + 'seed.js');
 const storeM = await import(base + 'store.js');
@@ -6,91 +6,160 @@ const S = await import(base + 'sprint.js');
 
 let fail = 0;
 const ok = (cond, msg) => { console.log((cond ? '  ✓ ' : '  ✗ ') + msg); if (!cond) fail++; };
+const sec = (d, id) => d.sections.find((s) => s.id === id);
+const wk = (d) => sec(d, 'weekly');
+const WEEKDAY = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const dow = (iso) => WEEKDAY[new Date(iso + 'T00:00').getDay()];
 
-/* ---------- 1) seed ใหม่ ---------- */
-console.log('1) buildSeedDoc (เครื่องใหม่)');
+/* ---------- 1) seed ใหม่ (เครื่องใหม่) ---------- */
+console.log('1) buildSeedDoc v20');
 const fresh = seedM.buildSeedDoc();
-const wk = (d) => d.sections.find((s) => s.id === 'weekly');
 const tasks = S.datedItems(fresh);
-ok(fresh.schemaVersion === 19, 'schemaVersion = 19');
-ok(tasks.length === 40, `task ผูกวันที่ = 40 (ได้ ${tasks.length})`);
-const inWeek = (w) => tasks.filter((t) => S.weekKeyOf(t.date) === w).length;
-ok(inWeek('2026-W39') === 2 && inWeek('2026-W40') === 12 && inWeek('2026-W41') === 13 && inWeek('2026-W42') === 13,
-  `แยกสัปดาห์ W39/40/41/42 = ${inWeek('2026-W39')}/${inWeek('2026-W40')}/${inWeek('2026-W41')}/${inWeek('2026-W42')} (ต้อง 2/12/13/13)`);
-ok(!wk(fresh).items.some((i) => !i.pool && !i.date), 'ไม่มีการ์ดรูทีนเก่าค้างใน weekly');
-ok(!wk(fresh).items.some((i) => i.cat === 'icpc'), 'ไม่มี task ICPC บนบอร์ด');
+ok(fresh.schemaVersion === 20, 'schemaVersion = 20');
+ok(S.SPRINT.id === 'mlsys-break-2569-1', 'แผน active = mlsys-break-2569-1');
+ok(tasks.length === 27, `task ผูกวันที่ = 27 (ได้ ${tasks.length})`);
+ok(tasks.every((t) => t.id.startsWith('mls-')), 'id task ใหม่ขึ้นต้น mls-');
+const fsIds = new Set(S.RETIRED_V20.finalSprintTasks);
+ok(fsIds.size === 40 && tasks.every((t) => !fsIds.has(t.id)), 'id task ใหม่ไม่ชน task Final Sprint 40 ตัว');
+ok(!wk(fresh).items.some((i) => String(i.id).startsWith('fs-')), 'ไม่มี task Final Sprint ค้างบนบอร์ด');
+ok(tasks.every((t) => t.date >= '2026-11-07' && t.date <= '2026-11-22'), 'task อยู่ในช่วง 7–22 พ.ย. 2569');
+ok(fresh.sprint.id === 'mlsys-break-2569-1' && fresh.sprint.projects.length === 5 && fresh.sprint.milestones.length === 5,
+  `projects ${fresh.sprint.projects.length} · milestones ${fresh.sprint.milestones.length} (ต้อง 5 · 5)`);
+ok(!fresh.sprint.projects.some((p) => ['dsml', 'emb', 'os-s', 'os-l', 'final'].includes(p.id)), 'ไม่มีโปรเจค Final Sprint');
 ok(S.isPaused(fresh, 'icpc'), 'icpc paused');
-ok(fresh.sprint.projects.length === 6 && fresh.sprint.milestones.length === 11, 'projects 6 · milestones 11');
+ok(!sec(fresh, 'exam'), 'ไม่มีแท็บเตรียมสอบ');
+ok(sec(fresh, 'classes') && sec(fresh, 'classes').items.length === 0, 'ตารางเรียน: แท็บอยู่ แต่ว่าง');
+ok(!wk(fresh).items.some((i) => String(i.id).startsWith('rd-')), 'ไม่มีถาดวิชา rd-*');
+ok(wk(fresh).items.filter((i) => i.kind === 'book').length === 10, 'ถาดหนังสือ bk-* อยู่ครบ 10');
+ok(sec(fresh, 'fitness').items.length === 7, 'fitness 7 การ์ด');
+ok(wk(fresh).dated === true && wk(fresh).note === S.SPRINT.app.boardHeader, 'weekly = บอร์ดผูกวันที่ + header จาก JSON');
+const rm = sec(fresh, 'roadmap').items.map((i) => i.id);
+ok(['L1', 'L2', 'L3', 'L4', 'L5', 'L6'].every((l) => rm.includes('mlr-' + l)), `roadmap มี L1–L6 (${rm.join(',')})`);
+ok(sec(fresh, 'roadmap').items.some((i) => i.url === S.SPRINT.skillTreeArtifact), 'roadmap มีลิงก์ skill tree');
+ok(sec(fresh, 'projects').items.map((i) => i.id).join(',') === 'mlp-P1,mlp-P2,mlp-P3,mlp-P4,mlp-P5', 'projects = P1–P5');
+const learn = sec(fresh, 'learn').items;
+ok(learn.length === S.SPRINT.resources.length && learn.every((i) => /^https?:\/\//.test(i.url)), `learn = resources ${learn.length} ลิงก์ (มี url ครบ)`);
+const allIds = fresh.sections.flatMap((s) => s.items.map((i) => i.id));
+ok(new Set(allIds).size === allIds.length, 'id การ์ดทั้งแอปไม่ซ้ำกัน');
+const newCards = ['roadmap', 'projects', 'learn'].flatMap((id) => sec(fresh, id).items);
+ok(newCards.every((i) => !String(i.id).startsWith('u')), 'การ์ด seed ใหม่ไม่มี id ขึ้นต้น u (จะถูกนับเป็นการ์ดผู้ใช้)');
 const v = S.validateSprint(fresh);
-ok(v.length === 0, 'validation ผ่าน (ไม่มีเวลาทับ / start<end / milestone มีจริง)' + (v.length ? '\n    ' + v.join('\n    ') : ''));
+ok(v.length === 0, 'validateSprint ผ่าน (ไม่มีเวลาทับ / start<end / milestone+project มีจริง)' + (v.length ? '\n    ' + v.join('\n    ') : ''));
+ok(tasks.every((t) => ['deep', 'light', 'locked'].includes(t.energy)), 'ทุก task มี energy');
 
 /* ---------- 2) idempotent ---------- */
 console.log('2) seed ซ้ำไม่เกิด task ซ้ำ');
 const again = S.seedSprintTasks(fresh);
-S.applyFinalSprint(fresh);
-ok(again === 0 && S.datedItems(fresh).length === 40, `seed ซ้ำ 2 รอบ → เติม ${again} · ยังเป็น ${S.datedItems(fresh).length}`);
+S.applyMlsysRoadmap(fresh);
+const rmLen = sec(fresh, 'roadmap').items.length;
+ok(again === 0 && S.datedItems(fresh).length === 27, `seed ซ้ำ 2 รอบ → เติม ${again} · ยังเป็น ${S.datedItems(fresh).length}`);
+ok(rmLen === 7 && sec(fresh, 'learn').items.length === learn.length, 'การ์ด roadmap/learn ไม่เบิ้ล');
 
-/* ---------- 3) migration จากข้อมูลผู้ใช้ v18 ---------- */
-console.log('3) upgradeDoc: ข้อมูลผู้ใช้ v18 → v19');
+/* ---------- 3) migration ข้อมูลผู้ใช้ v19 → v20 ---------- */
+console.log('3) upgradeDoc: ข้อมูลผู้ใช้ v19 → v20');
+const v19 = seedM.buildBaseSeed();
+S.applyFinalSprint(v19);              // = หน้าตา doc ของผู้ใช้หลังขั้น v18→v19
+v19.schemaVersion = 19;
+v19.sprintMigration = { at: '2026-09-22T00:00:00Z', removed: 120, backupFile: 'mission_log_backup_2026-09-22.json' };
+ok(S.datedItems(v19).length === 40 && v19.sprint.id === 'final-sprint-2569-1', 'fixture v19: 40 task Final Sprint');
+v19.finance.transactions.push({ id: 'tx1', type: 'income', amount: 5000, category: 'x', note: '', date: '2026-09-01' });
+v19.statuses.icpc = { f1: 'done' };
+v19.statuses['weekly:dated'] = { 'fs-2026-09-29-2000-os-s': 'done', uDated: 'done' };
+v19.statuses['weekly:2026-W45'] = { 'rd-os': 'done', 'bk-cod': 'running' };
+v19.statuses.exam = { uExam: 'done' };
+v19.sprint.projects.find((p) => p.id === 'research').deadline = '2026-12-31'; // ค่าที่ผู้ใช้แก้ในแผนเก่า
+wk(v19).items.find((i) => i.id === 'rd-os').day = 'พุธ WED';
+wk(v19).items.push({ id: 'uDated', date: '2026-10-05', day: 'จันทร์ MON', start: '13:00', end: '14:00', time: '13:00–14:00', project: 'dsml', milestone: 'M2', energy: 'light', activity: 'custom dated', cat: 'plan' });
+wk(v19).items.push({ id: 'uRes', date: '2026-10-06', day: 'อังคาร TUE', start: '13:00', end: '14:00', time: '13:00–14:00', project: 'research', milestone: 'M1', energy: 'light', activity: 'custom research', cat: 'res' });
+sec(v19, 'exam').items.push({ id: 'uExam', group: 'g', activity: 'โน้ตสอบที่เพิ่มเอง', cat: 'exam' });
+sec(v19, 'classes').items.push({ id: 'uClass', day: 'จันทร์ MON', time: '9:00–12:00', activity: 'คาบที่เพิ่มเอง', cat: 'class' });
+sec(v19, 'roadmap').items.push({ id: 'uRoad', group: 'mine', activity: 'roadmap ที่เพิ่มเอง', cat: 'road' });
+const icpcBefore = sec(v19, 'icpc').items.length;
+const libraryBefore = JSON.stringify(sec(v19, 'library'));
+const financeBefore = JSON.stringify(v19.finance);
+
+const changed = storeM.upgradeDoc(v19);
+ok(changed && v19.schemaVersion === 20, 'อัปเกรดเป็น v20');
+ok(JSON.stringify(v19.finance) === financeBefore, 'finance ไม่ถูกแตะ');
+ok(sec(v19, 'icpc').items.length === icpcBefore && v19.statuses.icpc?.f1 === 'done' && S.isPaused(v19, 'icpc'), 'icpc: การ์ด+สถานะอยู่ครบ และยัง paused');
+ok(JSON.stringify(sec(v19, 'library')) === libraryBefore, 'ชั้นหนังสือไม่ถูกแตะ');
+ok(sec(v19, 'fitness').items.length === 7, 'fitness อยู่ครบ');
+ok(!wk(v19).items.some((i) => fsIds.has(i.id)), 'task Final Sprint (fs-*) ถูกลบหมด');
+ok(!('fs-2026-09-29-2000-os-s' in v19.statuses['weekly:dated']) && v19.statuses['weekly:dated'].uDated === 'done', 'สถานะ fs-* ถูกลบ · สถานะการ์ดผู้ใช้คงอยู่');
+ok(v19.sprint.id === 'mlsys-break-2569-1' && v19.sprint.projects.map((p) => p.id).join(',') === 'l1,p1,coop,research,hack', 'projects = ชุดใหม่ล้วน');
+ok(v19.sprint.projects.find((p) => p.id === 'research').deadline === null, 'ค่าโปรเจค research ของแผนเก่าไม่รั่วมาแผนใหม่');
+ok(v19.sprint.milestones.map((m) => m.id).join(',') === 'M0,M1,M2,M3,M4', 'milestones = M0–M4 ชุดใหม่');
+const uDated = wk(v19).items.find((i) => i.id === 'uDated');
+const uRes = wk(v19).items.find((i) => i.id === 'uRes');
+ok(uDated && !uDated.project && !uDated.milestone, 'การ์ดผู้ใช้ผูกโปรเจคเก่า (dsml) → คงการ์ด ตัดลิงก์ project/milestone');
+ok(uRes && uRes.project === 'research' && !uRes.milestone, 'การ์ดผู้ใช้ project research → คง project · ตัด milestone (M1 ความหมายใหม่)');
+ok(!sec(v19, 'exam'), 'แท็บเตรียมสอบถูกลบ');
+const moved = wk(v19).items.find((i) => i.id === 'uExam');
+ok(moved && moved.pool === true && moved.day === '', 'การ์ดผู้ใช้ในแท็บเตรียมสอบย้ายเข้าถาด weekly');
+ok(!v19.statuses.exam, 'สถานะแท็บเตรียมสอบถูกลบ');
+const cls = sec(v19, 'classes').items.map((i) => i.id);
+ok(cls.length === 1 && cls[0] === 'uClass', `ตารางเรียน: ถอด cl-* 10 ใบ เหลือการ์ดผู้ใช้ (${cls})`);
+ok(!wk(v19).items.some((i) => S.RETIRED_V20.pool.includes(i.id)), 'ถาดวิชา rd-* ถูกลบ');
+ok(!('rd-os' in v19.statuses['weekly:2026-W45']) && v19.statuses['weekly:2026-W45']['bk-cod'] === 'running', 'สถานะ rd-* ถูกลบ · สถานะ bk-* คงอยู่');
+ok(wk(v19).items.filter((i) => i.kind === 'book').length === 10, 'ถาดหนังสือคงอยู่ 10 เล่ม');
+ok(sec(v19, 'roadmap').items.some((i) => i.id === 'uRoad') && sec(v19, 'roadmap').items[0].id === 'mlr-L1', 'roadmap: L1–L6 นำหน้า + การ์ดผู้ใช้คงอยู่');
+ok(S.datedItems(v19).filter((t) => t.id.startsWith('mls-')).length === 27, 'มี task ใหม่ 27');
+const mig = v19.sprintMigration;
+ok(mig && mig.label === 'MLSys Roadmap' && mig.backupKey === storeM.BACKUP_KEY_V20 && mig.backupFile === null, 'บันทึกการอัปเกรด + ชี้ backup key pre-v20');
+ok(mig.removed === 40 + 6 + 10 && mig.detail.movedToPool === 1, `จำนวนที่ล้าง ${mig.removed} (fs 40 + rd 6 + cl 10) · ย้ายเข้าถาด ${mig.detail.movedToPool}`);
+ok(!mig.prev, 'backup v19 ส่งสำเร็จแล้ว → ไม่ต้องเก็บ prev');
+const v2 = S.validateSprint(v19);
+ok(v2.length === 0, 'validateSprint หลัง migration ผ่าน' + (v2.length ? '\n    ' + v2.join('\n    ') : ''));
+ok(storeM.upgradeDoc(v19) === false && S.datedItems(v19).length === 29, 'รัน upgrade ซ้ำ ไม่เปลี่ยนอะไร (27 task + การ์ดผู้ใช้ 2)');
+
+/* ---------- 4) migration ประวัติ v18 → v20 ยังไม่พัง ---------- */
+console.log('4) upgradeDoc: ข้อมูลผู้ใช้ v18 → v20 (ผ่านขั้น Final Sprint)');
 const old = seedM.buildBaseSeed();
-old.statuses['weekly:2026-W39'] = { 'mw-mon1': 'done' };
-old.statuses['icpc'] = { f1: 'done' };
-old.statuses['roadmap'] = { rm1: 'done' };
-old.finance.transactions.push({ id: 'tx1', type: 'income', amount: 5000, category: 'x', note: '', date: '2026-09-01' });
-wk(old).items.find((i) => i.id === 'rd-os').day = 'พุธ WED';          // การ์ดถาดที่เคยจองวันไว้
+old.finance.transactions.push({ id: 'tx1', type: 'income', amount: 1, category: 'x', note: '', date: '2026-09-01' });
 wk(old).items.push({ id: 'uMine', day: 'ศุกร์ FRI', time: '10:00–11:00', activity: 'custom', cat: 'plan' });
-const icpcBefore = old.sections.find((s) => s.id === 'icpc').items.length;
 storeM.upgradeDoc(old);
-ok(old.schemaVersion === 19, 'อัปเกรดเป็น v19');
-ok(old.finance.transactions.length === 1, 'รายการเงินไม่หาย');
-ok(old.sections.find((s) => s.id === 'icpc').items.length === icpcBefore && old.statuses.icpc?.f1 === 'done', 'icpc: การ์ด+สถานะยังอยู่ (แค่ paused)');
-for (const id of ['roadmap', 'electives', 'learn', 'skills', 'research', 'english', 'projects', 'exam']) {
-  ok(old.sections.find((s) => s.id === id).items.length === 0, `ล้าง ${id}`);
-}
-ok(!old.statuses.roadmap && !old.statuses['weekly:2026-W39'], 'สถานะของแท็บที่ล้างถูกลบด้วย');
-ok(old.sections.find((s) => s.id === 'classes').items.length > 0, 'ตารางเรียนไม่แตะ');
-ok(old.sections.find((s) => s.id === 'fitness').items.length > 0, 'fitness ไม่แตะ');
-const pool = wk(old).items.filter((i) => i.pool);
-ok(pool.length === 16 && pool.every((i) => i.day === ''), `การ์ดถาด 16 ใบอยู่ครบ และกลับเข้าถาดหมด`);
-ok(!wk(old).items.some((i) => i.id === 'uMine' || i.id.startsWith('mw-')), 'การ์ด weekly เก่า (รวมที่เพิ่มเอง) ถูกล้าง');
-ok(S.datedItems(old).length === 40, 'มี task ใหม่ 40');
-ok(old.sprintMigration && old.sprintMigration.removed > 0, `บันทึกจำนวนที่ล้าง: ${old.sprintMigration?.removed} ใบ`);
-ok(S.validateSprint(old).length === 0, 'validation หลัง migration ผ่าน');
-const re = storeM.upgradeDoc(old);
-ok(re === false && S.datedItems(old).length === 40, 'รัน upgrade ซ้ำ ไม่เปลี่ยนอะไร');
+ok(old.schemaVersion === 20 && old.finance.transactions.length === 1, 'v18 → v20 · finance คงอยู่');
+ok(S.datedItems(old).length === 27 && !wk(old).items.some((i) => i.id.startsWith('fs-')), 'task ใหม่ 27 · ไม่มี fs-* ค้าง');
+ok(!old.sprintMigration.prev && old.sprintMigration.backupKey === storeM.BACKUP_KEY_V20, 'กระโดด v18→v20: ส่ง backup ก้อนเดียว (pre-v20 = ข้อมูล v18) ไม่ส่งซ้ำ');
+const v19b = seedM.buildBaseSeed();
+S.applyFinalSprint(v19b);
+v19b.schemaVersion = 19;
+v19b.sprintMigration = { at: 'x', removed: 1, backupFile: null };
+storeM.upgradeDoc(v19b);
+ok(v19b.sprintMigration.prev?.backupKey === storeM.BACKUP_KEY, 'v19 ที่ backup ยังส่งไม่สำเร็จ → เก็บไว้ใน prev ให้ App ส่งต่อ');
+ok(S.validateSprint(old).length === 0, 'validateSprint ผ่าน');
 
-/* ---------- 4) เลื่อนไปช่องว่างถัดไป ---------- */
-console.log('4) findNextSlot: ห้ามทับ locked/BUFFER และต้องตรงพลังงาน');
-const today = '2026-09-21';
-let moved = 0, skippedLocked = 0, bad = [];
+/* ---------- 5) เลื่อนไปช่องว่างถัดไป ---------- */
+console.log('5) findNextSlot: ห้ามทับ locked/BUFFER และต้องตรงพลังงาน');
+const today = '2026-11-07';
+let movedN = 0, skippedLocked = 0;
+const bad = [];
 const lockedBufferSpans = (d, iso) => S.busyOn(d, iso).filter((x) => x.item.energy === 'locked' || x.item.buffer).map((x) => x.span);
 for (const t of S.datedItems(fresh)) {
   const r = S.findNextSlot(fresh, t, { today, nowMin: 0 });
   if (t.energy === 'locked') { if (r === null) skippedLocked++; else bad.push('ย้าย locked ได้: ' + t.activity); continue; }
   if (!r) { bad.push('หา slot ไม่เจอ: ' + t.activity); continue; }
-  moved++;
+  movedN++;
   const cand = [S.toMin(r.start), S.toMin(r.end)];
-  const hit = S.busyOn(fresh, r.date, t.id).some((b) => cand[0] < b.span[1] && b.span[0] < cand[1]);
-  if (hit) bad.push(`ทับการ์ดอื่น: ${t.activity} → ${r.date} ${r.start}`);
+  if (S.busyOn(fresh, r.date, t.id).some((b) => cand[0] < b.span[1] && b.span[0] < cand[1])) bad.push(`ทับการ์ดอื่น: ${t.activity} → ${r.date} ${r.start}`);
   if (lockedBufferSpans(fresh, r.date).some((b) => cand[0] < b[1] && b[0] < cand[1])) bad.push('ทับ locked/BUFFER: ' + t.activity);
   if (r.date <= t.date && t.date >= today) bad.push(`ไม่ได้ย้ายไปวันถัดไป: ${t.activity} ${t.date} → ${r.date}`);
   if (cand[1] - cand[0] !== S.spanOf(t)[1] - S.spanOf(t)[0]) bad.push('ความยาวบล็อกเพี้ยน: ' + t.activity);
+  const win = S.SPRINT.energyWindows[t.energy === 'deep' ? 'deep' : 'light'][dow(r.date)] || [];
+  if (!win.some(([a, b]) => cand[0] >= S.toMin(a) && cand[1] <= S.toMin(b))) bad.push(`ไม่อยู่ในช่องพลังงาน ${t.energy}: ${t.activity} → ${r.date} ${r.start}`);
 }
-ok(bad.length === 0, `ย้ายได้ ${moved} ใบ · locked ห้ามย้าย ${skippedLocked} ใบ` + (bad.length ? '\n    ' + bad.join('\n    ') : ''));
-// ตัวอย่าง: deep ต้องไปลงช่อง deep เท่านั้น
-const deep = S.datedItems(fresh).find((t) => t.id === 'fs-2026-09-30-1015-dsml');
-const rd = S.findNextSlot(fresh, deep, { today, nowMin: 0 });
-ok(rd && ['SAT', 'SUN', 'WED'].includes(['SUN','MON','TUE','WED','THU','FRI','SAT'][new Date(rd.date + 'T00:00').getDay()]), `deep "cleaning" 30 ก.ย. → ${rd?.date} ${rd?.start}–${rd?.end}`);
+ok(bad.length === 0, `ย้ายได้ ${movedN} ใบ · locked ห้ามย้าย ${skippedLocked} ใบ` + (bad.length ? '\n    ' + bad.join('\n    ') : ''));
+ok(skippedLocked === 1, 'locked 1 ใบ (Hackathon 21 พ.ย.)');
 
-/* ---------- 5) progress โปรเจค ---------- */
-console.log('5) projectStats');
-fresh.statuses['weekly:dated'] = { 'fs-2026-09-29-2000-os-s': 'done' };
-const pOs = S.projectStats(fresh, fresh.sprint.projects.find((p) => p.id === 'os-s'), '2026-09-30');
-ok(pOs.total === 3 && pOs.done === 1 && pOs.pct === 33, `os-s: ${pOs.done}/${pOs.total} = ${pOs.pct}%`);
-ok(pOs.daysLeft === 2 && pOs.warn === true, `os-s เหลือ ${pOs.daysLeft} วัน, % < 70 → warn=${pOs.warn}`);
-const rv = S.weekReview(fresh, '2026-W40', '2026-10-05');
-ok(rv.unfinished.length === 12 - 1, `review W40: ค้าง ${rv.unfinished.length} (ติ๊กไปแล้ว 1)`);
-ok(rv.overdueMilestones.map((x) => x.m.id).join(',') === 'M0,M1,M2,M3', `milestone เลยกำหนด ณ 5 ต.ค.: ${rv.overdueMilestones.map((x) => x.m.id)}`);
+/* ---------- 6) progress โปรเจค ---------- */
+console.log('6) projectStats / weekReview');
+const p1Tasks = S.datedItems(fresh).filter((t) => t.project === 'p1');
+fresh.statuses['weekly:dated'] = { [p1Tasks[0].id]: 'done' };
+const pP1 = S.projectStats(fresh, fresh.sprint.projects.find((p) => p.id === 'p1'), '2026-11-18');
+ok(pP1.total === 4 && pP1.done === 1 && pP1.pct === 25, `p1: ${pP1.done}/${pP1.total} = ${pP1.pct}%`);
+ok(pP1.daysLeft === 2 && pP1.warn === true && pP1.next?.id === 'M3', `p1 เหลือ ${pP1.daysLeft} วัน · warn=${pP1.warn} · ถัดไป ${pP1.next?.id}`);
+const rv = S.weekReview(fresh, '2026-W46', '2026-11-16');
+ok(rv.overdueMilestones.map((x) => x.m.id).join(',') === 'M0,M1', `milestone เลยกำหนด ณ 16 พ.ย.: ${rv.overdueMilestones.map((x) => x.m.id)}`);
 
 console.log(fail ? `\n❌ FAIL ${fail}` : '\n✅ ALL PASS');
 process.exit(fail ? 1 : 0);
