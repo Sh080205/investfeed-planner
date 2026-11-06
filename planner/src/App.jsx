@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useMemo } from 'react';
 import { STATES, isoWeekKey, itemStatusKey } from './data/constants.js';
 import { loadDoc, saveDoc, downloadJSON, upgradeDoc, restoreSectionFromSeed, BACKUP_KEY } from './data/store.js';
 import { applyLegacy } from './data/migrate.js';
@@ -36,6 +36,10 @@ export default function App() {
       saveDoc(next);
       return next;
     });
+
+  // ธีม: 'ink' (ดำสนิท — ค่าเริ่มต้น) | 'slate' (มืดหม่นแบบเดิม) · layout effect กันจอกะพริบเป็นธีมอื่นก่อน
+  const theme = doc.settings.theme || 'ink';
+  useLayoutEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
 
   const active = doc.sections.find((s) => s.id === activeId) || doc.sections[0];
   const findItem = (d, sectionId, itemId) =>
@@ -247,6 +251,8 @@ export default function App() {
         onSaveDates={(dates) => update((d) => { Object.assign(d.settings.dates, dates); })}
         onExport={() => downloadJSON(doc)}
         onImportFile={onImportFile}
+        theme={theme}
+        onTheme={(t) => update((d) => { d.settings.theme = t; })}
       />
 
       <main className="content">

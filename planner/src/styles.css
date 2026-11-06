@@ -18,7 +18,29 @@
   --plan: #949dab;
   --fitness: #c98d86;   /* ส้มอิฐหม่น */
   --road: #c08fa0;      /* ชมพูหม่น */
+  --border-hover: #333b46;
   --radius: 10px;
+}
+/* ธีม Ink — ดำสนิท (OLED) · ตระกูลสีป้ายเดิมทั้ง 4 แค่ยกความสว่างขึ้นเล็กน้อยให้อ่านบนพื้นดำ */
+:root[data-theme='ink'] {
+  --bg: #000000;
+  --surface: #0c0d0f;
+  --surface-2: #15171a;
+  --border: #1f2226;
+  --border-soft: #17191c;
+  --border-hover: #2e3238;
+  --text: #e8ecf0;
+  --text-muted: #8a929d;
+  --ac: #86c29e;
+  --running: #83acd6;
+  --pending: #d1aa74;
+  --icpc: #d1aa74;
+  --review: #ab9dcf;
+  --ai: #83acd6;
+  --skill: #7dbcb5;
+  --plan: #9ca5b3;
+  --fitness: #d29690;
+  --road: #c999aa;
 }
 * { box-sizing: border-box; }
 @media (prefers-reduced-motion: reduce) {
@@ -82,7 +104,7 @@ body {
   font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted);
   background: none; border: 1px solid var(--border); border-radius: 5px; padding: 2px 6px; cursor: pointer;
 }
-.cd-edit:hover { color: var(--text); border-color: #333b46; }
+.cd-edit:hover { color: var(--text); border-color: var(--border-hover); }
 .cd-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-top: 6px; }
 .cd-row:first-child { margin-top: 0; }
 .cd-name { font-size: 11.5px; color: var(--text-muted); }
@@ -140,6 +162,21 @@ body {
   outline: 2px solid var(--running); outline-offset: 2px;
 }
 
+/* สลับธีม */
+.theme-switch { display: flex; align-items: center; gap: 6px; }
+.theme-label { font-size: 11px; color: var(--text-muted); margin-right: 2px; }
+.theme-opt {
+  flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  font: inherit; font-size: 11.5px; color: var(--text-muted); cursor: pointer;
+  background: none; border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px;
+}
+.theme-opt:hover { color: var(--text); border-color: var(--border-hover); }
+.theme-opt.active { color: var(--text); border-color: var(--ac); background: var(--surface-2); }
+.theme-opt:focus-visible { outline: 2px solid var(--running); outline-offset: 2px; }
+.theme-swatch { width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--border-hover); }
+.theme-swatch.sw-ink { background: #000; }
+.theme-swatch.sw-slate { background: #171b21; }
+
 .data-actions { display: flex; gap: 6px; }
 .data-actions .ml-reset { flex: 1; }
 a.ml-reset.back-link {
@@ -160,7 +197,7 @@ a.ml-reset.back-link {
   font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);
   background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; cursor: pointer;
 }
-.ml-reset:hover { color: var(--text); border-color: #333b46; }
+.ml-reset:hover { color: var(--text); border-color: var(--border-hover); }
 .ml-reset.add { color: var(--ac); border-color: rgba(46, 204, 113, 0.4); }
 .ml-reset.add:hover { background: rgba(46, 204, 113, 0.1); }
 .view-select {
@@ -190,7 +227,7 @@ a.ml-reset.back-link {
   padding: 10px 0; color: var(--text-muted); font: inherit;
   transition: border-color 0.15s ease, color 0.15s ease;
 }
-.day-col.collapsed:hover { border-color: #333b46; color: var(--text); }
+.day-col.collapsed:hover { border-color: var(--border-hover); color: var(--text); }
 .day-col.collapsed:focus-visible { outline: 2px solid var(--running); outline-offset: 2px; }
 .collapsed-day { writing-mode: vertical-rl; font-size: 10.5px; letter-spacing: 0.04em; }
 .collapsed-count {
@@ -225,7 +262,7 @@ a.ml-reset.back-link {
   padding: 11px 12px; cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease;
   display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px;
 }
-.ml-card:hover { border-color: #333b46; background: var(--surface-2); }
+.ml-card:hover { border-color: var(--border-hover); background: var(--surface-2); }
 .ml-card.done { opacity: 0.5; }
 .ml-card.static { cursor: default; }
 
@@ -241,7 +278,7 @@ a.ml-reset.back-link {
   background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px;
   padding: 4px 6px; cursor: pointer;
 }
-.icon-btn:hover { color: var(--text); border-color: #333b46; }
+.icon-btn:hover { color: var(--text); border-color: var(--border-hover); }
 .icon-btn.danger:hover { color: var(--fitness); border-color: rgba(255, 122, 107, 0.5); }
 
 .ml-head { display: flex; align-items: center; gap: 7px; min-height: 16px; }
@@ -387,7 +424,7 @@ a.book-card:hover .ml-activity { color: var(--running); }
   font-family: inherit; font-size: 12.5px; padding: 7px 14px; border-radius: 7px; cursor: pointer;
   background: none; border: 1px solid var(--border); color: var(--text-muted);
 }
-.btn:hover { color: var(--text); border-color: #333b46; }
+.btn:hover { color: var(--text); border-color: var(--border-hover); }
 .btn.primary { background: var(--ac); border-color: var(--ac); color: var(--bg); font-weight: 600; }
 .btn.primary:hover { filter: brightness(1.1); color: var(--bg); }
 
@@ -429,7 +466,7 @@ a.book-card:hover .ml-activity { color: var(--running); }
   flex: 1; font: inherit; font-size: 10.5px; padding: 4px 6px; cursor: pointer;
   background: none; border: 1px solid var(--border); border-radius: 5px; color: var(--text-muted);
 }
-.fin-until-presets button:hover { color: var(--text); border-color: #333b46; }
+.fin-until-presets button:hover { color: var(--text); border-color: var(--border-hover); }
 
 .fin-form {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);

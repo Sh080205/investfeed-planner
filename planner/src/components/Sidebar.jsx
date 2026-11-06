@@ -22,7 +22,12 @@ function sectionProgress(doc, section, weekKey) {
   return { total, done, pct: total ? Math.round((done / total) * 100) : 0 };
 }
 
-export default function Sidebar({ doc, weekKey, activeId, onSelect, onSaveDates, onExport, onImportFile }) {
+const THEMES = [
+  { id: 'ink', label: 'ดำสนิท' },
+  { id: 'slate', label: 'มืดหม่น' },
+];
+
+export default function Sidebar({ doc, weekKey, activeId, onSelect, onSaveDates, onExport, onImportFile, theme, onTheme }) {
   const fileRef = useRef(null);
 
   // ความคืบหน้ารวมทุก section ที่ติ๊กได้
@@ -88,6 +93,22 @@ export default function Sidebar({ doc, weekKey, activeId, onSelect, onSaveDates,
 
       {/* ICPC: ตอนพักไว้ยุบเหลือบรรทัดเดียว */}
       <CountdownCard dates={doc.settings.dates} onSave={onSaveDates} paused={isPaused(doc, 'icpc') ? SPRINT.app.pauseNote : null} />
+
+      {/* สลับธีม — เก็บใน doc.settings.theme (ติดไปกับ Export JSON) */}
+      <div className="theme-switch" role="radiogroup" aria-label="ธีม">
+        <span className="theme-label">ธีม</span>
+        {THEMES.map((t) => (
+          <button
+            key={t.id}
+            role="radio"
+            aria-checked={theme === t.id}
+            className={'theme-opt' + (theme === t.id ? ' active' : '')}
+            onClick={() => onTheme(t.id)}
+          >
+            <span className={'theme-swatch sw-' + t.id} aria-hidden="true" />{t.label}
+          </button>
+        ))}
+      </div>
 
       {/* backup / ย้ายเครื่อง / ดึงข้อมูลจาก planner เดิม */}
       <div className="data-actions">
