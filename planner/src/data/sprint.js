@@ -169,6 +169,23 @@ export function addL1Books(doc) {
   return add.length;
 }
 
+/* ---------------- ถอดหนังสือเทอม 1 ออกจากถาด (v22) ---------------- */
+// 8 เล่มของวิชาเทอม 3/1 — ระบุ id ชัด ๆ · เก็บ COD + H&P (สถาปัตยกรรมคอมพิวเตอร์ ใช้ต่อใน L3)
+export const RETIRED_V22_BOOKS = ['bk-mlcook', 'bk-datadriven', 'bk-dsml', 'bk-silber', 'bk-tanenbaum', 'bk-ostep', 'bk-walpole', 'bk-esp32'];
+
+/** ถอดหนังสือเทอม 1 (รวมใบที่จองวันไว้) + สถานะของมัน — คืนจำนวนที่ถอด */
+export function removeTerm1Books(doc) {
+  const drop = new Set(RETIRED_V22_BOOKS);
+  const weekly = doc.sections.find((s) => s.id === 'weekly');
+  if (!weekly) return 0;
+  const before = weekly.items.length;
+  weekly.items = weekly.items.filter((i) => !drop.has(i.id));
+  for (const [k, map] of Object.entries(doc.statuses || {})) {
+    if (k === 'weekly' || k.startsWith('weekly:')) for (const id of Object.keys(map)) if (drop.has(id)) delete map[id];
+  }
+  return before - weekly.items.length;
+}
+
 /* ---------------- MLSys Roadmap (v20) ---------------- */
 
 // การ์ด seed เทอม 1 ที่ถอดทิ้งตอนเข้า v20 — ระบุ id ชัด ๆ (ไม่ใช้ "อะไรที่ไม่อยู่ใน seed")

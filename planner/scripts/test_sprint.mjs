@@ -12,10 +12,10 @@ const WEEKDAY = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const dow = (iso) => WEEKDAY[new Date(iso + 'T00:00').getDay()];
 
 /* ---------- 1) seed ใหม่ (เครื่องใหม่) ---------- */
-console.log('1) buildSeedDoc v21');
+console.log('1) buildSeedDoc v22');
 const fresh = seedM.buildSeedDoc();
 const tasks = S.datedItems(fresh);
-ok(fresh.schemaVersion === 21, 'schemaVersion = 21');
+ok(fresh.schemaVersion === 22, 'schemaVersion = 22');
 ok(S.SPRINT.id === 'mlsys-break-2569-1', 'แผน active = mlsys-break-2569-1');
 ok(tasks.length === 27, `task ผูกวันที่ = 27 (ได้ ${tasks.length})`);
 ok(tasks.every((t) => t.id.startsWith('mls-')), 'id task ใหม่ขึ้นต้น mls-');
@@ -30,7 +30,7 @@ ok(S.isPaused(fresh, 'icpc'), 'icpc paused');
 ok(!sec(fresh, 'exam'), 'ไม่มีแท็บเตรียมสอบ');
 ok(sec(fresh, 'classes') && sec(fresh, 'classes').items.length === 0, 'ตารางเรียน: แท็บอยู่ แต่ว่าง');
 ok(!wk(fresh).items.some((i) => String(i.id).startsWith('rd-')), 'ไม่มีถาดวิชา rd-*');
-ok(wk(fresh).items.filter((i) => i.kind === 'book').length === 13, 'ถาดหนังสือ = เล่มเดิม 10 + L1 3');
+ok(wk(fresh).items.filter((i) => i.kind === 'book').map((i) => i.id).join(',') === 'bk-udl,bk-islp,bk-d2l,bk-cod,bk-hp', 'ถาดหนังสือ = L1 3 เล่ม + COD + H&P (ไม่มีเล่มเทอม 1)');
 const bookIds = wk(fresh).items.filter((i) => i.kind === 'book').map((i) => i.id);
 ok(bookIds.slice(0, 3).join(',') === 'bk-udl,bk-islp,bk-d2l', 'UDL / ISLP / d2l อยู่หัวถาดหนังสือ');
 ok(wk(fresh).items.filter((i) => ['bk-udl','bk-islp','bk-d2l'].includes(i.id)).every((i) => String(i.url).startsWith('https://') && i.pool && i.day === ''), 'การ์ดหนังสือ L1 มีลิงก์ และอยู่ในถาด');
@@ -82,7 +82,7 @@ const libraryBefore = JSON.stringify(sec(v19, 'library'));
 const financeBefore = JSON.stringify(v19.finance);
 
 const changed = storeM.upgradeDoc(v19);
-ok(changed && v19.schemaVersion === 21, 'อัปเกรดเป็น v21 (ผ่าน v20)');
+ok(changed && v19.schemaVersion === 22, 'อัปเกรดเป็น v22 (ผ่าน v20, v21)');
 ok(JSON.stringify(v19.finance) === financeBefore, 'finance ไม่ถูกแตะ');
 ok(sec(v19, 'icpc').items.length === icpcBefore && v19.statuses.icpc?.f1 === 'done' && S.isPaused(v19, 'icpc'), 'icpc: การ์ด+สถานะอยู่ครบ และยัง paused');
 ok(JSON.stringify(sec(v19, 'library')) === libraryBefore, 'ชั้นหนังสือไม่ถูกแตะ');
@@ -104,7 +104,7 @@ const cls = sec(v19, 'classes').items.map((i) => i.id);
 ok(cls.length === 1 && cls[0] === 'uClass', `ตารางเรียน: ถอด cl-* 10 ใบ เหลือการ์ดผู้ใช้ (${cls})`);
 ok(!wk(v19).items.some((i) => S.RETIRED_V20.pool.includes(i.id)), 'ถาดวิชา rd-* ถูกลบ');
 ok(!('rd-os' in v19.statuses['weekly:2026-W45']) && v19.statuses['weekly:2026-W45']['bk-cod'] === 'running', 'สถานะ rd-* ถูกลบ · สถานะ bk-* คงอยู่');
-ok(wk(v19).items.filter((i) => i.kind === 'book').length === 13, 'ถาดหนังสือ: เล่มเดิม 10 + L1 3');
+ok(wk(v19).items.filter((i) => i.kind === 'book').length === 5, 'ถาดหนังสือ: L1 3 + COD + H&P');
 ok(sec(v19, 'roadmap').items.some((i) => i.id === 'uRoad') && sec(v19, 'roadmap').items[0].id === 'mlr-L1', 'roadmap: L1–L6 นำหน้า + การ์ดผู้ใช้คงอยู่');
 ok(S.datedItems(v19).filter((t) => t.id.startsWith('mls-')).length === 27, 'มี task ใหม่ 27');
 const mig = v19.sprintMigration;
@@ -121,7 +121,7 @@ const old = seedM.buildBaseSeed();
 old.finance.transactions.push({ id: 'tx1', type: 'income', amount: 1, category: 'x', note: '', date: '2026-09-01' });
 wk(old).items.push({ id: 'uMine', day: 'ศุกร์ FRI', time: '10:00–11:00', activity: 'custom', cat: 'plan' });
 storeM.upgradeDoc(old);
-ok(old.schemaVersion === 21 && old.finance.transactions.length === 1, 'v18 → v21 · finance คงอยู่');
+ok(old.schemaVersion === 22 && old.finance.transactions.length === 1, 'v18 → v22 · finance คงอยู่');
 ok(S.datedItems(old).length === 27 && !wk(old).items.some((i) => i.id.startsWith('fs-')), 'task ใหม่ 27 · ไม่มี fs-* ค้าง');
 ok(!old.sprintMigration.prev && old.sprintMigration.backupKey === storeM.BACKUP_KEY_V20, 'กระโดด v18→v20: ส่ง backup ก้อนเดียว (pre-v20 = ข้อมูล v18) ไม่ส่งซ้ำ');
 const v19b = seedM.buildBaseSeed();
@@ -141,10 +141,26 @@ v20.schemaVersion = 20;
 wk(v20).items.find((i) => i.id === 'bk-cod').day = 'จันทร์ MON';
 const snapshot = JSON.stringify({ ...v20, schemaVersion: 0, sections: v20.sections.filter((s) => s.id !== 'weekly') });
 storeM.upgradeDoc(v20);
-ok(v20.schemaVersion === 21 && ['bk-udl', 'bk-islp', 'bk-d2l'].every((id) => wk(v20).items.some((i) => i.id === id)), 'เติม UDL / ISLP / d2l');
+ok(v20.schemaVersion === 22 && ['bk-udl', 'bk-islp', 'bk-d2l'].every((id) => wk(v20).items.some((i) => i.id === id)), 'เติม UDL / ISLP / d2l');
 ok(wk(v20).items.find((i) => i.id === 'bk-cod').day === 'จันทร์ MON', 'การ์ดหนังสือที่จองวันไว้ไม่ถูกแตะ');
 ok(JSON.stringify({ ...v20, schemaVersion: 0, sections: v20.sections.filter((s) => s.id !== 'weekly') }) === snapshot, 'แท็บอื่น/สถานะ/การเงินไม่เปลี่ยน');
 ok(S.addL1Books(v20) === 0, 'เติมซ้ำไม่เบิ้ล');
+
+
+/* ---------- 4c) v21 → v22: ถอดหนังสือเทอม 1 ---------- */
+console.log('4c) upgradeDoc: v21 → v22 (ลบหนังสือเทอม 1)');
+const v21 = seedM.buildBaseSeed();
+S.applyFinalSprint(v21); S.applyMlsysRoadmap(v21); S.addL1Books(v21); v21.schemaVersion = 21;
+ok(wk(v21).items.filter((i) => i.kind === 'book').length === 13, 'fixture v21: ถาด 13 เล่ม');
+wk(v21).items.find((i) => i.id === 'bk-silber').day = 'จันทร์ MON';
+wk(v21).items.push({ id: 'uBook', pool: true, kind: 'book', day: '', activity: 'หนังสือที่เพิ่มเอง', cat: 'book' });
+v21.statuses['weekly:2026-W46'] = { 'bk-walpole': 'done', 'bk-cod': 'running' };
+storeM.upgradeDoc(v21);
+const ids = wk(v21).items.filter((i) => i.kind === 'book').map((i) => i.id);
+ok(v21.schemaVersion === 22 && S.RETIRED_V22_BOOKS.every((id) => !ids.includes(id)), 'ถอด 8 เล่มเทอม 1 (รวมใบที่จองวันไว้)');
+ok(['bk-udl', 'bk-islp', 'bk-d2l', 'bk-cod', 'bk-hp', 'uBook'].every((id) => ids.includes(id)), 'เก็บ L1 + COD + H&P + หนังสือที่เพิ่มเอง');
+ok(!('bk-walpole' in v21.statuses['weekly:2026-W46']) && v21.statuses['weekly:2026-W46']['bk-cod'] === 'running', 'สถานะเล่มที่ถอดถูกลบ · ของ COD คงอยู่');
+ok(S.datedItems(v21).length === 27, 'task บนบอร์ดไม่ถูกแตะ');
 
 /* ---------- 5) เลื่อนไปช่องว่างถัดไป ---------- */
 console.log('5) findNextSlot: ห้ามทับ locked/BUFFER และต้องตรงพลังงาน');

@@ -4,7 +4,7 @@
 
 import { STORAGE_KEY, isoWeekKey, statusKey } from './constants.js';
 import { buildSeedDoc, buildBaseSeed } from './seed.js';
-import { applyFinalSprint, applyMlsysRoadmap, addL1Books } from './sprint.js';
+import { applyFinalSprint, applyMlsysRoadmap, addL1Books, removeTerm1Books } from './sprint.js';
 import { collectLegacyFromLocalStorage, applyLegacy } from './migrate.js';
 
 export { statusKey }; // ย้ายไปอยู่ constants.js แล้ว — re-export ให้ import เดิมยังใช้ได้
@@ -95,6 +95,7 @@ export function saveDoc(doc) {
  *            · เติม 27 task + projects/milestones + การ์ด roadmap/projects/learn จาก mlsys_break_2569_1.json
  *            · เก็บ เงิน/fitness/icpc(paused)/ชั้นหนังสือ/ถาดหนังสือ/การ์ดผู้ใช้
  * v20 → v21: ถาดหนังสือเพิ่ม UDL / ISLP / d2l (bk-udl, bk-islp, bk-d2l) ลิงก์เว็บทางการ
+ * v21 → v22: ถอดหนังสือเทอม 1 ออกจากถาด 8 เล่ม (RETIRED_V22_BOOKS) — เหลือ L1 3 เล่ม + COD + H&P
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -462,6 +463,13 @@ export function upgradeDoc(doc) {
     // ถาดหนังสือ: เพิ่ม UDL / ISLP / d2l (หนังสือหลักของ L1) — ไม่แตะการ์ดอื่น ไม่ต้อง backup
     addL1Books(doc);
     doc.schemaVersion = 21;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 22) {
+    // ผู้ใช้สั่งลบหนังสือเทอม 1 ออกจากถาด (8 เล่ม ระบุ id) — เก็บ COD + H&P + หนังสือ L1
+    removeTerm1Books(doc);
+    doc.schemaVersion = 22;
     changed = true;
   }
 
