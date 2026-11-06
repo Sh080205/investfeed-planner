@@ -1,5 +1,6 @@
 import React from 'react';
-import { STATE_LABEL, TAG_LABEL, TAG_FAMILY } from '../data/constants.js';
+import { TAG_LABEL, TAG_FAMILY } from '../data/constants.js';
+import StatusMark from './StatusMark.jsx';
 
 const ENERGY_LABEL = { deep: 'DEEP', light: 'LIGHT', locked: '🔒 LOCKED' };
 
@@ -67,14 +68,17 @@ export default function ItemCard({
         <button className="icon-btn danger" title="ลบ" aria-label="ลบ" onClick={stop(onDelete)}>🗑</button>
       </div>
 
-      {checkable && <div className={'verdict ' + state}>{STATE_LABEL[state]}</div>}
-
       <div className="ml-body">
-        {metaText && <div className="ml-meta">{metaText}</div>}
+        {(checkable || metaText) && (
+          <div className="ml-head">
+            {checkable && <StatusMark state={state} />}
+            {metaText && <span className="ml-meta">{metaText}</span>}
+          </div>
+        )}
         <div className={'ml-activity' + (checkable && state === 'done' ? ' strike' : '')}>
           {item.activity}
         </div>
-        {item.detail && <div className="ml-detail">{item.detail}</div>}
+        {item.detail && <div className="ml-detail" title={item.detail}>{item.detail}</div>}
       </div>
 
       <div className="card-foot">
@@ -89,7 +93,8 @@ export default function ItemCard({
               {TAG_LABEL[item.cat] || String(item.cat).toUpperCase()}
             </span>
           )}
-          {item.energy && (
+          {/* LIGHT เป็นค่าปกติ ไม่ต้องติดป้าย — ติดเฉพาะ DEEP / LOCKED ที่ต้องสังเกต */}
+          {item.energy && item.energy !== 'light' && (
             <span className={'energy e-' + item.energy + (item.unlocked ? ' unlocked' : '')}
               title={item.energy === 'locked' ? (item.unlocked ? 'ปลดล็อกแล้ว — ย้าย/แก้เวลาได้' : 'ล็อกเวลาไว้ — ปลดล็อกในหน้าแก้ไข') : undefined}>
               {item.energy === 'locked' && item.unlocked ? '🔓 UNLOCKED' : ENERGY_LABEL[item.energy] || item.energy}

@@ -1,16 +1,17 @@
 import React from 'react';
 
-const CIRC = 207; // เส้นรอบวง r=33 (ค่าเดียวกับ v2)
+const R = 22;
+const CIRC = 2 * Math.PI * R; // เส้นรอบวงของวงแหวน (ย่อจาก r=33 ให้ sidebar สั้นลง)
 
 export default function ProgressRing({ pct, done, total }) {
   return (
     <div className="ring-card">
       <div className="ring-wrap">
-        <svg width="78" height="78" viewBox="0 0 78 78">
-          <circle className="ring-bg" cx="39" cy="39" r="33" />
+        <svg width="54" height="54" viewBox="0 0 54 54" aria-hidden="true">
+          <circle className="ring-bg" cx="27" cy="27" r={R} />
           <circle
             className="ring-fg"
-            cx="39" cy="39" r="33"
+            cx="27" cy="27" r={R}
             strokeDasharray={CIRC}
             strokeDashoffset={CIRC - (CIRC * pct) / 100}
           />

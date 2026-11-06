@@ -29,6 +29,21 @@ export default function CountdownCard({ dates, onSave, paused = null }) {
     { key: 'bangkok', name: 'Bangkok Regional 2027' },
   ];
 
+  // พักไว้ + ไม่ได้แก้วัน → แถวเดียว: ป้ายพัก + วันที่เหลือถึง National
+  if (paused && !open) {
+    const d = daysUntil(dates.national);
+    return (
+      <div className="cd-card cd-compact is-paused">
+        <span className="dot dot-icpc" aria-hidden="true" />
+        <span className="cd-compact-text">
+          ICPC <span className="paused-badge">⏸ {paused}</span>
+        </span>
+        <span className="cd-compact-days mono" title="Thailand National 2027">{d >= 0 ? d + ' วัน' : 'ผ่านไปแล้ว'}</span>
+        <button className="cd-edit" onClick={toggle}>แก้วัน</button>
+      </div>
+    );
+  }
+
   return (
     <div className={'cd-card' + (paused ? ' is-paused' : '')}>
       <div className="cd-head">

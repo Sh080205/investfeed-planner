@@ -44,12 +44,8 @@ export default function Sidebar({ doc, weekKey, activeId, onSelect, onSaveDates,
 
       <ProgressRing pct={pct} done={done} total={total} />
 
-      {/* countdown หลัก: วันเริ่ม final (อยู่บน contest ICPC ที่พักไว้) */}
-      <SprintCountdown doc={doc} />
-
-      <CountdownCard dates={doc.settings.dates} onSave={onSaveDates} paused={isPaused(doc, 'icpc') ? SPRINT.app.pauseNote : null} />
-
-      {/* แท็บจัดเป็นกลุ่ม — section ที่ไม่อยู่ในกลุ่มไหนไปรวมที่ "อื่น ๆ" ท้ายสุด */}
+      {/* แท็บจัดเป็นกลุ่ม — อยู่ก่อน countdown ให้เห็นครบโดยไม่ต้องเลื่อน
+          section ที่ไม่อยู่ในกลุ่มไหนไปรวมที่ "อื่น ๆ" ท้ายสุด */}
       <nav className="ml-tabs" role="tablist">
         {(() => {
           const grouped = new Set(TAB_GROUPS.flatMap((g) => g.ids));
@@ -87,6 +83,12 @@ export default function Sidebar({ doc, weekKey, activeId, onSelect, onSaveDates,
         })()}
       </nav>
 
+      {/* countdown หลักของแผน + milestone ถัดไป */}
+      <SprintCountdown doc={doc} />
+
+      {/* ICPC: ตอนพักไว้ยุบเหลือบรรทัดเดียว */}
+      <CountdownCard dates={doc.settings.dates} onSave={onSaveDates} paused={isPaused(doc, 'icpc') ? SPRINT.app.pauseNote : null} />
+
       {/* backup / ย้ายเครื่อง / ดึงข้อมูลจาก planner เดิม */}
       <div className="data-actions">
         <button className="ml-reset" onClick={onExport}>⬇ Export JSON</button>
@@ -110,8 +112,8 @@ export default function Sidebar({ doc, weekKey, activeId, onSelect, onSaveDates,
       )}
 
       <div className="sidebar-footer">
-        คลิกการ์ดเพื่อเปลี่ยนสถานะ: ⏳ → 🔄 → ✅<br />
-        ✎ แก้ไข · 🗑 ลบ · ปุ่ม + เพิ่มรายการ<br />
+        คลิกการ์ดเพื่อเปลี่ยนสถานะ: ○ รอทำ → ◐ กำลังทำ → ✓ เสร็จ<br />
+        ชี้การ์ดเพื่อเห็นปุ่ม ✎ แก้ไข · 🗑 ลบ · ⏭ เลื่อน<br />
         บันทึกอัตโนมัติในเครื่อง · Export JSON ไว้กันข้อมูลหาย
       </div>
     </aside>

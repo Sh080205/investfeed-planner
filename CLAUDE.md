@@ -224,6 +224,9 @@ CLAUDE.md มีผลกับ **ทุก session ใน repo นี้** ร�
   `sprint.js` · `constants.js` · components: `SectionPanel` · `ItemCard` · `ItemEditor` · `ProjectBar` ·
   `WeekReview` · `SprintCountdown` (มี project `final` → นับถึง final · ไม่มี → นับถึงวันสุดท้ายของแผน) ·
   `FinanceTracker` · `BookShelf`
+- UI (6 พ.ย.): `TodayStrip` = แถบวันนี้บนบอร์ด (งานวันนี้ + ค้างจากวันก่อน + ⏭) · `StatusMark` = วงสถานะ ○ ◐ ✓
+  แทนป้าย PENDING · บอร์ดยุบวันที่ผ่านไปแล้วเป็นแถบ 44px (`--cols` inline) · sidebar เลื่อนในตัวเอง, แท็บอยู่ก่อน countdown
+  · ICPC countdown ตอน paused เหลือแถวเดียว · มือถือ: `.app` ต้อง align-items: stretch ไม่งั้นหน้าล้นจอ
 
 ### กติกาที่ต้องทำตามเวลาเปลี่ยนเนื้อหา/โครงข้อมูล
 - เปลี่ยนค่าเริ่มต้น = **bump schemaVersion + เพิ่มขั้นใน `upgradeDoc`** เสมอ (ข้อมูลผู้ใช้จะไม่อัปเดตเอง)

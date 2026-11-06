@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DAY_ORDER, itemStatusKey } from '../data/constants.js';
 import { SPRINT, datesOfWeek, shiftWeek, fmtDateShort, spanOf, isPaused, todayISO } from '../data/sprint.js';
 import ItemCard from './ItemCard.jsx';
 import BookShelf from './BookShelf.jsx';
 import FinanceTracker from './FinanceTracker.jsx';
 import ProjectBar from './ProjectBar.jsx';
+import TodayStrip from './TodayStrip.jsx';
 
 // อ่าน payload ของการลาก — { type: 'move', id } = ย้ายการ์ดเดิม · { type: 'new' } = กล่องข้อความใหม่
 function readDragPayload(e) {
@@ -26,7 +27,14 @@ export default function SectionPanel({
   icpcView, onIcpcView,
   finance, onAddTx, onDeleteTx, onSetBudgetUntil,
 }) {
-  const dated = !!section.dated;              // บอร์ด weekly แบบผูกวันที่ (Final Sprint)
+  // วันที่ผ่านไปแล้วที่ผู้ใช้กดกางออก (ปกติยุบเป็นแถบแคบ ให้วันนี้+วันข้างหน้าได้ที่)
+  const [expandedPast, setExpandedPast] = useState(() => new Set());
+  const togglePast = (iso) => setExpandedPast((prev) => {
+    const next = new Set(prev);
+    if (next.has(iso)) next.delete(iso); else next.add(iso);
+    return next;
+  });
+  const dated = !!section.dated;              // บอร์ด weekly แบบผูกวันที่
   const wk = dated ? viewWeek : weekKey;      // สัปดาห์ที่ใช้เก็บสถานะของการ์ดรูทีน
   const weekDates = dated ? datesOfWeek(viewWeek) : null;
   const today = todayISO();
@@ -134,6 +142,7 @@ export default function SectionPanel({
   }
 
   /* ---------- layout 'days': คอลัมน์ จ–อา (+ วันที่จริงถ้าเป็นบอร์ดผูกวันที่) + ถาด ---------- */
+  const isCollapsed = (iso) => dated && !!iso && iso < today && !expandedPast.has(iso);
   function renderDays() {
     const hasSubjectPool = items.some((i) => poolKind(i) === 'subject');
     const hasBookPool = items.some((i) => poolKind(i) === 'book');
@@ -152,11 +161,35 @@ export default function SectionPanel({
           </div>
         )}
 
-        <div className="day-grid">
+        <div
+          className="day-grid"
+          style={dated ? { '--cols': weekDates.map((iso) => (isCollapsed(iso) ? '44px' : 'minmax(140px, 1fr)')).join(' ') } : undefined}
+        >
           {DAY_ORDER.map((day, idx) => {
             const iso = dated ? weekDates[idx] : undefined;
             let dayItems = items.filter((i) => (dated && i.date ? i.date === iso : i.day === day));
             if (dated) dayItems = [...dayItems].sort(byStart);
+
+            // วันที่ผ่านไปแล้ว: ยุบเป็นแถบแคบ บอกจำนวนที่ค้าง · กดเพื่อกาง
+            if (isCollapsed(iso)) {
+              const left = dayItems.filter((i) => stateOf(i) !== 'done').length;
+              return (
+                <button
+                  type="button"
+                  className={'day-col collapsed' + (left ? ' has-left' : '')}
+                  key={day}
+                  onClick={() => togglePast(iso)}
+                  title={`${day} ${fmtDateShort(iso)} — ผ่านไปแล้ว${left ? ` · ค้าง ${left}` : ''} · กดเพื่อกาง`}
+                  aria-label={`กางวัน${day} ${fmtDateShort(iso)}${left ? ` ค้าง ${left} งาน` : ''}`}
+                >
+                  <span className="collapsed-day mono">{day.split(' ')[1]} {fmtDateShort(iso)}</span>
+                  {left > 0
+                    ? <span className="collapsed-count mono">{left}</span>
+                    : dayItems.length > 0 && <span className="collapsed-ok mono">✓</span>}
+                </button>
+              );
+            }
+
             return (
               <div
                 className={'day-col' + (iso === today ? ' is-today' : '')}
@@ -167,7 +200,12 @@ export default function SectionPanel({
               >
                 <div className="day-col-header mono">
                   <span>{day}{iso && <span className="day-date"> · {fmtDateShort(iso)}</span>}</span>
-                  <button className="icon-btn" title={'เพิ่มรายการวัน' + day} onClick={() => onAdd({ day, date: iso })}>+</button>
+                  <span className="day-col-actions">
+                    {iso && iso < today && (
+                      <button className="icon-btn" title="ยุบวันนี้" aria-label="ยุบวัน" onClick={() => togglePast(iso)}>‹</button>
+                    )}
+                    <button className="icon-btn" title={'เพิ่มรายการวัน' + day} onClick={() => onAdd({ day, date: iso })}>+</button>
+                  </span>
                 </div>
                 {dayItems.map((item) => card(item, day, iso))}
                 {!dayItems.length && <div className="day-empty">ลากการ์ดมาวางที่นี่</div>}
@@ -287,6 +325,17 @@ export default function SectionPanel({
           <ul>{issues.slice(0, 8).map((m, i) => <li key={i}>{m}</li>)}</ul>
           {issues.length > 8 && <div>…และอีก {issues.length - 8} จุด (ดูใน console)</div>}
         </div>
+      )}
+
+      {dated && (
+        <TodayStrip
+          items={section.items}
+          today={today}
+          stateOf={stateOf}
+          projectOf={projectOf}
+          onCycle={(item) => onCycle(section, item, wk)}
+          onMoveNext={(item) => onMoveNext(section, item)}
+        />
       )}
 
       {dated && doc.sprint && <ProjectBar doc={doc} onUpdateProject={onUpdateProject} />}
