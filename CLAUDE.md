@@ -225,7 +225,7 @@ CLAUDE.md มีผลกับ **ทุก session ใน repo นี้** ร�
   `WeekReview` · `SprintCountdown` (มี project `final` → นับถึง final · ไม่มี → นับถึงวันสุดท้ายของแผน) ·
   `FinanceTracker` · `BookShelf`
 - v21 (7 พ.ย.): ถาดหนังสือ weekly เพิ่ม `bk-udl` / `bk-islp` / `bk-d2l` (url จาก resources ใน JSON → เว็บทางการ)
-  ⚠ บนเครื่องนี้ไม่มีโฟลเดอร์ชั้นหนังสือ `C:UsersPublicDocumentsReseach skill` → `/api/books` คืน 0 · ลิงก์ `/books/*` ของเล่มเก่าเปิดไม่ได้
+  ⚠ บนเครื่องนี้ไม่มีโฟลเดอร์ชั้นหนังสือ `C:\Users\Public\Documents\Reseach skill` → `/api/books` คืน 0 · ลิงก์ `/books/*` ของเล่มเก่าเปิดไม่ได้
 - UI (6 พ.ย.): `TodayStrip` = แถบวันนี้บนบอร์ด (งานวันนี้ + ค้างจากวันก่อน + ⏭) · `StatusMark` = วงสถานะ ○ ◐ ✓
   แทนป้าย PENDING · บอร์ดยุบวันที่ผ่านไปแล้วเป็นแถบ 44px (`--cols` inline) · sidebar เลื่อนในตัวเอง, แท็บอยู่ก่อน countdown
   · ICPC countdown ตอน paused เหลือแถวเดียว · มือถือ: `.app` ต้อง align-items: stretch ไม่งั้นหน้าล้นจอ
