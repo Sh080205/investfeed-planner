@@ -4,7 +4,7 @@
 
 import { STORAGE_KEY, isoWeekKey, statusKey } from './constants.js';
 import { buildSeedDoc, buildBaseSeed } from './seed.js';
-import { applyFinalSprint, applyMlsysRoadmap } from './sprint.js';
+import { applyFinalSprint, applyMlsysRoadmap, addL1Books } from './sprint.js';
 import { collectLegacyFromLocalStorage, applyLegacy } from './migrate.js';
 
 export { statusKey }; // ย้ายไปอยู่ constants.js แล้ว — re-export ให้ import เดิมยังใช้ได้
@@ -94,6 +94,7 @@ export function saveDoc(doc) {
  *            แท็บเตรียมสอบ (การ์ดผู้ใช้ย้ายเข้าถาด weekly), คาบเรียนเทอม 1, ถาดวิชา rd-*
  *            · เติม 27 task + projects/milestones + การ์ด roadmap/projects/learn จาก mlsys_break_2569_1.json
  *            · เก็บ เงิน/fitness/icpc(paused)/ชั้นหนังสือ/ถาดหนังสือ/การ์ดผู้ใช้
+ * v20 → v21: ถาดหนังสือเพิ่ม UDL / ISLP / d2l (bk-udl, bk-islp, bk-d2l) ลิงก์เว็บทางการ
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -454,6 +455,13 @@ export function upgradeDoc(doc) {
       label: 'MLSys Roadmap', backupKey: BACKUP_KEY_V20, ...(prev ? { prev } : {}),
     };
     doc.schemaVersion = 20;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 21) {
+    // ถาดหนังสือ: เพิ่ม UDL / ISLP / d2l (หนังสือหลักของ L1) — ไม่แตะการ์ดอื่น ไม่ต้อง backup
+    addL1Books(doc);
+    doc.schemaVersion = 21;
     changed = true;
   }
 

@@ -142,6 +142,33 @@ export function applyFinalSprint(doc) {
   return removed;
 }
 
+/* ---------------- ถาดหนังสือ L1 (v21) ---------------- */
+// หนังสือหลักของ L1 ในถาดหนังสือ weekly — url ดึงจาก resources ใน JSON (ไม่ซ้ำข้อมูล)
+// ชั้นหนังสือในเครื่อง (BOOKS_DIR) ไม่มีเล่มเหล่านี้ จึงลิงก์ไปเว็บทางการที่แจก PDF/ฉบับออนไลน์ฟรี
+const L1_BOOK_SPEC = [
+  { id: 'bk-udl', match: /^Understanding Deep Learning/, activity: '📕 Understanding Deep Learning (UDL) — L1 บท 2–7, 10–11 · แกนหลักปิดเทอม' },
+  { id: 'bk-islp', match: /^ISLP/, activity: '📕 ISLP (Intro to Statistical Learning, Python) — L1 บท 3–5 + lab ท้ายบท' },
+  { id: 'bk-d2l', match: /^Dive into Deep Learning/, activity: '📕 Dive into Deep Learning (d2l) — อ้างอิงโค้ด PyTorch · เปิดเมื่อติดเกิน 20 นาที' },
+];
+export function l1BookCards(plan = MLSYS) {
+  return L1_BOOK_SPEC.map(({ id, match, activity }) => {
+    const r = plan.resources.find((x) => match.test(x.name));
+    return { id, pool: true, kind: 'book', day: '', activity, cat: 'book', url: r ? r.url : undefined };
+  });
+}
+
+/** เติมการ์ดหนังสือ L1 เข้าถาดหนังสือ (ก่อนเล่มเดิม) — idempotent · คืนจำนวนที่เติม */
+export function addL1Books(doc) {
+  const weekly = doc.sections.find((s) => s.id === 'weekly');
+  if (!weekly) return 0;
+  const have = new Set(weekly.items.map((i) => i.id));
+  const add = l1BookCards().filter((c) => !have.has(c.id));
+  if (!add.length) return 0;
+  const at = weekly.items.findIndex((i) => i.pool && i.kind === 'book');
+  weekly.items.splice(at >= 0 ? at : weekly.items.length, 0, ...add);
+  return add.length;
+}
+
 /* ---------------- MLSys Roadmap (v20) ---------------- */
 
 // การ์ด seed เทอม 1 ที่ถอดทิ้งตอนเข้า v20 — ระบุ id ชัด ๆ (ไม่ใช้ "อะไรที่ไม่อยู่ใน seed")

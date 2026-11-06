@@ -209,7 +209,7 @@ CLAUDE.md มีผลกับ **ทุก session ใน repo นี้** ร�
 ### โครงข้อมูล planner (อ่านก่อนแก้)
 - ข้อมูลอยู่ใน **localStorage ของเบราว์เซอร์ผู้ใช้** key `planner-v3:doc` — Claude มองไม่เห็นข้อมูลจริง
   (Browser pane ของ Claude เป็นคนละ storage — ใช้ทดสอบได้ ล้างได้ ไม่กระทบผู้ใช้)
-- `doc = { schemaVersion (ตอนนี้ 20), sections[], statuses{}, settings{}, finance{}, sprint{}, sprintMigration }`
+- `doc = { schemaVersion (ตอนนี้ 21), sections[], statuses{}, settings{}, finance{}, sprint{}, sprintMigration }`
 - item: `{ id, activity, meta, time, day, cat, url?, group?, pool?, kind?, date?, start?, end?,
   project?, milestone?, energy?(deep|light|locked), unlocked?, buffer?, detail? }`
 - สถานะ: `statuses['icpc']` · รายสัปดาห์ `statuses['weekly:2026-W45']` (ถูก prune เมื่อสัปดาห์ผ่านไป) ·
@@ -220,10 +220,12 @@ CLAUDE.md มีผลกับ **ทุก session ใน repo นี้** ร�
 - การ์ดแท็บ roadmap/projects/learn สร้างจาก JSON (`planSectionCards`): id `mlr-L1…L6` + `mlr-tree` ·
   `mlp-P1…P5` · `mlres-<slug ชื่อ>` · สีโปรเจคใหม่ (`.proj-l1/p1/coop/hack`) ใช้ตัวแปรสีเดิมใน styles.css
 - ไฟล์หลัก: `planner/src/data/` → `store.js` (load/save + `upgradeDoc` ไล่ v1→v20 + backup key ต่อเวอร์ชัน) ·
-  `seed.js` (`buildBaseSeed` = เทมเพลตเก่า v18 · `buildSeedDoc` = base → applyFinalSprint → applyMlsysRoadmap = v20) ·
+  `seed.js` (`buildBaseSeed` = เทมเพลตเก่า v18 · `buildSeedDoc` = base → applyFinalSprint → applyMlsysRoadmap → addL1Books = v21) ·
   `sprint.js` · `constants.js` · components: `SectionPanel` · `ItemCard` · `ItemEditor` · `ProjectBar` ·
   `WeekReview` · `SprintCountdown` (มี project `final` → นับถึง final · ไม่มี → นับถึงวันสุดท้ายของแผน) ·
   `FinanceTracker` · `BookShelf`
+- v21 (7 พ.ย.): ถาดหนังสือ weekly เพิ่ม `bk-udl` / `bk-islp` / `bk-d2l` (url จาก resources ใน JSON → เว็บทางการ)
+  ⚠ บนเครื่องนี้ไม่มีโฟลเดอร์ชั้นหนังสือ `C:UsersPublicDocumentsReseach skill` → `/api/books` คืน 0 · ลิงก์ `/books/*` ของเล่มเก่าเปิดไม่ได้
 - UI (6 พ.ย.): `TodayStrip` = แถบวันนี้บนบอร์ด (งานวันนี้ + ค้างจากวันก่อน + ⏭) · `StatusMark` = วงสถานะ ○ ◐ ✓
   แทนป้าย PENDING · บอร์ดยุบวันที่ผ่านไปแล้วเป็นแถบ 44px (`--cols` inline) · sidebar เลื่อนในตัวเอง, แท็บอยู่ก่อน countdown
   · ICPC countdown ตอน paused เหลือแถวเดียว · มือถือ: `.app` ต้อง align-items: stretch ไม่งั้นหน้าล้นจอ
