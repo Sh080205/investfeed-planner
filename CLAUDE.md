@@ -29,18 +29,23 @@
 
 ## ข้อมูลคงที่ (ห้ามถามซ้ำ ห้ามเดาเพิ่ม)
 
-**เป้าหมายระยะยาว:** ทำงาน 1–3 ปี → ป.โท (VISTEC / NUS / KAIST / ไต้หวัน)
-สายที่เดินสองประตูพร้อมกัน: (A) AI + Embedded/Hardware, edge AI, AI-on-chip
-(B) Efficient ML / ML Systems — quantization, pruning, inference optimization
+**เป้าหมายระยะยาว:** ทำงาน 1–3 ปี → ป.โท สาย MLSys (KAIST / NUS / VISTEC — ไต้หวันตัดออกแล้ว)
+**สายที่ล็อกแล้ว (ก.ย. 2569): (B) Efficient ML / ML Systems** — quantization, pruning, inference optimization
+สาย (A) AI + Embedded/Hardware ไม่ใช่เป้าหมายแล้ว แต่พื้น embedded/FPGA/C++ ยังเป็นจุดแข็ง
+**บันไดอาชีพ (พ.ย. 2569):** สหกิจสาย deploy/MLOps → งานแรก applied/production ML ที่บริษัท self-host โมเดล
+→ inference optimization → inference/infra engineer ต่างประเทศ หรือ ป.โท
 น้ำหนักตอนสมัคร: **research publication + production experience > เกรด > เหรียญแข่งขัน**
 แต่เกรดต้องไม่พังจนปิดโอกาส — ให้ถือว่าเกรดคือ "เกณฑ์ผ่าน" ไม่ใช่ "ตัวชี้วัดที่ต้องดันสุด"
 
-**เส้นทางจบ:** สหกิจศึกษา (co-op) — ปี 4 เทอม 2 คือเทอมสหกิจ
+**เส้นทางจบ:** สหกิจศึกษา (co-op) — ปี 4 เทอม 2 คือเทอมสหกิจ · **ตัดสินแล้ว 8 พ.ย. 2569: ลง 03600390 ปี 3/2**
+⚠ ใน My KU ยังอยู่แผน 6749 "ไม่เลือกเรียนสหกิจ" — **[ต้องเช็คกับอาจารย์ที่ปรึกษา]** ว่าต้องยื่นเปลี่ยนแผนไหม
 วิชาบังคับทั้งหมดต้องเคลียร์จบภายในปี 4 เทอม 1 → เทอมนี้ตกวิชาไหนคือกระทบแผนทั้งสาย
 
 **งานวิจัยที่ทำอยู่:** TCN-based PM2.5 anomaly detection บน FPGA (VHDL)
 และ portfolio ESP32-S3 + TinyML
-จุดที่ยังไม่แข็งและต้องได้เวลาจริง: **VHDL ระดับ synthesizable, FPGA toolchain, deep learning เชิงลึก**
+งานวิจัย FPGA อยู่ใน maintenance mode (ทำเฉพาะที่อาจารย์สั่ง) · โปรเจกต์ใหม่ต้องไม่เสียเงิน
+จุดที่ยังไม่แข็งและต้องได้เวลาจริง (เรียงลำดับ): **deep learning เชิงลึก → serving/deploy (Docker, FastAPI, ONNX Runtime)
+→ CUDA/GPU → PyTorch custom op → optimization** · VHDL/FPGA เท่าที่งานวิจัยต้องใช้
 
 **พื้นฐานที่มีแล้ว (ห้ามเสนอให้ปูใหม่):** C/C++, Python (NumPy/pandas/scikit-learn/Matplotlib),
 Java, SQL, Bash, Assembly, OOP, Data Structures & Algorithms, Discrete Math,
@@ -133,8 +138,19 @@ Digital Systems Design, Computer Architecture, Databases, Linux/Git/CI-CD
 - **ช่วงพลังงาน (ยืนยันแล้ว):** ตื่น 07:00 · นอน 24:00 · **หัวแล่นสุด 08:00–12:00** (ดื่มกาแฟก่อน)
   ปิดเทอมไม่มีคาบ → พีค 8–12 ว่างทุกวัน = อ่าน/derive/เขียนโค้ดจากไฟล์เปล่า ·
   บ่าย 13–17 / คืน 19–22 = quiz กับ Claude, lab ISLP, งานเบา
-- **เทอม 3/2 เริ่ม ~23 พ.ย. 2569 — ยังไม่รู้ตารางเรียนจริง** → ห้ามเดา · ได้มาเมื่อไรต้อง
-  (1) ใส่คาบในแท็บตารางเรียน (2) ตั้ง energyWindows ใหม่ (3) ทำโปรไฟล์วิชาเทอม 2 แทนตาราง 6 วิชาด้านบน
+- **เทอม 3/2 เริ่ม ~23 พ.ย. 2569 — แผนลงทะเบียน 18 นก. (ยังไม่ได้ลงทะเบียนจริง)**
+  วิชาที่เช็คแล้วว่าเปิดจริงใน My KU (8 พ.ย. 69) — ใส่ในแท็บตารางเรียนแล้ว (schema v23, ป้าย "แผน"):
+  | วัน-เวลา | วิชา | นก. |
+  |---|---|---|
+  | จ. 9–12 | 03600390 เตรียมสหกิจ | 3 |
+  | จ. 13–16 | 03603435 Cloud Computing | 3 |
+  | อ. 13–16 | 03603496 Selected Topics — MiniZinc (อาจารย์ยืนยันว่านับเฉพาะเลือก · วิชานี้ 1–3 นก. ต้องเช็คว่า 3) | 3 |
+  | ศ. 9–12 + ศ. 13–16 (หรือ 16–19) | 03603341 Software Engineering บรรยาย + แล็บ | 4 |
+  | ? | ภาษาไทย 01999021-67 + วิชากลุ่มอยู่ดีมีสุข ≥2 นก. (ยังไม่มีรหัส) | 5 |
+  ไม่ลงเลือกเสรีเทอมนี้ (ML นับไปแล้ว 3) · ยังขาดเลือกเสรีอีก 3 นก. → ปี 4/1
+  ตัวสำรองถ้า 496 เต็ม (10 ที่): 03603382 DIP อ. 9–12 · 452/423/381 **ไม่เปิด** ภาคปลาย 2569
+  ยังไม่รู้: เวลา gen-ed 2 ตัว, TA เทอม 2, วันสอบ · ได้ครบแล้วต้อง (1) แก้ป้าย "แผน" ในแท็บตารางเรียน
+  (2) ตั้ง energyWindows ใหม่ (3) ทำโปรไฟล์วิชาเทอม 2 แทนตาราง 6 วิชาด้านบน
   (4) เทอม 2 งบ self-study ~4–6 ชม./สัปดาห์ (ตาม L2 note)
 - ⚠ ยังไม่เคยได้รีวิว % จริงเลยตั้งแต่ Final Sprint — รีวิวแรกของแผนนี้คือ อา. 15 พ.ย. 19:00
 
@@ -193,7 +209,7 @@ CLAUDE.md มีผลกับ **ทุก session ใน repo นี้** ร�
 
 ---
 
-## 🔁 Handoff สำหรับแชตถัดไป (สรุปถึง 6 พ.ย. 2026 · schema v20 MLSys Roadmap)
+## 🔁 Handoff สำหรับแชตถัดไป (สรุปถึง 8 พ.ย. 2026 · schema v23 คาบเทอม 3/2 ตามแผน)
 
 ### แอปคืออะไร รันยังไง
 - repo: `github.com/Sh080205/investfeed-planner` (private) · branch `main` · commit + push หลังจบแต่ละงาน
@@ -209,7 +225,7 @@ CLAUDE.md มีผลกับ **ทุก session ใน repo นี้** ร�
 ### โครงข้อมูล planner (อ่านก่อนแก้)
 - ข้อมูลอยู่ใน **localStorage ของเบราว์เซอร์ผู้ใช้** key `planner-v3:doc` — Claude มองไม่เห็นข้อมูลจริง
   (Browser pane ของ Claude เป็นคนละ storage — ใช้ทดสอบได้ ล้างได้ ไม่กระทบผู้ใช้)
-- `doc = { schemaVersion (ตอนนี้ 22), sections[], statuses{}, settings{}, finance{}, sprint{}, sprintMigration }`
+- `doc = { schemaVersion (ตอนนี้ 23), sections[], statuses{}, settings{}, finance{}, sprint{}, sprintMigration }`
 - item: `{ id, activity, meta, time, day, cat, url?, group?, pool?, kind?, date?, start?, end?,
   project?, milestone?, energy?(deep|light|locked), unlocked?, buffer?, detail? }`
 - สถานะ: `statuses['icpc']` · รายสัปดาห์ `statuses['weekly:2026-W45']` (ถูก prune เมื่อสัปดาห์ผ่านไป) ·
@@ -220,13 +236,15 @@ CLAUDE.md มีผลกับ **ทุก session ใน repo นี้** ร�
 - การ์ดแท็บ roadmap/projects/learn สร้างจาก JSON (`planSectionCards`): id `mlr-L1…L6` + `mlr-tree` ·
   `mlp-P1…P5` · `mlres-<slug ชื่อ>` · สีโปรเจคใหม่ (`.proj-l1/p1/coop/hack`) ใช้ตัวแปรสีเดิมใน styles.css
 - ไฟล์หลัก: `planner/src/data/` → `store.js` (load/save + `upgradeDoc` ไล่ v1→v20 + backup key ต่อเวอร์ชัน) ·
-  `seed.js` (`buildBaseSeed` = เทมเพลตเก่า v18 · `buildSeedDoc` = base → applyFinalSprint → applyMlsysRoadmap → addL1Books → removeTerm1Books = v22) ·
+  `seed.js` (`buildBaseSeed` = เทมเพลตเก่า v18 · `buildSeedDoc` = base → applyFinalSprint → applyMlsysRoadmap → addL1Books → removeTerm1Books → addTerm2PlanClasses = v23) ·
   `sprint.js` · `constants.js` · components: `SectionPanel` · `ItemCard` · `ItemEditor` · `ProjectBar` ·
   `WeekReview` · `SprintCountdown` (มี project `final` → นับถึง final · ไม่มี → นับถึงวันสุดท้ายของแผน) ·
   `FinanceTracker` · `BookShelf`
 - v21 (7 พ.ย.): ถาดหนังสือ weekly เพิ่ม `bk-udl` / `bk-islp` / `bk-d2l` (url จาก resources ใน JSON → เว็บทางการ)
   ⚠ บนเครื่องนี้ไม่มีโฟลเดอร์ชั้นหนังสือ `C:\Users\Public\Documents\Reseach skill` → `/api/books` คืน 0 · ลิงก์ `/books/*` ของเล่มเก่าเปิดไม่ได้
 - v22 (7 พ.ย.): ผู้ใช้สั่งลบหนังสือเทอม 1 ออกจากถาด 8 เล่ม (`RETIRED_V22_BOOKS`) → ถาดเหลือ UDL, ISLP, d2l, COD, H&P
+- v23 (8 พ.ย.): แท็บตารางเรียนเติมคาบเทอม 3/2 ตามแผน 5 ใบ (`TERM2_PLAN_CLASSES` id `c2-*` ใน sprint.js · meta ขึ้นต้น "แผน")
+  ไม่แตะแท็บอื่น · คาบไม่กระทบบอร์ด weekly (`busyOn` อ่านแค่ weekly) · energyWindows ยังเป็นของปิดเทอม
 - UI (6 พ.ย.): `TodayStrip` = แถบวันนี้บนบอร์ด (งานวันนี้ + ค้างจากวันก่อน + ⏭) · `StatusMark` = วงสถานะ ○ ◐ ✓
   แทนป้าย PENDING · บอร์ดยุบวันที่ผ่านไปแล้วเป็นแถบ 44px (`--cols` inline) · sidebar เลื่อนในตัวเอง, แท็บอยู่ก่อน countdown
   · ICPC countdown ตอน paused เหลือแถวเดียว · มือถือ: `.app` ต้อง align-items: stretch ไม่งั้นหน้าล้นจอ
@@ -249,6 +267,8 @@ CLAUDE.md มีผลกับ **ทุก session ใน repo นี้** ร�
 - server port 3000 ตายเองเป็นพัก ๆ → `Start-Process node -ArgumentList 'server.js'` ในโฟลเดอร์ repo
 - screenshot ใน Browser pane มัก timeout (pane ไม่แสดง) → ยืนยันผลด้วย DOM/JS แทน
 - เครื่องนี้ไม่มี Python (`python` เปิด Microsoft Store) → ใช้ Node เขียนสคริปต์
+- build จาก Linux VM (device_bash) ใช้ `planner/node_modules` ของ Windows ไม่ได้ (rollup native) →
+  คัดลอก source ไป `$HOME/build` → `npm ci` → `npx vite build` → copy `dist/index.html` กลับ (ทำรอบ v23)
 
 ### สถานะงาน ณ ตอนส่งต่อ
 - **MLSys Roadmap (schema v20) เสร็จและ push แล้ว** · git tag ก่อนแก้: `pre-mlsys-roadmap-2026-11-06`
@@ -267,8 +287,9 @@ CLAUDE.md มีผลกับ **ทุก session ใน repo นี้** ร�
 1. **M0 (10 พ.ย.)** — deadline ยื่นบริษัทสหกิจจริง → อัปเดต deadline + ติ๊ก confirmed ของ COOP ในแถบโปรเจค
 2. **Hackathon 21 พ.ย.** — รอผลทีม · ถ้าไม่ได้ไป: ลบการ์ดเตรียม hackathon (คืน 20 พ.ย.) แล้วใช้ 21 พ.ย. เป็น buffer ซ่อมข้อสอบ
 3. **รีวิวรายสัปดาห์** (อา. 15 พ.ย.) — ยังไม่เคยได้ % จริงสักครั้ง ให้ถามก่อนจัดตารางสัปดาห์ถัดไป
-4. **เทอม 3/2 (~23 พ.ย.)** — รอตารางเรียนจริง → ใส่แท็บตารางเรียน + energyWindows ใหม่ + แผน L2 เป็นไฟล์ JSON
-   ใหม่ (schema v21, prefix id ใหม่ห้ามชน `fs-`/`mls-`) + โปรไฟล์วิชาเทอม 2 ใน CLAUDE.md
+4. **เทอม 3/2 (~23 พ.ย.)** — คาบตามแผนอยู่ในแท็บตารางเรียนแล้ว (v23) · รอผลลงทะเบียนจริง + เวลา gen-ed/TA →
+   แก้ป้าย "แผน" + energyWindows ใหม่ + แผน L2 เป็นไฟล์ JSON ใหม่ (schema v24+, prefix id ใหม่ห้ามชน `fs-`/`mls-`/`c2-`)
+   + โปรไฟล์วิชาเทอม 2 ใน CLAUDE.md
 5. **ICPC** ยัง paused — เป้าแข่งปี 4 · ถามผู้ใช้ก่อนปลด
 
 ### บริบทผู้ใช้ที่ควรรู้ (นอกจากโปรไฟล์ด้านบน)

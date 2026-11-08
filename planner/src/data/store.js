@@ -4,7 +4,7 @@
 
 import { STORAGE_KEY, isoWeekKey, statusKey } from './constants.js';
 import { buildSeedDoc, buildBaseSeed } from './seed.js';
-import { applyFinalSprint, applyMlsysRoadmap, addL1Books, removeTerm1Books } from './sprint.js';
+import { applyFinalSprint, applyMlsysRoadmap, addL1Books, removeTerm1Books, addTerm2PlanClasses } from './sprint.js';
 import { collectLegacyFromLocalStorage, applyLegacy } from './migrate.js';
 
 export { statusKey }; // ย้ายไปอยู่ constants.js แล้ว — re-export ให้ import เดิมยังใช้ได้
@@ -96,6 +96,7 @@ export function saveDoc(doc) {
  *            · เก็บ เงิน/fitness/icpc(paused)/ชั้นหนังสือ/ถาดหนังสือ/การ์ดผู้ใช้
  * v20 → v21: ถาดหนังสือเพิ่ม UDL / ISLP / d2l (bk-udl, bk-islp, bk-d2l) ลิงก์เว็บทางการ
  * v21 → v22: ถอดหนังสือเทอม 1 ออกจากถาด 8 เล่ม (RETIRED_V22_BOOKS) — เหลือ L1 3 เล่ม + COD + H&P
+ * v22 → v23: แท็บตารางเรียนเติมคาบเทอม 3/2 ตามแผน (c2-*, TERM2_PLAN_CLASSES) — ป้าย "แผน" ยังไม่ใช่ผลลงทะเบียน
  */
 export function upgradeDoc(doc) {
   let changed = false;
@@ -470,6 +471,13 @@ export function upgradeDoc(doc) {
     // ผู้ใช้สั่งลบหนังสือเทอม 1 ออกจากถาด (8 เล่ม ระบุ id) — เก็บ COD + H&P + หนังสือ L1
     removeTerm1Books(doc);
     doc.schemaVersion = 22;
+    changed = true;
+  }
+
+  if (doc.schemaVersion < 23) {
+    // ตารางเรียนเทอม 3/2 ตามแผน (เช็คว่าเปิดจริงใน My KU 8 พ.ย. 69) — เติมเฉพาะแท็บ classes ไม่แตะแท็บอื่น
+    addTerm2PlanClasses(doc);
+    doc.schemaVersion = 23;
     changed = true;
   }
 

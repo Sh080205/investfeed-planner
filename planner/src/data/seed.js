@@ -2,7 +2,7 @@
 //
 // ตั้งแต่ v19: แผนผูกวันที่อยู่แยกในไฟล์ JSON (v19 final_sprint_2569_1 · v20 mlsys_break_2569_1)
 // ไฟล์นี้เก็บเทมเพลตเนื้อหาชุดเดิมไว้ให้ migration รุ่นก่อน ๆ อ้างอิง
-import { applyFinalSprint, applyMlsysRoadmap, addL1Books, removeTerm1Books } from './sprint.js';
+import { applyFinalSprint, applyMlsysRoadmap, addL1Books, removeTerm1Books, addTerm2PlanClasses } from './sprint.js';
 //
 // สำคัญ: นี่คือ "ค่าเริ่มต้น" เท่านั้น — หลังเปิดครั้งแรกข้อมูลจริงอยู่ใน localStorage
 // และแก้ไขทุกรายการได้ผ่าน UI (ปุ่ม ✎ / 🗑 / + เพิ่มรายการ)
@@ -509,6 +509,7 @@ export function buildSeedDoc() {
   applyMlsysRoadmap(doc);
   addL1Books(doc);
   removeTerm1Books(doc);
-  doc.schemaVersion = 22;
+  addTerm2PlanClasses(doc);
+  doc.schemaVersion = 23;
   return doc;
 }

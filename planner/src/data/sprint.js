@@ -186,6 +186,31 @@ export function removeTerm1Books(doc) {
   return before - weekly.items.length;
 }
 
+/* ---------------- ตารางเรียนเทอม 3/2 — ตามแผน (v23) ---------------- */
+// คาบที่เช็คแล้วว่าเปิดจริงใน My KU (8 พ.ย. 2569, ศรีราชา ภาคปลาย 2569) แต่ "ยังไม่ได้ลงทะเบียน"
+// → ทุกใบมีป้าย "แผน" ใน meta · แก้เป็นของจริงหลังลงทะเบียน
+// ยังไม่ใส่ (ไม่รู้เวลา — ห้ามเดา): ภาษาไทย 01999021-67 · วิชาอยู่ดีมีสุข · TA เทอม 2
+const TERM2_NOTE = 'เทอม 3/2 (เริ่ม 23 พ.ย. 2569) — ตามแผน ยังไม่ใช่ผลลงทะเบียน · ยังขาด: ภาษาไทย 01999021, อยู่ดีมีสุข, TA (ยังไม่รู้เวลา) · ช่องพลังงานยังเป็นของปิดเทอม';
+export const TERM2_PLAN_CLASSES = [
+  { id: 'c2-mon1', day: 'จันทร์ MON', time: '9:00–12:00', meta: 'แผน · 3 นก. · หมู่ 800 · ห้องติดต่อผู้สอน', activity: '03600390 การเตรียมความพร้อมสหกิจศึกษา (Co-op Prep) — วิชาแรกของสายสหกิจ · ใช้ทำ resume/สัมภาษณ์ให้ตรงสาย intern deploy/MLOps', cat: 'class' },
+  { id: 'c2-mon2', day: 'จันทร์ MON', time: '13:00–16:00', meta: 'แผน · 3 นก. · หมู่ 800 · 20 ที่', activity: '03603435 Cloud Computing — virtualization / cloud deployment · ใกล้งาน MLOps ที่สุดในหลักสูตร', cat: 'class' },
+  { id: 'c2-tue1', day: 'อังคาร TUE', time: '13:00–16:00', meta: 'แผน · 1–3 นก. (เช็คว่า 3) · หมู่ 800 · 10 ที่ · เช็คว่านับเป็นเฉพาะเลือก', activity: '03603496 Selected Topics — MiniZinc (constraint/discrete optimization) · ทดสอบ flavor ฝั่ง optimization · โจทย์ปลายวิชา: bit allocation แบบ ILP', cat: 'class' },
+  { id: 'c2-fri1', day: 'ศุกร์ FRI', time: '9:00–12:00', meta: 'แผน · 4 นก. · บรรยาย หมู่ 800', activity: '03603341 วิศวกรรมซอฟต์แวร์ (Software Engineering) — บรรยาย', cat: 'class' },
+  { id: 'c2-fri2', day: 'ศุกร์ FRI', time: '13:00–16:00', meta: 'แผน · แล็บหมู่ 830 (หรือหมู่ 831 ศ. 16:00–19:00 — ยังไม่เลือก) · Lab Com 3', activity: '03603341 วิศวกรรมซอฟต์แวร์ — แล็บ', cat: 'class' },
+];
+
+/** เติมคาบเรียนเทอม 3/2 (ตามแผน) เข้าแท็บตารางเรียน — idempotent · ไม่แตะการ์ดที่ผู้ใช้เพิ่มเอง · คืนจำนวนที่เติม */
+export function addTerm2PlanClasses(doc) {
+  const classes = doc.sections.find((s) => s.id === 'classes');
+  if (!classes) return 0;
+  const have = new Set(classes.items.map((i) => i.id));
+  const add = TERM2_PLAN_CLASSES.filter((c) => !have.has(c.id)).map((c) => ({ ...c }));
+  classes.items.push(...add);
+  classes.note = TERM2_NOTE;
+  return add.length;
+}
+
+
 /* ---------------- MLSys Roadmap (v20) ---------------- */
 
 // การ์ด seed เทอม 1 ที่ถอดทิ้งตอนเข้า v20 — ระบุ id ชัด ๆ (ไม่ใช้ "อะไรที่ไม่อยู่ใน seed")
