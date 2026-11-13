@@ -428,90 +428,153 @@ a.book-card:hover .ml-activity { color: var(--running); }
 .btn.primary { background: var(--ac); border-color: var(--ac); color: var(--bg); font-weight: 600; }
 .btn.primary:hover { filter: brightness(1.1); color: var(--bg); }
 
-/* ---------- Finance (แท็บเงิน) ---------- */
-.fin { display: flex; flex-direction: column; gap: 16px; }
+/* ---------- Finance (แท็บเงิน) ----------
+   ลำดับการอ่าน: เหลือเท่าไร → ใช้ได้วันละเท่าไร → วันนี้ใช้ไปเท่าไร → รับ/จ่าย → บันทึก → รายการรายวัน
+   ตัวเลขใช้ฟอนต์หลัก + tabular-nums (อ่านง่ายกว่า mono) · รับ = เขียวหม่น (--ac) · จ่าย = ส้มอิฐ (--fitness) */
+.fin { display: flex; flex-direction: column; gap: 18px; max-width: 1080px; }
+.fin .num { font-variant-numeric: tabular-nums; }
+.fin .inc { color: var(--ac); }
+.fin .exp { color: var(--fitness); }
+.fin-label { font-size: 12.5px; color: var(--text-muted); }
 
-.fin-month { display: flex; align-items: center; justify-content: center; gap: 14px; }
-.fin-month-label { font-size: 14px; font-weight: 700; min-width: 140px; text-align: center; }
+.fin-month { display: flex; align-items: center; gap: 10px; }
+.fin-month-label { font-size: 17px; font-weight: 600; min-width: 92px; text-align: center; }
 
-.fin-summary { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 12px; }
-.fin-tile {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;
+.fin-hero {
+  display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(220px, 1fr); gap: 18px 28px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px;
 }
-.fin-tile-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
-.fin-tile-val { font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 700; }
-.fin-tile-val.big { font-size: 24px; }
-.fin-tile.income .fin-tile-val { color: var(--ac); }
-.fin-tile.expense .fin-tile-val { color: var(--fitness); }
-.fin-tile.balance { border-color: rgba(123, 163, 204, 0.4); }
-.fin-tile.balance .fin-tile-val { color: var(--running); }
-.fin-tile.balance.neg { border-color: rgba(201, 141, 134, 0.45); }
-.fin-tile.balance.neg .fin-tile-val { color: var(--fitness); }
-.fin-tile-sub { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
-.fin-tile-sub.warn { color: var(--fitness); }
-.fin-tile-sub b { color: var(--running); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
-
-/* ตั้งวันที่ "เงินนี้ใช้ถึงวันไหน" ในการ์ดเงินคงเหลือ */
-.fin-until { margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
-.fin-until-row {
-  display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  font-size: 11px; color: var(--text-muted);
+.fin-hero-main { display: flex; flex-direction: column; gap: 6px; }
+.fin-balance {
+  font-size: 40px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: var(--text);
 }
+.fin-hero.neg .fin-balance { color: var(--fitness); }
+.fin-perday { font-size: 15px; color: var(--text); display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.fin-perday b { font-size: 22px; font-weight: 700; color: var(--zone, var(--running)); }
+.fin-perday-sub { font-size: 12.5px; color: var(--text-muted); }
+.fin-today {
+  align-self: flex-start; margin-top: 4px; font-size: 13px; color: var(--text-muted);
+  border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px;
+}
+.fin-today b { color: var(--text); font-weight: 600; }
+.fin-today.over { color: var(--fitness); border-color: color-mix(in srgb, var(--fitness) 45%, transparent); }
+.fin-today.over b { color: var(--fitness); }
+.fin-note { font-size: 13px; color: var(--text-muted); }
+.fin-note.warn { color: var(--fitness); }
+
+.fin-hero-side {
+  display: flex; flex-direction: column; justify-content: center; gap: 10px;
+  padding-left: 24px; border-left: 1px solid var(--border-soft);
+}
+.fin-stat { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.fin-stat-val { font-size: 19px; font-weight: 600; }
+.fin-meter { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin-top: 4px; }
+.fin-meter-fill { display: block; height: 100%; border-radius: 3px; background: var(--fitness); }
+.fin-meter-label { font-size: 12px; color: var(--text-muted); }
+
+/* ตั้งวันที่ "เงินนี้ใช้ถึงวันไหน" — แถวเดียวท้ายการ์ด */
+.fin-until {
+  grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px;
+  border-top: 1px solid var(--border-soft); padding-top: 14px;
+}
+.fin-until-row { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--text-muted); }
 .fin-until-row input {
-  background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px;
-  padding: 4px 7px; font: inherit; font-size: 11.5px; color-scheme: dark;
+  background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 7px;
+  padding: 5px 8px; font: inherit; font-size: 12.5px; color-scheme: dark;
 }
-.fin-until-presets { display: flex; gap: 5px; margin-top: 6px; }
+.fin-until-presets { display: flex; gap: 6px; }
 .fin-until-presets button {
-  flex: 1; font: inherit; font-size: 10.5px; padding: 4px 6px; cursor: pointer;
-  background: none; border: 1px solid var(--border); border-radius: 5px; color: var(--text-muted);
+  font: inherit; font-size: 12px; padding: 5px 11px; cursor: pointer;
+  background: none; border: 1px solid var(--border); border-radius: 999px; color: var(--text-muted);
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 .fin-until-presets button:hover { color: var(--text); border-color: var(--border-hover); }
 
 .fin-form {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 12px; display: flex; flex-direction: column; gap: 10px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px 18px; display: flex; flex-direction: column; gap: 12px;
 }
-.fin-toggle { display: flex; gap: 8px; }
+.fin-form-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.fin-form-title { font-size: 15px; font-weight: 600; }
+.fin-toggle { display: inline-flex; padding: 3px; gap: 2px; background: var(--bg); border: 1px solid var(--border); border-radius: 9px; }
 .fin-toggle button {
-  flex: 1; font: inherit; font-size: 12.5px; padding: 8px; border-radius: 7px; cursor: pointer;
-  background: var(--bg); border: 1px solid var(--border); color: var(--text-muted);
+  font: inherit; font-size: 13px; padding: 5px 16px; border-radius: 6px; cursor: pointer;
+  background: none; border: none; color: var(--text-muted); transition: background 0.15s ease, color 0.15s ease;
 }
-.fin-toggle button.active.exp { color: var(--fitness); border-color: var(--fitness); background: rgba(255, 122, 107, 0.08); }
-.fin-toggle button.active.inc { color: var(--ac); border-color: var(--ac); background: color-mix(in srgb, var(--ac) 8%, transparent); }
-.fin-form-row { display: flex; gap: 8px; }
-.fin-form-row > * { flex: 1; min-width: 0; }
-.fin-form-row .btn.primary { flex: 0 0 auto; }
+.fin-toggle button:hover { color: var(--text); }
+.fin-toggle button.active.exp { color: var(--fitness); background: color-mix(in srgb, var(--fitness) 14%, var(--surface)); font-weight: 600; }
+.fin-toggle button.active.inc { color: var(--ac); background: color-mix(in srgb, var(--ac) 14%, var(--surface)); font-weight: 600; }
+.fin-form-row { display: flex; gap: 10px; align-items: flex-end; }
+.fin-field { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: var(--text-muted); }
+.fin-field.amt { flex: 1.1; }
+.fin-field.date { flex: 0 0 150px; }
 .fin-form input {
-  background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 7px;
-  padding: 8px 10px; font: inherit; font-size: 12.5px; color-scheme: dark;
+  width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px;
+  padding: 9px 11px; font: inherit; font-size: 14px; color-scheme: dark;
+  transition: border-color 0.15s ease;
 }
-.fin-amt { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+.fin-form input:focus { outline: none; border-color: var(--zone, var(--running)); }
+.fin-form input::placeholder { color: color-mix(in srgb, var(--text-muted) 70%, transparent); }
+.fin-amt { font-size: 17px !important; font-weight: 600; }
+.fin-form input, .fin-submit { height: 42px; }
+.fin-submit { flex: 0 0 auto; padding: 9px 18px; font-size: 14px; border-radius: 8px; }
+.fin-submit.expense { background: var(--fitness); border-color: var(--fitness); }
+.fin-submit.income { background: var(--ac); border-color: var(--ac); }
 
-.fin-section-head { font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.fin-cols { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(240px, 1fr); gap: 18px 28px; align-items: start; }
+.fin-h { margin: 0 0 10px; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.fin-count {
+  font-size: 11.5px; font-weight: 600; color: var(--text-muted);
+  border: 1px solid var(--border); border-radius: 999px; padding: 0 8px;
+}
+.fin-empty {
+  color: var(--text-muted); font-size: 13px; padding: 22px 14px; text-align: center;
+  border: 1px dashed var(--border); border-radius: var(--radius);
+}
 
-.fin-bycat { display: flex; flex-direction: column; gap: 8px; }
-.fin-cat-row { display: flex; align-items: center; gap: 10px; font-size: 12px; }
-.fin-cat-name { flex: 0 0 130px; color: var(--text); }
-.fin-cat-bar { flex: 1; height: 8px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
-.fin-cat-fill { display: block; height: 100%; background: var(--fitness); border-radius: 4px; }
-.fin-cat-amt { flex: 0 0 auto; color: var(--text-muted); }
-
-.fin-empty { color: var(--text-muted); font-size: 12px; padding: 14px; text-align: center;
-  border: 1px dashed var(--border); border-radius: var(--radius); }
-.fin-list { display: flex; flex-direction: column; gap: 6px; }
+.fin-day { margin-bottom: 14px; }
+.fin-day-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 12.5px; color: var(--text-muted); padding: 0 4px 6px; border-bottom: 1px solid var(--border-soft);
+}
+.fin-day-head .num { font-size: 12.5px; font-weight: 600; }
 .fin-tx {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 9px 11px;
+  display: flex; align-items: center; gap: 12px; padding: 9px 4px;
+  border-bottom: 1px solid var(--border-soft);
 }
-.fin-tx-main { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; }
-.fin-tx-note { font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.fin-tx-date { font-size: 10.5px; color: var(--text-muted); flex-shrink: 0; }
-.fin-tx-amt { font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.fin-tx:last-child { border-bottom: none; }
+.fin-tx-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: var(--fitness); }
+.fin-tx-dot.inc { background: var(--ac); }
+.fin-tx-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.fin-tx-cat { font-size: 14px; color: var(--text); }
+.fin-tx-note { font-size: 12.5px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fin-tx-amt { font-size: 15px; font-weight: 600; flex-shrink: 0; }
 .fin-tx-amt.income { color: var(--ac); }
-.fin-tx-amt.expense { color: var(--fitness); }
+.fin-tx-amt.expense { color: var(--text); }
+.fin-del { opacity: 0; transition: opacity 0.15s ease; }
+.fin-tx:hover .fin-del, .fin-del:focus-visible { opacity: 1; }
+@media (hover: none) { .fin-del { opacity: 1; } }
+
+.fin-bycat { display: flex; flex-direction: column; gap: 12px; }
+.fin-cat-row { display: flex; flex-direction: column; gap: 5px; }
+.fin-cat-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 13.5px; }
+.fin-cat-name { color: var(--text); }
+.fin-cat-amt { color: var(--text); font-weight: 600; }
+.fin-cat-pct { color: var(--text-muted); font-weight: 400; font-size: 12px; margin-left: 4px; }
+.fin-cat-bar { height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+.fin-cat-fill { display: block; height: 100%; background: color-mix(in srgb, var(--fitness) 80%, var(--surface)); border-radius: 3px; }
 .tag.income-tag { background: color-mix(in srgb, var(--ac) 10%, transparent); color: var(--ac); }
-.tag.expense-tag { background: rgba(255, 122, 107, 0.1); color: var(--fitness); }
+.tag.expense-tag { background: color-mix(in srgb, var(--fitness) 10%, transparent); color: var(--fitness); }
+
+@media (max-width: 760px) {
+  .fin-hero, .fin-cols { grid-template-columns: 1fr; }
+  .fin-hero { padding: 16px; }
+  .fin-hero-side { padding-left: 0; border-left: none; border-top: 1px solid var(--border-soft); padding-top: 14px; }
+  .fin-balance { font-size: 34px; }
+  .fin-form-row { flex-wrap: wrap; }
+  .fin-field, .fin-field.date { flex: 1 1 100%; }
+  .fin-submit { flex: 1 1 100%; }
+}
 
 /* ================= Final Sprint ================= */
 /* สีโปรเจค (ใช้ทั้งป้ายการ์ดและแถบโปรเจค) — อยู่ในพาเลตต์หม่นชุดเดิม */
@@ -630,8 +693,6 @@ a.book-card:hover .ml-activity { color: var(--running); }
   .ml-tab { flex: 1 1 auto; }
   .day-grid { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
   .field-row { flex-direction: column; gap: 12px; }
-  .fin-summary { grid-template-columns: 1fr; }
-  .fin-form-row { flex-wrap: wrap; }
 }
 
 /* ---------- ตารางเรียน: กริดเวลา · ธีม "Chalk" (กระดานชอล์กยามค่ำ) ----------
