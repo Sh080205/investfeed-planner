@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DAY_ORDER, itemStatusKey } from '../data/constants.js';
+import { DAY_ORDER, itemStatusKey, groupOf } from '../data/constants.js';
 import { SPRINT, datesOfWeek, shiftWeek, fmtDateShort, spanOf, isPaused, todayISO } from '../data/sprint.js';
 import ItemCard from './ItemCard.jsx';
 import BookShelf from './BookShelf.jsx';
@@ -44,10 +44,19 @@ export default function SectionPanel({
   const projectOf = (item) => doc.sprint?.projects.find((p) => p.id === item.project) || null;
   const milestoneOf = (item) => doc.sprint?.milestones.find((m) => m.id === item.milestone) || null;
 
+  // หัวหน้า: ชื่อแท็บ + กลุ่ม (สีตาม zone ของกลุ่ม)
+  const panelHead = (
+    <header className="panel-head">
+      <h1 className="panel-title">{section.tab}</h1>
+      {groupOf(section.id) && <span className="panel-zone">{groupOf(section.id).label}</span>}
+    </header>
+  );
+
   /* ---------- แท็บที่พักไว้ (icpc ช่วง Final Sprint) — ซ่อนการ์ด ไม่นับ progress ---------- */
   if (isPaused(doc, section.id)) {
     return (
       <>
+        {panelHead}
         <div className="ml-panel-note">
           <span>{section.note}</span>
           <span className="note-actions">
@@ -263,6 +272,7 @@ export default function SectionPanel({
 
   return (
     <>
+      {panelHead}
       <div className="ml-panel-note">
         <span>{note}</span>
         <span className="note-actions">

@@ -28,12 +28,15 @@ export const TAG_FAMILY = {
 };
 
 // จัดกลุ่มแท็บใน sidebar — section ที่ไม่อยู่ในลิสต์จะไปกลุ่ม "อื่น ๆ" ท้ายสุด
+// zone = ธีมประจำกลุ่ม → สีเน้นของหน้า (ใช้ตระกูลสีป้ายเดิม 4 ตัว ไม่เพิ่มสีใหม่) ดู [data-zone] ใน styles.css
 export const TAB_GROUPS = [
-  { label: 'ประจำวัน', ids: ['weekly', 'exam', 'classes', 'finance', 'fitness'] },
-  { label: 'แข่งขัน', ids: ['icpc', 'english'] },
-  { label: 'เรียน & วิจัย', ids: ['research', 'library', 'electives', 'skills', 'learn'] },
-  { label: 'ระยะยาว', ids: ['projects', 'roadmap'] },
+  { label: 'ประจำวัน', zone: 'daily', ids: ['weekly', 'exam', 'classes', 'finance', 'fitness'] },
+  { label: 'แข่งขัน', zone: 'compete', ids: ['icpc', 'english'] },
+  { label: 'เรียน & วิจัย', zone: 'study', ids: ['research', 'library', 'electives', 'skills', 'learn'] },
+  { label: 'ระยะยาว', zone: 'future', ids: ['projects', 'roadmap'] },
 ];
+/** กลุ่มของแท็บ (null = ไม่อยู่ในกลุ่มไหน → "อื่น ๆ") */
+export const groupOf = (sectionId) => TAB_GROUPS.find((g) => g.ids.includes(sectionId)) || null;
 
 // แผนหลัง National ของ section ICPC — รายการที่ไม่มี track จะแสดงเสมอ
 export const TRACK_LABEL = {

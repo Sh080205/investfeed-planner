@@ -63,7 +63,7 @@ export default function Sidebar({ doc, weekKey, activeId, onSelect, onSaveDates,
             const secs = g.ids.map((id) => doc.sections.find((s) => s.id === id)).filter(Boolean);
             if (!secs.length) return null;
             return (
-              <div className="tab-group" key={g.label}>
+              <div className="tab-group" key={g.label} data-zone={g.zone || 'other'}>
                 <div className="tab-group-label">{g.label}</div>
                 {secs.map((s) => {
                   const p = sectionProgress(doc, s, weekKey);

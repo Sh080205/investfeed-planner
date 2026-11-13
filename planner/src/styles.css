@@ -154,10 +154,10 @@ body {
 }
 .ml-tab:hover { color: var(--text); background: var(--surface); }
 .ml-tab.active {
-  background: var(--surface-2); color: var(--text); border-left-color: var(--ac); font-weight: 600;
+  background: var(--surface-2); color: var(--text); border-left-color: var(--zone, var(--ac)); font-weight: 600;
 }
 .ml-tab .pct { font-size: 10px; color: var(--text-muted); opacity: 0.75; }
-.ml-tab.active .pct { color: var(--ac); opacity: 1; }
+.ml-tab.active .pct { color: var(--zone, var(--ac)); opacity: 1; }
 .ml-tab:focus-visible, .ml-card:focus-visible, .ml-reset:focus-visible, .icon-btn:focus-visible {
   outline: 2px solid var(--running); outline-offset: 2px;
 }
@@ -198,16 +198,16 @@ a.ml-reset.back-link {
   background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; cursor: pointer;
 }
 .ml-reset:hover { color: var(--text); border-color: var(--border-hover); }
-.ml-reset.add { color: var(--ac); border-color: rgba(46, 204, 113, 0.4); }
-.ml-reset.add:hover { background: rgba(46, 204, 113, 0.1); }
+.ml-reset.add { color: var(--zone, var(--ac)); border-color: color-mix(in srgb, var(--zone, var(--ac)) 40%, transparent); }
+.ml-reset.add:hover { background: color-mix(in srgb, var(--zone, var(--ac)) 10%, transparent); }
 .view-select {
   font-size: 11px; color: var(--icpc); background: var(--surface);
-  border: 1px solid rgba(255, 180, 84, 0.4); border-radius: 6px; padding: 4px 6px; cursor: pointer;
+  border: 1px solid color-mix(in srgb, var(--icpc) 40%, transparent); border-radius: 6px; padding: 4px 6px; cursor: pointer;
 }
 
 .banner {
   display: flex; justify-content: space-between; align-items: center; gap: 10px;
-  background: rgba(46, 204, 113, 0.08); border: 1px solid rgba(46, 204, 113, 0.35);
+  background: color-mix(in srgb, var(--ac) 8%, transparent); border: 1px solid color-mix(in srgb, var(--ac) 35%, transparent);
   color: var(--ac); font-size: 12.5px; border-radius: var(--radius);
   padding: 10px 12px; margin-bottom: 14px;
 }
@@ -478,7 +478,7 @@ a.book-card:hover .ml-activity { color: var(--running); }
   background: var(--bg); border: 1px solid var(--border); color: var(--text-muted);
 }
 .fin-toggle button.active.exp { color: var(--fitness); border-color: var(--fitness); background: rgba(255, 122, 107, 0.08); }
-.fin-toggle button.active.inc { color: var(--ac); border-color: var(--ac); background: rgba(46, 204, 113, 0.08); }
+.fin-toggle button.active.inc { color: var(--ac); border-color: var(--ac); background: color-mix(in srgb, var(--ac) 8%, transparent); }
 .fin-form-row { display: flex; gap: 8px; }
 .fin-form-row > * { flex: 1; min-width: 0; }
 .fin-form-row .btn.primary { flex: 0 0 auto; }
@@ -510,7 +510,7 @@ a.book-card:hover .ml-activity { color: var(--running); }
 .fin-tx-amt { font-size: 13px; font-weight: 700; flex-shrink: 0; }
 .fin-tx-amt.income { color: var(--ac); }
 .fin-tx-amt.expense { color: var(--fitness); }
-.tag.income-tag { background: rgba(46, 204, 113, 0.1); color: var(--ac); }
+.tag.income-tag { background: color-mix(in srgb, var(--ac) 10%, transparent); color: var(--ac); }
 .tag.expense-tag { background: rgba(255, 122, 107, 0.1); color: var(--fitness); }
 
 /* ================= Final Sprint ================= */
@@ -556,7 +556,7 @@ a.book-card:hover .ml-activity { color: var(--running); }
 .week-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
 .week-label { font-size: 12px; font-weight: 600; }
 .day-date { color: var(--text); font-weight: 600; }
-.day-col.is-today .day-col-header { color: var(--ac); border-bottom-color: var(--ac); }
+.day-col.is-today .day-col-header { color: var(--zone, var(--ac)); border-bottom-color: var(--zone, var(--ac)); }
 
 /* ป้ายพลังงาน + รายละเอียด */
 .card-tags { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
@@ -638,7 +638,7 @@ a.book-card:hover .ml-activity { color: var(--running); }
    ใช้ตระกูลสี study (--running ฟ้าหม่น) ตัวเดียว · เส้นประ = คาบที่ยังเป็นแผน · ไม่มี glow */
 .tt {
   --tt-line: color-mix(in srgb, var(--border) 70%, transparent);
-  --tt-ink: var(--running);
+  --tt-ink: var(--zone, var(--running));
   --tt-fill: color-mix(in srgb, var(--running) 13%, var(--surface));
 }
 .tt-summary {
@@ -725,3 +725,31 @@ a.book-card:hover .ml-activity { color: var(--running); }
 }
 .tt-chip:hover { border-color: var(--tt-ink); }
 @media (hover: none) { .tt-dayhead .tt-add, .tt-del { opacity: 1; } }
+
+/* ---------- ธีมประจำกลุ่มแท็บ (zone) ----------
+   แต่ละกลุ่มใช้สีจากตระกูลป้ายเดิม 4 ตัว (ไม่เพิ่มสีใหม่) เป็นสีเน้นของหน้านั้น:
+   ประจำวัน = ฟ้าหม่น "Chalk" · แข่งขัน = อำพัน "Arena" · เรียน & วิจัย = เขียวน้ำทะเล "Lab" · ระยะยาว = ชมพูหม่น "Horizon" */
+[data-zone] { --zone: var(--plan); }
+[data-zone='daily']   { --zone: var(--running); }
+[data-zone='compete'] { --zone: var(--pending); }
+[data-zone='study']   { --zone: var(--skill); }
+[data-zone='future']  { --zone: var(--road); }
+
+.tab-group-label { display: flex; align-items: center; gap: 6px; }
+.tab-group-label::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--zone); opacity: 0.85;
+}
+
+.panel-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; margin: 0 0 8px; }
+.panel-title {
+  margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.2;
+  text-transform: capitalize;
+}
+.panel-zone { font-size: 12.5px; font-weight: 500; color: var(--zone); }
+
+.content :focus-visible { outline-color: var(--zone); }
+.content .ml-card:hover { border-color: color-mix(in srgb, var(--zone) 40%, var(--border-hover)); }
+.content .group-head { border-bottom: 1px solid var(--border-soft); padding-bottom: 8px; }
+.content .group-badge { color: var(--zone); border-color: color-mix(in srgb, var(--zone) 35%, var(--border)); }
+.content .day-col.is-today { background: color-mix(in srgb, var(--zone) 4%, transparent); border-radius: var(--radius); }
+.content ::selection { background: color-mix(in srgb, var(--zone) 32%, transparent); }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useMemo } from 'react';
-import { STATES, isoWeekKey, itemStatusKey } from './data/constants.js';
+import { STATES, isoWeekKey, itemStatusKey, groupOf } from './data/constants.js';
 import { loadDoc, saveDoc, downloadJSON, upgradeDoc, restoreSectionFromSeed, BACKUP_KEY } from './data/store.js';
 import { applyLegacy } from './data/migrate.js';
 import { findNextSlot, validateSprint, dayLabelOf, fmtDateShort } from './data/sprint.js';
@@ -255,7 +255,7 @@ export default function App() {
         onTheme={(t) => update((d) => { d.settings.theme = t; })}
       />
 
-      <main className="content">
+      <main className="content" data-zone={groupOf(active.id)?.zone || 'other'}>
         {doc.migratedCount > 0 && !doc.migrationNoticeDismissed && (
           <div className="banner">
             <span>✓ นำเข้าข้อมูลจาก planner เดิมสำเร็จ {doc.migratedCount} รายการ (สถานะที่เคยติ๊ก + วันแข่ง)</span>
