@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#121110">
   <title>InvestFeed — ข่าวการลงทุน</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23121110'/><path d='M18 70 L40 48 L56 60 L82 30' stroke='%23d9a35b' stroke-width='10' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,8 +16,7 @@
 <header class="header">
   <div class="header-inner">
     <div class="logo">
-      <span class="logo-mark" aria-hidden="true">📈</span>
-      <span class="logo-name">InvestFeed</span>
+      <span class="logo-name">Invest<em>Feed</em></span>
     </div>
 
     <nav class="tab-bar" id="tab-bar">
@@ -51,27 +51,31 @@
         </svg>
         <input type="search" id="search-input" class="search-input" placeholder="ค้นหาข่าว..." autocomplete="off">
       </label>
-      <button class="ai-btn" id="ai-btn" title="สรุปข่าวด้วย AI">
+      <button class="ai-btn" id="ai-btn" title="สรุปข่าวด้วย AI" aria-label="สรุปข่าวด้วย AI">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
           <path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z"/>
         </svg>
         <span>สรุปข่าว AI</span>
       </button>
-      <button class="tool-btn" id="ai-history-btn" title="ประวัติสรุปย้อนหลัง">
+      <button class="tool-btn" id="ai-history-btn" title="ประวัติสรุปย้อนหลัง" aria-label="ประวัติสรุปย้อนหลัง">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
           <path d="M3 3v5h5"/>
           <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/>
           <path d="M12 7v5l4 2"/>
         </svg>
       </button>
-      <button class="tool-btn" id="refresh-btn" title="รีเฟรชข่าว">
+      <button class="tool-btn" id="refresh-btn" title="รีเฟรชข่าว" aria-label="รีเฟรชข่าว">
         <svg id="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
           <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
           <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
         </svg>
       </button>
-      <a class="tool-btn" href="/planner" title="เปิด Planner (แผน ICPC + ตารางเรียน)" style="text-decoration:none">📅</a>
-      <button class="tool-btn" id="theme-btn" title="สลับ Dark / Light">
+      <a class="tool-btn" href="/planner" title="เปิด Planner (แผนเรียน + ตารางเรียน)" aria-label="เปิด Planner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+      </a>
+      <button class="tool-btn" id="theme-btn" title="สลับ Dark / Light" aria-label="สลับธีมมืด/สว่าง">
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
           <circle cx="12" cy="12" r="5"/>
           <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
@@ -112,7 +116,7 @@
   </div>
 
   <div class="empty hidden" id="empty">
-    <p class="empty-icon">🔍</p>
+    <p class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="40" height="40"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.6-4.6"/></svg></p>
     <p id="empty-msg">ไม่พบข่าวที่ค้นหา</p>
   </div>
 

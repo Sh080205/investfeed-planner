@@ -6,6 +6,7 @@ import BookShelf from './BookShelf.jsx';
 import FinanceTracker from './FinanceTracker.jsx';
 import ProjectBar from './ProjectBar.jsx';
 import TodayStrip from './TodayStrip.jsx';
+import Timetable from './Timetable.jsx';
 
 // อ่าน payload ของการลาก — { type: 'move', id } = ย้ายการ์ดเดิม · { type: 'new' } = กล่องข้อความใหม่
 function readDragPayload(e) {
@@ -290,7 +291,7 @@ export default function SectionPanel({
             </button>
           )}
           {/* ชิปลากสร้างกล่องข้อความใหม่ — ลากไปวางบนคอลัมน์วัน */}
-          {isDays && (
+          {isDays && section.id !== 'classes' && (
             <span
               className="drag-chip mono"
               draggable
@@ -344,6 +345,9 @@ export default function SectionPanel({
         {section.layout === 'money'
           ? <FinanceTracker finance={finance} onAddTx={onAddTx} onDeleteTx={onDeleteTx} onSetBudgetUntil={onSetBudgetUntil} />
           : section.layout === 'books' ? <BookShelf />
+          : section.id === 'classes' ? (
+            <Timetable items={items} onEdit={onEdit} onAdd={onAdd} onDelete={(item) => onDelete(section, item)} />
+          )
           : section.layout === 'days' ? renderDays()
           : renderGroups()}
       </div>
